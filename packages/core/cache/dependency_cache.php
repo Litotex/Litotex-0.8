@@ -1,0 +1,1 @@
+<?php die(); ?>1278857033%a:3:{s:4:"news";a:2:{i:0;s:4:"news";i:1;s:12:"package_news";}s:4:"main";a:2:{i:0;s:4:"main";i:1;s:12:"package_main";}s:4:"test";a:2:{i:0;s:4:"test";i:1;s:12:"package_test";}}

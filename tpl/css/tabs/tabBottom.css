@@ -1,0 +1,155 @@
+/*BOTTOM STYLE*/
+
+.lazyTabContentsBottom {
+	float:left;
+	width:auto;
+	height:auto;
+	display:none;
+	background-color:#F0F8FF;
+}
+
+
+.lazyTabHeaderBottom {
+	position:relative;
+	width:100%;
+	overflow:hidden;
+	clear:left;
+	background-color:white;  
+    padding-top:3px;
+    border-top:1px solid #B9D3EE; 	
+} 
+
+.lazyTabHeaderBottom ul {
+	position:relative;
+	height:25px;/*set by javascript*/
+	width:5000px;
+	padding:0 0 10px 0;
+    background-color:#C6E2FF;
+	border-top: 1px solid #B9D3EE;
+	font: 12px sans-serif;
+	line-height:normal;
+	margin:0 ;
+	list-style:none;
+}
+
+.lazyTabHeaderBottom li {
+	float:left;
+	position:relative;
+    padding:0 0 0 10px; 
+	background:url("tabBottom.png") no-repeat 0 100%;
+    margin:0 1px;   
+}
+
+.lazyTabHeaderBottom .lazyTabLink {
+	float:left;
+	display:block;
+	width:auto;
+	padding:0 10px 0 0; 
+	background: transparent url("tabBottom.png") no-repeat 100% 100%;
+	text-decoration:none;
+	color:#43798B;
+	outline: none;
+}
+      
+.lazyTabHeaderBottom .lazyTabLink span {
+	padding:5px 16px 4px 0;
+	display:block;
+}
+      
+.lazyTabHeaderBottom li.active {
+	background:  url("tabBottomActive.png") no-repeat 0 100%;
+	border-width:0;
+	margin-top:-1px;
+	display:block;
+	font-weight:bold;
+}
+      
+.lazyTabHeaderBottom li.active .lazyTabLink {
+	background: transparent url("tabBottomActive.png") no-repeat 100% 100%; 
+	color:#43798B;
+}
+
+
+.lazyTabHeaderBottom li:hover, .lazyTabHeaderBottom li.hover {
+	background:url("tabBottomHover.png") no-repeat 0 100%;
+	color:#43798B;  
+}
+
+.lazyTabHeaderBottom li:hover .lazyTabLink, .lazyTabHeaderBottom li.hover .lazyTabLink {
+	background:transparent url("tabBottomHover.png") no-repeat 100% 100%;
+}
+      
+.lazyTabHeaderBottom a.lazyTabClose {
+	display:block;
+	position:absolute;
+	float:left;
+	right:5px;
+	top:5px;
+	width:16px;
+	height:16px;
+	background:url("closebg.png") no-repeat  left top;
+}
+
+.lazyTabHeaderBottom li:hover .lazyTabClose:hover, .lazyTabHeaderBottom li.hover .lazyTabClose.hover{
+	background :url("closebg.png") no-repeat -15px 0px ; 
+}
+
+.lazyTabHeaderBottom .lazyTabScroll {
+	padding-left:17px ;
+	padding-right:17px;	
+}
+
+.lazyTabHeaderBottom .scrollLeft {
+	background: #C6E2FF url(arrow.png) no-repeat scroll -104px center;
+	margin-top:3px;
+	width:17px;
+	height:100%;
+	border-right:1px solid #B9D3EE;
+	border-top:1px solid #B9D3EE;
+	cursor:pointer;
+	left:0;
+	top:0;
+    cursor:pointer;
+    position:absolute;
+	z-index:10;	
+	opacity: 0.9;
+	filter: alpha(opacity = 90);
+}
+
+
+
+.lazyTabHeaderBottom .scrollRight {
+	background: #C6E2FF url(arrow.png) no-repeat scroll -40px center;
+	margin-top:3px;
+	width:17px;
+	height:100%;
+	border-left:1px solid #B9D3EE;
+	border-top:1px solid #B9D3EE;
+	cursor:pointer;
+	position:absolute;
+	right:0;
+	top:0;
+    z-index:10;	
+	opacity: 0.9;
+	filter: alpha(opacity = 90);
+}
+
+.lazyTabHeaderTop .disabled { 
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.loading {
+	border:1px solid gray;
+	width:80px;
+	height:40px;
+	v-align:center;
+	position:absolute;
+	left: 50%;
+	top:50%;
+	margin-left:-40px;
+	margin-top:-20px;
+	background:url("loading.gif") no-repeat 0 center;
+	padding-left:31px;
+}
+
