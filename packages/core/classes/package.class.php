@@ -80,6 +80,11 @@ abstract class package {
      * This function registers the class into the package manager and loads the casted action
      * @return void
      */
+    
+    public static $dependency = array();
+    
+    protected static $_dep = array();
+    
     public final function __construct() {
         if(!isset($_GET['action']))
             $action = 'main';
@@ -269,5 +274,9 @@ abstract class package {
      */
     public final function getPackageName(){
         return $this->_packageName;
+    }
+    
+    public static function registerDependency($dep){
+    	self::$_dep = $dep;
     }
 }

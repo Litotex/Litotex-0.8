@@ -144,6 +144,7 @@ class packages{
 			return true;
 		$return = true;
 		foreach($this->_hookCache[$hookname . ':' . $nParams] as $func){
+			$this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
 			if(!call_user_func_array(array($func[0], '__hook_' . $func[1]), $args))
 				$return = false;
 		}
@@ -152,14 +153,28 @@ class packages{
 	/**
 	 * This function will create an instance of a package set by $packageName
 	 * @param str $packageName name of class (without package_*)
-	 * @return bool on failure | instance of class
+	 * @param bool Should a template be showed?
+	 * @param bool Should the package be initlaized at all? If not only include it...
+	 * @return bool on failure | instance of class | true if not initialized
 	 */
-	public function loadPackage($packageName, $tplEnable = true){
-		if(isset($this->_dependencyCache[$packageName])){
+	public function loadPackage($packageName, $tplEnable = true, $initialize = true){
+		$dep = array();
+		if(isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true){
 			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
-			$pack = new $this->_dependencyCache[$packageName][1];
-			$pack->setTemplatePolicy($tplEnable);
-			return $pack;
+			foreach($this->_dependencyCache[$packageName]['dep'] as $depName){
+				$cache = $this->loadPackage($depName, false);
+				if(!$cache)
+					trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+				$dep[$depName] = $cache;
+			}
+			$cname =$this->_dependencyCache[$packageName][1];
+			$cname::registerDependency($dep);
+			if($initialize){
+				$pack = new $this->_dependencyCache[$packageName][1];
+				$pack->setTemplatePolicy($tplEnable);
+				return $pack;
+			}
+			return true;
 		} else {
 			return false;
 		}
@@ -211,9 +226,38 @@ class packages{
 				$newInfo = call_user_func(array($className, 'registerClass'), $className);
 				if(!$newInfo)
 					return false;
+				$dep = $className::$dependency;
+				$path = str_replace('package_', '', $className);
+				$this->_dependencyCache[$path]['dep'] = $dep;
+				$this->_dependencyCache[$path]['active'] = true;
 			}
 		}
+		$this->_checkDependency();
 		return $this->_writeDependencyCache();
+	}
+	
+	private function _checkDependency(){
+		$return = true;
+		$parents = array();
+		$checked = array();
+		for($i = 0; $i < 2; $i++){
+			foreach($this->_dependencyCache as $name => $pack){
+				if($pack['active'] == false)
+					continue;
+				foreach($pack['dep'] as $dep){
+					if(!isset($this->_dependencyCache[$dep])){
+						trigger_error("Could not find package <i>" . $dep . "</i> which is needed by <i>" . $name . "</i>. The package will be deactivated automaticly!", E_USER_NOTICE);
+						$this->_dependencyCache[$name]['active'] = false;
+						$return = false;
+					} else if($this->_dependencyCache[$dep]['active'] == false){
+						trigger_error("Package <i>" . $dep . "</i> which is needed by <i>" . $name . "</i> is deactivated and could not be loaded. The package will be deactivated automaticly!", E_USER_NOTICE);
+						$this->_dependencyCache[$name]['active'] = false;
+						$return = false;
+					}
+				}
+			}
+		}
+		return $return;
 	}
 	/**
 	 * This function will register a class for the package cache
