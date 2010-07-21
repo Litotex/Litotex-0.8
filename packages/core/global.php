@@ -11,6 +11,7 @@ require_once('classes/package.class.php');
 require_once('classes/packagemanager.class.php');
 require_once('classes/AdoDB/adodb.inc.php');
 require_once('classes/date.class.php');
+require_once 'classes/cron.class.php';
 require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
@@ -37,7 +38,7 @@ package::setDatabaseClass($db);
 //Smarty settings... next
 $smarty = new Smarty();
 $smarty->compile_dir = TEMPLATE_COMPILATION;
-$smarty->debugging = true;
+//$smarty->debugging = true;
 $smarty->assign('HEADER', TEMPLATE_HEADER);
 $smarty->assign('FOOTER', TEMPLATE_FOOTER);
 $smarty->assign('TITLE', 'Litotex 0.8 Preversion');
@@ -70,3 +71,6 @@ if(isset($_GET['package'])) {
 }else {
     $package = $packageManager->loadPackage('main', true);
 }
+
+//$cron = new cron();
+//$cron->doActions();
