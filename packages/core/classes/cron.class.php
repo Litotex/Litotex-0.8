@@ -15,11 +15,57 @@ class cron{
 	public function __destruct(){
 
 	}
-	public function add(){
-
+	public function add($textID, $nextInt, $interval, $function, $params, $dependencies = array(), $user = false, $blockUser = false, $object = false){
+		if(!is_array($dependencies))
+		return false;
+		$dependencies = implode(';', $dependencies);
+		if(is_a($user, 'user')){
+			$user = $user->getUserID();
+		}
+		if($user === false){
+			$user = '';
+		} else if(!is_int($user)){
+			return false;
+		}
+		if(is_array($blockUser)){
+			foreach($blockUser as $key => $block){
+				if(is_a($block, 'user')){
+					$block = $block->getUserID();
+				}
+				if($block === false){
+					unset($blockUser[$key]);
+				} else if(!is_int($block)){
+					return false;
+				} else {
+					$blockUser[$key] = $block;
+				}
+			}
+			$blockUser = implode(';', $blockUser);
+		} else {
+			$blockUser = '';
+		}
+		if(is_object($object)){
+			$object = serialize($object);
+		} else {
+			$object = '';
+		}
+		if(!is_array($params))
+		return false;
+		$params = implode(';', $params);
+		$nextInt *= 1;
+		$interval *= 1;
+		$result = package::$db->Execute("INSERT INTO `lttx_cron` (`textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`)
+		VALUES
+		(?, ?, ?, ?, ?, ?, ?, ?, ?)", array($textID, $object, $function, $params, $nextInt, $interval, $user, $blockUser, $dependencies));
+		if(package::$db->Affected_Rows() == 1)
+		return true;
+		return false;
 	}
-	public function remove(){
-
+	public function remove($textID){
+		$result = package::$db->Execute("DELETE FROM `lttx_cron` WHERE `textID` = ?", array($textID));
+		if(package::$db->Affected_Rows() == 0)
+		return false;
+		return true;
 	}
 	public function doActions($limit = false){
 		$this->_now = time(); //We will use a variable to determine the current time because it might change over the running time, further we need to change it when we use limits

@@ -72,5 +72,5 @@ if(isset($_GET['package'])) {
     $package = $packageManager->loadPackage('main', true);
 }
 
-//$cron = new cron();
-//$cron->doActions();
+$cron = new cron();
+$cron->doActions();

@@ -483,7 +483,7 @@ class user {
     public function getUserID() {
         if(!$this->_initialized)
             return false;
-        return $this->_currentID;
+        return (int)$this->_currentID;
     }
     /**
      * This will return the user's name
