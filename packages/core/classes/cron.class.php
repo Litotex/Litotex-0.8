@@ -9,13 +9,33 @@
  */
 class cron{
 	private $_now;
+	private static $_runtimeEdits = array();
 	public function __construct(){
 
 	}
 	public function __destruct(){
 
 	}
-	public function add($textID, $nextInt, $interval, $function, $params, $dependencies = array(), $user = false, $blockUser = false, $object = false){
+	public static function change($textID, $function, $params, $object = false){
+		if(is_object($object)){
+			$object = serialize($object);
+		} else {
+			$object = '';
+		}
+		if(!is_array($params))
+		return false;
+		$params = implode(';', $params);
+		$result = package::$db->Execute("SELECT `ID` FROM `lttx_cron` WHERE `textID` = ?", array($textID));
+		package::$db->Execute("UPDATE `lttx_cron` SET `function` = ?, `params` = ?, `serialized` = ? WHERE `textID` = ?", array($function, $params, $object, $textID));
+		if($result->RecordCount() == 0)
+		return true;
+		while(!$result->EOF){
+			self::$_runtimeEdits[$result->fields[0]] = array('serialized' => $object, 'params' => explode(';', $params), 'function' => $function);
+			$result->MoveNext();
+		}
+		return true;
+	}
+	public static function add($textID, $nextInt, $interval, $function, $params, $dependencies = array(), $user = false, $blockUser = false, $object = false){
 		if(!is_array($dependencies))
 		return false;
 		$dependencies = implode(';', $dependencies);
@@ -61,7 +81,14 @@ class cron{
 		return true;
 		return false;
 	}
-	public function remove($textID){
+	public static function remove($textID){
+		$toDelete = package::$db->Execute("SELECT `ID` FROM `lttx_cron` WHERE `textID` = ?", array($textID));
+		if($toDelete->RecordCount() == 0)
+		return true;
+		while(!$toDelete->EOF){
+			self::$_runtimeEdits[$toDelete->fields[0]] = array('serialized' => '', 'function' => '', 'params' => array(), 'nextInt' => 0, 'interval' => 0, 'userID' => '', 'blockUserID' => array(), 'dependencies' => array(), 'ID' => $toDelete->fields[0]);
+			$toDelete->MoveNext();
+		}
 		$result = package::$db->Execute("DELETE FROM `lttx_cron` WHERE `textID` = ?", array($textID));
 		if(package::$db->Affected_Rows() == 0)
 		return false;
@@ -72,7 +99,11 @@ class cron{
 		$list = $this->_getActionList($limit);
 		$blocks = self::_generateBlockIndex($list);
 		$list = $this->_splitByBlocks($list, $blocks);
-		var_dump($this->_doActions($list));
+		package::$db->Execute("DELETE FROM `lttx_cron` WHERE `interval` = 0 AND `nextInt` <= ?", array($this->_now));
+		$this->_upDateDB();
+	}
+	private function _upDateDB(){
+		package::$db->Execute("UPDATE `lttx_cron` SET `nextInt` = `nextInt` + CEIL((?-`nextInt`)/`interval`+1) * `interval` WHERE `nextInt` <= ?", array($this->_now, $this->_now));
 	}
 	private function _doActions($actions){
 		foreach($actions as $action){
@@ -82,6 +113,17 @@ class cron{
 				if(!package::$packages->loadPackage($dep, false, false))
 				return false;
 			}
+			if(isset(self::$_runtimeEdits[$action['ID']])){
+				$edit = self::$_runtimeEdits[$action['ID']];
+				if(isset($edit['serialized']) && isset($edit['function']) && $edit['serialized'] == '' && $edit['function'] == '')
+					continue; //Maybe the element has been deleted during runtime, so just move ahead...
+				if(isset($edit['serialized']))
+					$action['serialized'] = $edit['serialized'];
+				if(isset($edit['function']))
+					$action['function'] = $edit['function'];
+				if(isset($edit['params']))
+					$action['params'] = $edit['params'];
+			} //We are prepared very well... now let's do the job...
 			$intervalReplace = array_keys($action['params'], '$interval');
 			$intNumReplace = array_keys($action['params'], '$intNum');
 			foreach($intervalReplace as $replace){
