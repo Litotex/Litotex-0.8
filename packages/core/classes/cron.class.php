@@ -10,12 +10,6 @@
 class cron{
 	private $_now;
 	private static $_runtimeEdits = array();
-	public function __construct(){
-
-	}
-	public function __destruct(){
-
-	}
 	public static function change($textID, $function, $params, $object = false){
 		if(is_object($object)){
 			$object = serialize($object);
