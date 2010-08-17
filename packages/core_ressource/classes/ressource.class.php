@@ -2,7 +2,7 @@
 /**
  * This class handles all ressource specific actions
  * @author Jonas Schwabe <j.s@cascaded-web.com>
- * @todo: Time to have x ressources function, are there enough res? If not wich lacks?
+ * @todo: Time to have x ressources function
  */
 class ressource{
 	/**
@@ -20,6 +20,8 @@ class ressource{
 	 * @var array
 	 */
 	private $_res = array();
+	private $_resFormula = array();
+	private $_saveChanges = false;
 	/**
 	 * Source id (userid, buildingid...)
 	 * @var int
@@ -45,27 +47,58 @@ class ressource{
 	 * @var bool
 	 */
 	private $_resNameFetched = false;
+	private $_limit = false;
+	private $_useIncreaseFormula = false;
+	private $_useLimit = array();
 	/**
 	 * Loads the data from database and pre caches them therefor
-	 * @param $race
-	 * @param $table
-	 * @param $id
+	 * @param int $race ID of race to get information from
+	 * @param str $table Tablename lttx[n]_[$table]Ressource
+	 * @param int $id ID to cover
+	 * @param bool $edit Should any manipulation be written to the database automaticly
+	 * @param bool $increaseFormula Should the class use a manipulate formula
+	 * @param bool $limit Should the class use the saved limit value?
 	 * @return void
 	 */
-	public function  __construct($race, $table, $id) {
+	public function  __construct($race, $table, $id, $edit, $increaseFormula = false, $limit = false) {
 		$id *= 1;
 		$race *= 1;
-		$res = package::$db->Execute("SELECT `resID`, `resNum` FROM `lttx_" . $table . "Ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
+		$add = '';
+		if($increaseFormula)
+			$add .= ', `increaseFormula`';
+		if($limit)
+			$add .= ', `limit`';
+		$res = package::$db->Execute("SELECT `resID`, `resNum`" . $add . " FROM `lttx_" . $table . "Ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
 		if(!$res)
-		return;
+			throw new Exception('Selected ressource table "' . $table . '" was not found or incompatible');
 		while(!$res->EOF){
-			$this->_res[$res->fields[0]] = (int)$res->fields[1];
+			$i = 2;
+			$this->_res[$res->fields[0]] = (float)$res->fields[1];
+			if($increaseFormula){
+				$this->_resFormula[$res->fields[0]] = $res->fields[$i++];
+			}
+			if($limit){
+				$this->_limit[$res->fields[0]] = $res->fields[$i++];
+			}
 			$res->MoveNext();
+		}
+		$checkRes = package::$db->Execute("SELECT `ID` FROM `lttx_ressources` WHERE `raceID` = ?", array($race));
+		while(!$checkRes->EOF){
+			if(isset($this->_res[$checkRes->fields[0]])){
+				$checkRes->MoveNext();
+				continue;
+			}
+			package::$db->Execute("INSERT INTO `lttx_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)", array($checkRes->fields[0], $race, $id));
+			$this->_res[$checkRes->fields[0]] = 0;
+			$checkRes->MoveNext();
 		}
 		$this->_race = $race;
 		$this->_src = $id;
 		$this->_table = $table;
 		$this->_initialized = true;
+		$this->_saveChanges = (bool)$edit;
+		$this->_useIncreaseFormula = (bool)$increaseFormula;
+		$this->_useLimit = (bool)$limit;
 		return;
 	}
 	/**
@@ -73,8 +106,19 @@ class ressource{
 	 * @return void
 	 */
 	public function __destruct(){
-		$this->flush();
+		if($this->_saveChanges){
+			$this->flush();
+		}
 		return;
+	}
+	public function useFormula($x){
+		foreach($this->_resFormula as $id => $formula){
+			if(!math::verifyFormula($formula))
+				return false;
+			$formula = math::replaceX($formula, $x);
+			$this->_res[$id] = math::calculateString($formula);
+		}
+		return true;
 	}
 	/**
 	 * Makes an addition of res1 and res2, res2 is not changed
@@ -130,8 +174,8 @@ class ressource{
 			return false;
 		}
 		if(!isset($this->_res[$resID]))
-			return false;
-		return $this->_res[$resID];
+		return false;
+		return floor($this->_res[$resID]);
 	}
 	/**
 	 * Sets the number of a specific ressource
@@ -142,25 +186,32 @@ class ressource{
 		if(!$this->_initialized){
 			return false;
 		}
-		$this->_res[$resID] = (int)$newValue;
+		if(isset($this->_limit[$resID]) && $newValue > $this->_limit[$resID])
+			$newValue = $this->_limit[$resID];
+		$this->_res[$resID] = (float)$newValue;
 		if(!in_array($resID, $this->_changed)){
 			$this->_changed[] = $resID;
 		}
+	}
+	public function setLimit($resID, $newValue){
+		$newValue = (int)$newValue;
+		if(!isset($this->_limit[$resID]))
+			return false;
+		$this->_limit[$resID] = $newValue;
+		package::$db->Execute("UPDATE `lttx_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?", array($newValue, $resID, $this->_race, $this->_src));
+		return true;
 	}
 	/**
 	 * Returns the ressource instance of a user
 	 * @param user $user
 	 * @return ressource
 	 */
-	public static function getUserRess(user $user){
-		if(!is_a($user)){
-			return false;
-		}
-		$ID = $user->getUserID();
+	public static function getTerritoryRess(territory $territory){
+		$ID = $territory->getID();
 		if(!$ID){
 			return false;
 		}
-		return new ressource($user->getRace, 'user', $ID);
+		return new ressource($territory->getUser()->getData('race'), 'territory', $ID, true, false, true);
 	}
 	/**
 	 * Returns all ressources as an array
@@ -212,7 +263,7 @@ class ressource{
 	 */
 	public function getRace(){
 		if($this->_initialized)
-			return false;
+		return false;
 		return $this->_race;
 	}
 	/**
@@ -224,6 +275,29 @@ class ressource{
 			package::$db->Execute('UPDATE `lttx_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?', array($this->_res[$value], $this->_src, $value, $this->_race));
 		}
 		$this->_changed = array();
+		return true;
+	}
+	public function update(){
+		return $this->__construct($this->_race, $this->_table, $this->_src, $this->_saveChanges, $this->_useIncreaseFormula, $this->_useLimit);
+	}
+	public function simpleAddition($resID, $addValue, $numberOfAdditions = 1, $update = false){
+		if($update)
+			$this->update();
+		$addValue *= $numberOfAdditions;
+		return $this->setRess($resID, $this->getRess($resID) + $addValue);
+	}
+	public static function checkFit(ressource $res1, ressource $res2){
+		if(!$res1->initialized() || !$res2->initialized()){
+			return false;
+		}
+		if($res1->getRace() != $res2->getRace())
+		return false;
+		$res1n = $res1->getAllRess();
+		$res2n = $res2->getAllRess();
+		foreach($res1n as $key => $item){
+			if($item < $res2n[$key])
+				return false;
+		}
 		return true;
 	}
 }

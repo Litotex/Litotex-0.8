@@ -48,7 +48,7 @@ class session{
         return $IP;
     }
     public function addHistory($msg){
-        $result = package::$db->Execute("INSERT INTO `lttx_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)", array(sha1($this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
+        $result = package::$db->Execute("INSERT INTO `lttx_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)", array(hash('sha512', $this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
     }
     public function destroy(){
         if($this->user){

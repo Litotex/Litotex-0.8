@@ -5,11 +5,11 @@
  * It is highly recommended to use a cron job or use a progamm on the server to do the jobs as it would take
  * a lot too long if there are a lot of active users
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
- * @todo: Almost everything :) So move on... nothing to see here...
  */
 class cron{
 	private $_now;
 	private static $_runtimeEdits = array();
+	private static $_runtimeAdditions = array();
 	public static function change($textID, $function, $params, $object = false){
 		if(is_object($object)){
 			$object = serialize($object);
@@ -18,21 +18,28 @@ class cron{
 		}
 		if(!is_array($params))
 		return false;
-		$params = implode(';', $params);
+		$params = serialize($params);
 		$result = package::$db->Execute("SELECT `ID` FROM `lttx_cron` WHERE `textID` = ?", array($textID));
 		package::$db->Execute("UPDATE `lttx_cron` SET `function` = ?, `params` = ?, `serialized` = ? WHERE `textID` = ?", array($function, $params, $object, $textID));
 		if($result->RecordCount() == 0)
 		return true;
 		while(!$result->EOF){
-			self::$_runtimeEdits[$result->fields[0]] = array('serialized' => $object, 'params' => explode(';', $params), 'function' => $function);
+			self::$_runtimeEdits[$result->fields[0]] = array('serialized' => $object, 'params' => unserialize($params), 'function' => $function);
 			$result->MoveNext();
 		}
 		return true;
 	}
+	public static function addIfNotExists($textID, $nextInt, $interval, $function, $params, $dependencies = array(), $user = false, $blockUser = false, $object = false){
+		$result = package::$db->Execute("SELECT `ID` FROM `lttx_cron` WHERE `textID` = ?", array($textID));
+		if($result->RecordCount() == 0)
+			return self::add($textID, $nextInt, $interval, $function, $params, $dependencies, $user, $blockUser, $object);
+		else 
+			return self::change($textID, $function, $params, $object);
+	}
 	public static function add($textID, $nextInt, $interval, $function, $params, $dependencies = array(), $user = false, $blockUser = false, $object = false){
 		if(!is_array($dependencies))
 		return false;
-		$dependencies = implode(';', $dependencies);
+		$dependenciesSubmit = serialize($dependencies);
 		if(is_a($user, 'user')){
 			$user = $user->getUserID();
 		}
@@ -54,9 +61,9 @@ class cron{
 					$blockUser[$key] = $block;
 				}
 			}
-			$blockUser = implode(';', $blockUser);
+			$blockUserSubmit = serialize($blockUser);
 		} else {
-			$blockUser = '';
+			$blockUserSubmit = '';
 		}
 		if(is_object($object)){
 			$object = serialize($object);
@@ -65,14 +72,17 @@ class cron{
 		}
 		if(!is_array($params))
 		return false;
-		$params = implode(';', $params);
+		$paramsSubmit = serialize($params);
 		$nextInt *= 1;
 		$interval *= 1;
 		$result = package::$db->Execute("INSERT INTO `lttx_cron` (`textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`)
 		VALUES
-		(?, ?, ?, ?, ?, ?, ?, ?, ?)", array($textID, $object, $function, $params, $nextInt, $interval, $user, $blockUser, $dependencies));
-		if(package::$db->Affected_Rows() == 1)
-		return true;
+		(?, ?, ?, ?, ?, ?, ?, ?, ?)", array($textID, $object, $function, $paramsSubmit, $nextInt, $interval, $user, $blockUserSubmit, $dependenciesSubmit));
+		if(package::$db->Affected_Rows() == 1){
+			$insertedID = package::$db->Insert_ID();
+			self::$_runtimeAdditions[] = array('ID' => $insertedID, 'serialized' => $object, 'function' => $function, 'params' => $params, 'nextInt' => $nextInt, 'interval' => $interval, 'userID' => $user, 'blockUserID' => $blockUser, 'dependencies' => $dependencies);
+			return true;
+		}
 		return false;
 	}
 	public static function remove($textID){
@@ -95,6 +105,7 @@ class cron{
 		$list = $this->_splitByBlocks($list, $blocks);
 		package::$db->Execute("DELETE FROM `lttx_cron` WHERE `interval` = 0 AND `nextInt` <= ?", array($this->_now));
 		$this->_upDateDB();
+		return (is_array($list))?$this->_doActions($list):true;
 	}
 	private function _upDateDB(){
 		package::$db->Execute("UPDATE `lttx_cron` SET `nextInt` = `nextInt` + CEIL((?-`nextInt`)/`interval`+1) * `interval` WHERE `nextInt` <= ?", array($this->_now, $this->_now));
@@ -127,15 +138,20 @@ class cron{
 				$action['params'][$replace] = $action['intNum'];
 			}
 			if($action['serialized'] == ''){
-				call_user_func($action['function'], $action['params']);
+				call_user_func_array($action['function'], $action['params']);
 			}else{
 				$unserialized = unserialize($action['serialized']);
 				if(!$unserialized)
 				return false;
-				call_user_func(array($unserialized, $action['function']), $action['params']);
+				call_user_func_array(array($unserialized, $action['function']), $action['params']);
 			}
+//			$this->_callRuntimeAdditions($action['nextInt']);
 		}
+//		$this->_callRuntimeAdditions();
 		return true;
+	}
+	private function _callRuntimeAdditions($actionTime = false){
+//		if(!$actionTime) TODO: Runtime Additions need to be handled... Suckin as XD
 	}
 	private function _getActionList($limit){
 		$list = array();
@@ -150,7 +166,7 @@ class cron{
 			return 0;
 		}
 		while(!$data->EOF){
-			$list[] = array('serialized' => $data->fields[0], 'function' => $data->fields[1], 'params' => explode(';', $data->fields[2]), 'nextInt' => $data->fields[3], 'interval' => $data->fields[4], 'userID' => $data->fields[5], 'blockUserID' => explode(';', $data->fields[6]), 'dependencies' => explode(';', $data->fields[7]), 'ID' => $data->fields[8]);
+			$list[] = array('serialized' => $data->fields[0], 'function' => $data->fields[1], 'params' => unserialize($data->fields[2]), 'nextInt' => $data->fields[3], 'interval' => $data->fields[4], 'userID' => $data->fields[5], 'blockUserID' => unserialize($data->fields[6]), 'dependencies' => unserialize($data->fields[7]), 'ID' => $data->fields[8]);
 			$data->MoveNext();
 		}
 		if(!$this->_sortActionList($list))
@@ -176,8 +192,12 @@ class cron{
 	}
 	private static function _generateBlockIndex($list){
 		$blocks = array();
+		if(!is_array($list))
+		return false;
 		foreach($list as $item){
 			if($item['interval'] == 0 && count($item['blockUserID']) > 0){
+				if(!$item['blockUserID'])
+				continue;
 				foreach($item['blockUserID'] as $blockUsers){
 					$blocks[$blockUsers][] = $item;
 				}
@@ -188,10 +208,12 @@ class cron{
 	private function _splitByBlocks($list, $block){
 		$listRet = array();
 		$addAfter = array();
+		if(!is_array($list))
+		return false;
 		foreach($list as $item){
 			$added = false;
 			if($item['interval'] == 0){
-				$listRet[] = array('serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => 0, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
+				$listRet[] = array('ID' => $item['ID'], 'serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => 0, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
 				if(isset($addAfter[$item['ID']])){
 					foreach ($addAfter[$item['ID']] as $add){
 						$listRet[] = $add;
@@ -211,16 +233,16 @@ class cron{
 					$intPreDone += $intThisRun;
 					$item['nextInt'] += $item['interval'] * $intThisRun;
 					if($i == 0){
-						$listRet[] = array('serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intThisRun, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
+						$listRet[] = array('ID' => $item['ID'], 'serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intThisRun, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
 						$i = 1;
 					}else{
-						$addAfter[$lastBlockID][] = array('serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intThisRun, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
+						$addAfter[$lastBlockID][] = array('ID' => $item['ID'], 'serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intThisRun, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
 					}
 					$lastBlockID = $blocker['ID'];
 				}
-				$addAfter[$blocker['ID']][] = array('serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intAll - $intPreDone, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
+				$addAfter[$blocker['ID']][] = array('ID' => $item['ID'], 'serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intAll - $intPreDone, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
 			} else {
-				$listRet[] = array('serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intAll - $intPreDone, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
+				$listRet[] = array('ID' => $item['ID'], 'serialized' => $item['serialized'], 'params' => $item['params'], 'function' => $item['function'], 'intNum' => $intAll - $intPreDone, 'interval' => $item['interval'], 'dependencies' => $item['dependencies']);
 			}
 		}
 		return $listRet;
@@ -230,5 +252,16 @@ class cron{
 		if($i < $this->_now)
 		return true;
 		return false;
+	}
+	public static function searchByTextID($textID){
+		$return = array();
+		$result = package::$db->Execute("SELECT `ID`, `textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies` FROM `lttx_cron` WHERE `textID` LIKE ?", array($textID));
+		if($result->RecordCount() == 0)
+			return false;
+		while(!$result->EOF){
+			$return[] = $result->fields;
+			$result->MoveNext();
+		}
+		return $return;
 	}
 }

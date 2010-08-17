@@ -1,21 +1,21 @@
 <?php
-include_once('classes/building.class.php');
+include_once('classes/territory.class.php');
 /**
  * This is just a dummy class to ensure the building class will be loaded...
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  * @hooks: None as this class has no features to be serious
  */
-class package_core_buildings extends package{
+class package_core_territory extends package{
 	/**
 	 * Name of the module, please do not change this!
 	 * @var string
 	 */
-    protected $_packageName = 'core_buildings';
+    protected $_packageName = 'core_territory';
     /**
      * Dependencies, we need quite a lot of them ;)
      * @var array
      */
-    public static $dependency = array('core_ressource', 'core_territory');
+    public static $dependency = array('core_ressource', 'core_buildings');
     /**
      * Only loads the building class
      * @see packages/core/classes/package::__action_main()
@@ -29,7 +29,6 @@ class package_core_buildings extends package{
 	 * @return bool
 	 */
 	public static function registerHooks(){
-//		self::_registerHook('plugin_buildingRessource', 'manipulateBuildingCost', 1, 'manipulateBuildingCost', LITO_PLUGIN_ROOT . 'buildings/buildingRessource.plugin.php', 'core_buildings');
 		return true;
 	}
 }

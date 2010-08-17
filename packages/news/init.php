@@ -70,7 +70,6 @@ class package_news extends package {
         $tpl->assign('news', $news);
         $tpl->compile_dir = TEMPLATE_COMPILATION;
         $tpl->display(TEMPLATE_DIRECTORY . '/' . 'news' . '/' . 'newsblock.tpl');
-        echo ':)';
         return true;
     }
 }
