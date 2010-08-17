@@ -35,7 +35,7 @@ class user {
      */
     private $_currentID = 0;
     /**
-     * Static salt is used to salt every sh1 hash DO NOT CHANGE IT
+     * Static salt is used to salt every hash DO NOT CHANGE IT AFTER THE FIRST USE
      * @var string
      */
     private static $_staticSalt = 'agudeb7c6xf nkfcb refnm4 x__.$&/§&"$%jj';
@@ -100,9 +100,11 @@ class user {
      * @return void
      */
     public function __construct($userID) {
+    	if($userID == 0)
+    		return;
         $userID = intval($userID);
         if(!self::userExists($userID))
-            return;
+            throw new Exception('User ' . $userID . ' was not found');
         $this->_currentID = $userID;
         $this->_initialized = true;
         $this->_bufferActive = self::$_globalBufferActive;
@@ -167,7 +169,7 @@ class user {
             return -2;
         $additionalDataColumns = '';
         $additionalDataPointer = '';
-        $additionalData = array($username, $email, sha1($passwordSalted[1]), $passwordSalted[0]);
+        $additionalData = array($username, $email, hash('sha512', $passwordSalted[1]), $passwordSalted[0]);
         foreach($data as $key => $value) {
             $additionalData[] = $value;
             $additionalDataPointer .= ', ?';
@@ -210,7 +212,7 @@ class user {
      */
     static private function _compareSaltString($str1, $str2, $dynSalt) {
         $str1 = self::_saltString($str1, $dynSalt);
-        if(sha1($str1[1]) == $str2)
+        if(hash('sha512', $str1[1]) == $str2)
             return true;
         return false;
     }
@@ -483,7 +485,7 @@ class user {
     public function getUserID() {
         if(!$this->_initialized)
             return false;
-        return $this->_currentID;
+        return (int)$this->_currentID;
     }
     /**
      * This will return the user's name
@@ -532,5 +534,10 @@ class user {
     }
     public function logout(){
     	
+    }
+    public function setPassword($password){
+    	$salted = $this->_saltString($password);
+    	package::$db->Execute("UPDATE `lttx_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?", array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
+    	return true;
     }
 }

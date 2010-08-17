@@ -39,6 +39,8 @@ class packages{
 	 * @var string
 	 */
 	private $_packagesDir = MODULES_DIRECTORY;
+	
+	private $_loaded = array();
 	/**
 	 * This will load hook and package cache and save the modulmanager class in packages parent class 
 	 * @return void
@@ -126,10 +128,13 @@ class packages{
 	 * @param str $function name of the function that should be used if it is not named __hook_$hookname
 	 * @return bool
 	 */
-	public function registerHook($class, $hookname, $nParams, $function){
+	public function registerHook($class, $hookname, $nParams, $function, $file, $packageName){
+		if($file){
+			include_once($file);
+		}
 		if(!method_exists($class, '__hook_'.$function))
 			return false;
-		$this->_hookCache[$hookname.':'.$nParams][] = array($class, $function);
+		$this->_hookCache[$hookname.':'.$nParams][] = array($class, $function, $file, $packageName);
 		return true;
 	}
 	/**
@@ -144,6 +149,11 @@ class packages{
 			return true;
 		$return = true;
 		foreach($this->_hookCache[$hookname . ':' . $nParams] as $func){
+			if($func[2]){
+				if($func[3])
+				$this->loadPackage($func[3], false, false);
+				include_once($func[2]);
+			}
 			$this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
 			if(!call_user_func_array(array($func[0], '__hook_' . $func[1]), $args))
 				$return = false;
@@ -158,17 +168,25 @@ class packages{
 	 * @return bool on failure | instance of class | true if not initialized
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true){
+		if($initialize == false && in_array($packageName, $this->_loaded))
+			return true;
 		$dep = array();
 		if(isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true){
 			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
-			foreach($this->_dependencyCache[$packageName]['dep'] as $depName){
+			foreach($this->_dependencyCache[$packageName]['loadDep'] as $depName){
 				$cache = $this->loadPackage($depName, false);
 				if(!$cache)
 					trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 				$dep[$depName] = $cache;
 			}
-			$cname =$this->_dependencyCache[$packageName][1];
-			$cname::registerDependency($dep);
+			$cname = $this->_dependencyCache[$packageName][1];
+			call_user_func(array($cname, 'registerDependency'), $dep);
+			$this->_loaded[] = $packageName;
+			foreach($this->_dependencyCache[$packageName]['loadDep'] as $depName){
+				$cache = $this->loadPackage($depName, false, false);
+				if(!$cache)
+					trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+			}
 			if($initialize){
 				$pack = new $this->_dependencyCache[$packageName][1];
 				$pack->setTemplatePolicy($tplEnable);
@@ -226,9 +244,12 @@ class packages{
 				$newInfo = call_user_func(array($className, 'registerClass'), $className);
 				if(!$newInfo)
 					return false;
-				$dep = $className::$dependency;
+				$prop = get_class_vars($className);
+				$dep = $prop['dependency'];
+				$loadDep = $prop['loadDependency'];
 				$path = str_replace('package_', '', $className);
 				$this->_dependencyCache[$path]['dep'] = $dep;
+				$this->_dependencyCache[$path]['loadDep'] = $loadDep;
 				$this->_dependencyCache[$path]['active'] = true;
 			}
 		}

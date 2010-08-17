@@ -83,6 +83,8 @@ abstract class package {
     
     public static $dependency = array();
     
+    public static $loadDependency = array();
+    
     protected static $_dep = array();
     
     public final function __construct() {
@@ -92,7 +94,7 @@ abstract class package {
             $action = $_GET['action'];
         $this->_returnValue = $this->_castAction($action);
         if(!is_bool($this->_returnValue)) {
-            self::printErrorMsg('Warning', 'Return value of __action_ methodes have to be boolean. It will be casted automaticly', __LINE__, __FILE__);
+            self::printErrorMsg('Warning', 'Return value of __action_ methodes have to be boolean. It will be casted automaticly', __LINE__, __FILE__); //TODO: This is fuckin stupid :D
             $this->_returnValue = (bool)$this->_returnValue;
         }
         return;
@@ -133,13 +135,13 @@ abstract class package {
      * @param bool | str $function name of function, used if the function is overloaded
      * @return bool was the hook registered successfully?
      */
-    protected static final function _registerHook($class, $hookname, $nParams, $function = false) {
+    protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
         if(!self::$packages) {
-            self::printErrorMsg('Fatal', 'Packagemanager was not published for every package', __LINE__, __FILE__);
+            self::printErrorMsg('Fatal', 'Packagemanager was not published for every package', __LINE__, __FILE__); //TODO... god damned
             exit();
         }
         $function = (!$function)?$hookname:$function;
-        $return = self::$packages->registerHook($class, $hookname, $nParams, $function);
+        $return = self::$packages->registerHook($class, $hookname, $nParams, $function, $file, $packageName);
         if(!$return)
             self::printErrorMsg('Warning', 'Packagemanager was unable to load hook function "__hook_' . $function . '"', __LINE__, __FILE__);
     }

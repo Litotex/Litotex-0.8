@@ -7,10 +7,13 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 require_once('const.php');
+require_once('classes/math.class.php');
 require_once('classes/package.class.php');
 require_once('classes/packagemanager.class.php');
 require_once('classes/AdoDB/adodb.inc.php');
+require_once('classes/plugin.class.php');
 require_once('classes/date.class.php');
+require_once 'classes/cron.class.php';
 require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
@@ -29,7 +32,9 @@ if($noDBConfig) {
     exit();
 }
 $db = NewADOConnection('mysql');
+$db->charSet = 'utf8';
 $db->connect($dbConfig['host'], $dbConfig['user'], $dbConfig['password'], $dbConfig['database']);
+//mysql_set_charset('utf8');
 if($db->ErrorMsg()) {
     die('Database connection failed!');
 }
@@ -37,7 +42,7 @@ package::setDatabaseClass($db);
 //Smarty settings... next
 $smarty = new Smarty();
 $smarty->compile_dir = TEMPLATE_COMPILATION;
-$smarty->debugging = true;
+//$smarty->debugging = true;
 $smarty->assign('HEADER', TEMPLATE_HEADER);
 $smarty->assign('FOOTER', TEMPLATE_FOOTER);
 $smarty->assign('TITLE', 'Litotex 0.8 Preversion');
@@ -57,6 +62,10 @@ package::setSessionClass($session);
 //Package next
 $packageManager = new packages();
 package::setPackageManagerClass($packageManager);
+
+$cron = new cron();
+$cron->doActions();
+
 if(!package::$user)
     $perm = new perm(new user(0));
 else
@@ -70,3 +79,8 @@ if(isset($_GET['package'])) {
 }else {
     $package = $packageManager->loadPackage('main', true);
 }
+
+$territorys = territory::getUserTerritories(new user(1));
+$buildings = $territorys[0]->getBuildings();
+//var_dump($buildings[1][1]->checkDependencies($territorys[0], 1));
+//var_dump($territorys[0]->increaseBuildingLevel(1));

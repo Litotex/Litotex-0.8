@@ -1,5 +1,6 @@
 <?php
 define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/');
+define('LITO_PLUGIN_ROOT', LITO_ROOT . 'plugins/');
 define('LITO_URL', 'http://localhost/Litotex8/');
 define('LITO_CSS_URL', LITO_URL . 'tpl/css/');
 define('LITO_JS_URL', LITO_URL . 'js/');
@@ -12,3 +13,4 @@ define('PACKAGE_CACHE', LITO_ROOT . 'packages/core/cache/dependency_cache.php');
 define('TEMPLATE_HEADER', TEMPLATE_DIRECTORY . '/header.tpl');
 define('TEMPLATE_FOOTER', TEMPLATE_DIRECTORY . '/footer.tpl');
 define('DB_PREFX', 'lttx1_');
+define('RESSOURCE_UPDATE_INTERVAL', 1);

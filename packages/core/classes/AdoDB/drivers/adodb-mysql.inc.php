@@ -367,8 +367,10 @@ class ADODB_mysql extends ADOConnection {
 												$this->forceNewConnect);
 		else
 			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword);
-	
 		if ($this->_connectionID === false) return false;
+		if($this->charSet){
+			mysql_query("SET NAMES '$this->charSet'", $this->_connectionID);
+		}
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;	
 	}
