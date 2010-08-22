@@ -80,7 +80,8 @@ if(isset($_GET['package'])) {
     $package = $packageManager->loadPackage('main', true);
 }
 
-$territorys = territory::getUserTerritories(new user(1));
-$buildings = $territorys[0]->getBuildings();
+//$territorys = territory::getUserTerritories(new user(1));
+//$buildings = $territorys[0]->getBuildings();
 //var_dump($buildings[1][1]->checkDependencies($territorys[0], 1));
 //var_dump($territorys[0]->increaseBuildingLevel(1));
+var_dump(building::getAllByRace(1));

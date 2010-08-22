@@ -145,9 +145,9 @@ class cron{
 				return false;
 				call_user_func_array(array($unserialized, $action['function']), $action['params']);
 			}
-//			$this->_callRuntimeAdditions($action['nextInt']);
+			$this->_callRuntimeAdditions($action['nextInt']);
 		}
-//		$this->_callRuntimeAdditions();
+		$this->_callRuntimeAdditions();
 		return true;
 	}
 	private function _callRuntimeAdditions($actionTime = false){

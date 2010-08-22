@@ -1,0 +1,1 @@
+1282371394;a:1:{s:9:"Ressource";a:3:{i:0;s:25:"plugin_dependencyBuilding";i:1;s:18:"dependencyBuilding";i:2;a:1:{i:0;s:15:"checkDependency";}}}

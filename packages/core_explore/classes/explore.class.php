@@ -1,19 +1,19 @@
 <?php
-class buildingPluginHandler extends plugin_handler{
-	protected $_name = "buildings";
-	protected $_location = "buildings";
-	protected $_cacheLocation = "../cache/buildings.cache.php";
+class explorePluginHandler extends plugin_handler{
+	protected $_name = "explores";
+	protected $_location = "explores";
+	protected $_cacheLocation = "../cache/explore.cache.php";
 	protected $_currentFile = __FILE__;
 }
 
-class buildingDependencyPluginHandler extends plugin_handler{
+class exploreDependencyPluginHandler extends plugin_handler{
 	protected $_name = 'dependencies';
 	protected $_location = 'dependencies';
-	protected $_cacheLocation = "../cache/buildingDependencies.cache.php";
+	protected $_cacheLocation = "../cache/exploreDependencies.cache.php";
 	protected $_currentFile = __FILE__;
 }
 
-class building{
+class explore{
 	private $_ID;
 	private $_data;
 	private $_changed = false;
@@ -23,10 +23,10 @@ class building{
 	private $_timeFormula = '';
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
-	public function __construct($buildingID){
-		$data = package::$db->Execute("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx_buildings` WHERE `ID` = ?", array($buildingID));
+	public function __construct($exploreID){
+		$data = package::$db->Execute("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx_explores` WHERE `ID` = ?", array($exploreID));
 		if(!isset($data->fields[0]))
-			throw new Exception('Building ' . $buildingID .' was not found');
+			throw new Exception('Explore ' . $exploreID .' was not found');
 		$plugin = $data->fields[2];
 		$pluginPreferences = $data->fields[3];
 		if(($plugin = unserialize($plugin)) === false)
@@ -41,9 +41,9 @@ class building{
 		$this->_initialized = true;
 		$this->_data['name'] = $data->fields[0];
 		$this->_data['race'] = $data->fields[1];
-		$this->_ID = $buildingID;
-		$this->_pluginHandler = new buildingPluginHandler();
-		$this->_dependencyPluginHandler = new buildingDependencyPluginHandler();
+		$this->_ID = $exploreID;
+		$this->_pluginHandler = new explorePluginHandler();
+		$this->_dependencyPluginHandler = new exploreDependencyPluginHandler();
 		$this->_timeFormula = $data->fields[4];
 		$this->_pointsFormula = $data->fields[5];
 	}
@@ -58,9 +58,9 @@ class building{
 	public function getCost($level){
 		if(!$this->_initialized)
 			return false;
-		$resource = new ressource($this->_data['race'], 'building', $this->_ID, false, true);
+		$resource = new ressource($this->_data['race'], 'explore', $this->_ID, false, true);
 		$resource->useFormula($level);
-		package::$packages->callHook('manipulateBuildingCost', array(&$resource));
+		package::$packages->callHook('manipulateExploreCost', array(&$resource));
 		return $resource;
 	}
 	public function initialized(){
@@ -94,11 +94,11 @@ class building{
 		$formula = math::replaceX($this->_pointsFormula, (int)$level);
 		return math::calculateString($formula);
 	}
-	public function increaseBuildingLevel($level, territory $territory){
+	public function increaseExploreLevel($level, territory $territory){
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$db->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx_buildingDependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
+		$dep = package::$db->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx_exploreDependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
 		$return = array();
 		if(!$dep)
 			return false;
@@ -118,26 +118,21 @@ class building{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = package::$db->Execute("SELECT `ID` FROM `lttx_buildings` WHERE `race` = ?", array($race));
+		$result = package::$db->Execute("SELECT `ID` FROM `lttx_explores` WHERE `race` = ?", array($race));
 		$return = array();
 		if(!$result)
 			return false;
 		while(!$result->EOF){
-			$return[] = new building($result->fields[0]);
+			$return[] = new explore($result->fields[0]);
 			$result->MoveNext();
 		}
 		return $return;
 		//TODO: Cache to make no extra Database connections
 	}
-	public function addBuilding(){
+	public function addExplore(){
 		
 	}
 	public function flush(){
 		
 	}
 }
-//
-//$building = new building(1);
-//$cost = $building->getCost(1);
-//var_dump($cost);
-//new buildingPluginHandler();
