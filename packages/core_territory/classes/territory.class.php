@@ -40,6 +40,15 @@ class territory{
 			}
 			$buildings->MoveNext();
 		}
+		$explores = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx_territoryExplores` WHERE `territoryID` = ?", array($this->_ID));
+		while(!$explores->EOF){
+			try {
+				$this->_data['explores'][$explores->fields[0]] = array($explores->fields[2], new building($explores->fields[1]));
+			} catch (Exception $e) {
+				//TODO: Debug...
+			}
+			$explores->MoveNext();
+		}
 		try {
 			$user = new user($result->fields[0]);
 			$this->_data['user'] = $user;
