@@ -1,1 +1,0 @@
-1281734751;a:1:{s:9:"Ressource";a:2:{i:0;s:24:"plugin_buildingRessource";i:1;a:0:{}}}
