@@ -1,0 +1,76 @@
+body,html {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    min-width: 41em; /* Mindestbreite verhindert Umbruch und Anzeigefehler in modernen Browsern */
+      padding:0px;
+  margin:0px;
+  }
+#wrapper { 
+   margin: 0 auto;
+   width: 1024px;
+   border: 1px solid #3A3A3C;
+}
+#header {
+    margin: 0 0 0.7em; padding: 0.3em;
+		background: #3A3A3C;
+ 		color: #FFFEFE;
+}
+#leftcolumn {
+    font-size: 0.83em;
+    float: left; 
+    width: 18em;
+    margin: 0 0 1.2em; 
+    padding: 0;
+    border: 1px dashed silver;
+    background-color: #eee; 
+}
+#leftcolumn p {
+    font-size: 1em;
+    margin: 0.5em;
+}
+#rightcolumn{
+    font-size: 0.83em;
+    float: right; 
+		width: 18em;
+    margin: 0 0 1.1em; 
+    padding: 0;
+    background-color: #eee; 
+    border: 1px dashed silver;
+  }
+#rightcolumn p {
+    font-size: 1em;
+    margin: 0.5em;
+}
+#content {
+    margin: 0 16em 1em 16em;
+    padding: 0 1em;
+    border-left: 2px solid #F1592A;
+    border-right: 2px solid #F1592A;
+}
+* html div#Inhalt {
+    height: 1em;  /* Workaround gegen den 3-Pixel-Bug des Internet Explorer bis Version 6 */
+}
+#content p {
+    font-size: 1em;
+    margin: 0.5em;
+}
+#footer{
+    clear: both;
+    font-size: 0.9em;
+    margin: 0; padding: 0.1em;
+    text-align: center;
+  	background: #3A3A3C;
+    color: #FFFEFE;
+}
+#copyright {
+	text-align: right;
+	float:right;
+	font-size: 11px;
+}
+h2 {
+	font-size:12px;
+	padding-top:5px;
+	padding-left:5px;
+	color: #564b47;
+	background-color: transparent;
+}

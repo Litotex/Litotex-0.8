@@ -1,5 +1,20 @@
 <?php
-
+/*
+ * This file is part of Litotex | Open Source Browsergame Engine.
+ *
+ * Litotex is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Litotex is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
+ */
 define("DEVDEBUG", true);
 
 header("Content-Type: text/html; charset=utf-8");
@@ -13,7 +28,6 @@ require_once('classes/packagemanager.class.php');
 require_once('classes/AdoDB/adodb.inc.php');
 require_once('classes/plugin.class.php');
 require_once('classes/date.class.php');
-require_once 'classes/cron.class.php';
 require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
@@ -28,7 +42,7 @@ if(!file_exists(DATABASE_CONFIG_FILE)) {
     $noDBConfig = true;
 }
 if($noDBConfig) {
-    package::printErrorMsg('Fatal', 'No databasesettings saved at ' . DATABASE_CONFIG_FILE, __LINE__, __FILE__);
+    throw new Exception('No databasesettings saved at ' . DATABASE_CONFIG_FILE);
     exit();
 }
 $db = NewADOConnection('mysql');
@@ -42,12 +56,11 @@ package::setDatabaseClass($db);
 //Smarty settings... next
 $smarty = new Smarty();
 $smarty->compile_dir = TEMPLATE_COMPILATION;
-//$smarty->debugging = true;
-$smarty->assign('HEADER', TEMPLATE_HEADER);
-$smarty->assign('FOOTER', TEMPLATE_FOOTER);
-$smarty->assign('TITLE', 'Litotex 0.8 Preversion');
-package::addCssFile('default.css');
-package::addCssFile('litotex.css');
+$smarty->debugging = true;
+$smarty->assign('HEADER', package::getTplDir() . 'header.tpl');
+$smarty->assign('FOOTER', package::getTplDir() . 'footer.tpl');
+$smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
+package::addCssFile('main.css');
 package::setTemplateClass($smarty);
 //Restore Session?
 if(isset($_SESSION['lttx']['session'])){
@@ -63,8 +76,7 @@ package::setSessionClass($session);
 $packageManager = new packages();
 package::setPackageManagerClass($packageManager);
 
-$cron = new cron();
-$cron->doActions();
+$packageManager->callHook('loadCore', array());
 
 if(!package::$user)
     $perm = new perm(new user(0));
@@ -79,9 +91,5 @@ if(isset($_GET['package'])) {
 }else {
     $package = $packageManager->loadPackage('main', true);
 }
-
-//$territorys = territory::getUserTerritories(new user(1));
-//$buildings = $territorys[0]->getBuildings();
-//var_dump($buildings[1][1]->checkDependencies($territorys[0], 1));
-//var_dump($territorys[0]->increaseBuildingLevel(1));
-var_dump(building::getAllByRace(1));
+$packageManager->callHook('endCore', array());
+package::$tpl->assign('queryCount', package::$db->count);

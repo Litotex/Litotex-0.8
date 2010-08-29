@@ -1,4 +1,20 @@
 <?php
+/*
+ * This file is part of Litotex | Open Source Browsergame Engine.
+ *
+ * Litotex is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Litotex is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * This class has to be extended by every modul used in Litotex 0.8
  * @author: Jonas Schwbae <jonas.schwabe@gmail.com>
@@ -88,16 +104,21 @@ abstract class package {
     protected static $_dep = array();
     
     public final function __construct() {
+    	$this->_tplDir = self::getTplDir();
         if(!isset($_GET['action']))
             $action = 'main';
         else
             $action = $_GET['action'];
         $this->_returnValue = $this->_castAction($action);
         if(!is_bool($this->_returnValue)) {
-            self::printErrorMsg('Warning', 'Return value of __action_ methodes have to be boolean. It will be casted automaticly', __LINE__, __FILE__); //TODO: This is fuckin stupid :D
             $this->_returnValue = (bool)$this->_returnValue;
         }
+        self::loadLang(self::$tpl, $this->_packageName);
+        $this->setTemplateSettings(self::$tpl, $this->_packageName);
         return;
+    }
+    public final function success(){
+    	return $this->_returnValue;
     }
     /**
      * Displays the template if set to do
@@ -109,6 +130,11 @@ abstract class package {
         }
         return true;
     }
+    public static function getLanguageVar($var){
+    	if(isset(self::$tpl->_config[0]['vars'][$var]))
+    		return self::$tpl->_config[0]['vars'][$var];
+    	return false;
+    } 
     /**
      * This functions checks which actions are available ($_availableActions) and casts the best function for $action
      * return bool (from action function)
@@ -118,7 +144,11 @@ abstract class package {
             $functionName = '__action_' . $action;
             return $this->$functionName();
         }else {
-            return $this->__action_main();
+        	if(in_array('main', $this->_availableActions)){
+        		$functionName = '__action_main';
+        		return $this->$functionName();
+        	}
+            return false;
         }
     }
     /**
@@ -137,7 +167,7 @@ abstract class package {
      */
     protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
         if(!self::$packages) {
-            self::printErrorMsg('Fatal', 'Packagemanager was not published for every package', __LINE__, __FILE__); //TODO... god damned
+            self::printErrorMsg('Fatal', 'Packagemanager was not published for every package', __LINE__, __FILE__); //FIXME... god damned
             exit();
         }
         $function = (!$function)?$hookname:$function;
@@ -235,16 +265,19 @@ abstract class package {
      * @return bool
      */
     public final function setTemplatePolicy($tpl) {
-        $this->_tpl = (bool)$tpl;
+    	if($this->_returnValue)
+        	$this->_tpl = (bool)$tpl;
+        else $this->_tpl = false;
         return true;
     }
     /**
      * Add a new css file to include to the template
      * @param string $href name of css file
+     * @param bool $usePackageDir true if not in object context or if you want to use /tpldir/css, else default package template folder will be used
      * @return bool
      */
-    public static function addCssFile($href) {
-        self::$_cssFiles[] = LITO_CSS_URL . $href;
+    public function addCssFile($href, $package = false) {
+        self::$_cssFiles[] = self::getCssUrl($package) . $href;
         if(self::$tpl)
             self::$tpl->assign('CSS_FILES', self::$_cssFiles);
         return true;
@@ -252,10 +285,11 @@ abstract class package {
     /**
      * Adds a new js file to include to the template
      * @param string $href name of js file
+     * @param bool $usePackageDir true if not in object context or if you want to use /tpldir/js, else default package template folder will be used
      * @return bool
      */
-    public static function addJsFile($href) {
-        self::$_jsFiles[] = LITO_JS_URL . $href;
+    public static function addJsFile($href, $package = false) {
+        self::$_jsFiles[] = self::getJsUrl($package) . $href;
         if(self::$tpl)
             self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
@@ -280,5 +314,55 @@ abstract class package {
     
     public static function registerDependency($dep){
     	self::$_dep = $dep;
+    }
+    public function getTplDir($package = false){
+    	if(!$package)
+    		return TEMPLATE_DIRECTORY . self::getTemplate() . '/';
+    	else
+    		return TEMPLATE_DIRECTORY . self::getTemplate() . '/' . $package . '/';
+    }
+	public function getTplURL($package = false){
+		if(!$package)
+    		return TPL_DIRNAME . self::getTemplate() . '/';
+    	else
+    		return TPL_DIRNAME . self::getTemplate() . '/' . $package . '/';
+    }
+    public static function getTemplate(){
+    	return 'default';
+    }
+    public function getImgUrl($package = false){
+    	return self::getTplURL($package) . IMG_DIR;
+    }
+	public function getJsUrl($package = false){
+    		return self::getTplURL($package) . JS_DIR;
+    }
+	public function getCssUrl($package = false){
+    	return self::getTplURL($package) . CSS_DIR;
+    }
+	public function getLangPath($package = false){
+    	return self::getTplDir($package) . LANG_DIR;
+    }
+    public static function getLanguage(){
+    	return 'de';
+    }
+	public static function loadLang($tpl, $package = false){
+    	if(file_exists(self::getLangPath(true) . self::getLanguage() . '.lang.php')){
+        	$tpl->config_load(self::getLangPath(true) . self::getLanguage() . '.lang.php');
+        }
+        if($package && file_exists(self::getLangPath($package) .  self::getLanguage() . '.lang.php')){
+        	$tpl->config_load(self::getLangPath($package) . self::getLanguage() . '.lang.php');
+        }
+        return true;
+    }
+    public static function setTemplateSettings($tpl, $package = false){
+    	$tpl->assign('CORE_IMG_URL', self::getImgUrl(false));
+        $tpl->assign('CORE_CSS_URL', self::getCssUrl(false));
+        $tpl->assign('CORE_JS_URL', self::getJsUrl(false));
+        if($package){
+	        $tpl->assign('IMG_URL', self::getImgUrl($package));
+	        $tpl->assign('CSS_URL', self::getCssUrl($package));
+	        $tpl->assign('JS_URL', self::getJsUrl($package));
+        }
+        return true;
     }
 }

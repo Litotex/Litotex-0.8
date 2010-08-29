@@ -1,4 +1,20 @@
 <?php
+/*
+ * This file is part of Litotex | Open Source Browsergame Engine.
+ *
+ * Litotex is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Litotex is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
+ */
 require_once("userGroup.class.php");
 require_once("perm.class.php");
 /**
@@ -449,18 +465,7 @@ class user {
             return true;
         return false;
     }
-    /**
-     * This will generate a mail handler TODO: Maybe PHPMailer?
-     * The returned handler can be used further
-     * @param str $subject subject will be set automaticly
-     * @param str $text text will be set automaticly
-     * @return bool on failure | mailer instance
-     */
-    public function generateMailHandler($subject, $text) {
-        if(!$this->_initialized)
-            return false;
-    }
-    /** TODO
+    /** FIXME
      * This will check if the user is banned
      * @return bool
      */
@@ -468,7 +473,7 @@ class user {
         if(!$this->_initialized)
             return false;
     }
-    /** TODO
+    /** FIXME
      * This will ban a user for a specific amount of time
      * @param str $reason Reason to ban the user (may show up on login)
      * @param int $duration Time to ban the user in sec

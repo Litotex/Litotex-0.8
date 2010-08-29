@@ -1,4 +1,20 @@
 <?php
+/*
+ * This file is part of Litotex | Open Source Browsergame Engine.
+ *
+ * Litotex is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Litotex is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
+ */
 require_once('classes/category.class.php');
 require_once('classes/news.class.php');
 require_once('classes/comment.class.php');
@@ -37,6 +53,7 @@ class package_news extends package {
     public static function registerHooks() {
         self::_registerHook(__CLASS__, 'getNews', 2);
         self::_registerHook(__CLASS__, 'showNewsBlock', 1);
+        		self::_registerHook(__CLASS__, 'templateSidebarLeft', 0);
         return true;
     }
     public function __action_showComments() {
@@ -67,9 +84,15 @@ class package_news extends package {
     public static function  __hook_showNewsBlock($n) {
         $news = self::getNews(false, 1, $n);
         $tpl = new Smarty();
-        $tpl->assign('news', $news);
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-        $tpl->display(TEMPLATE_DIRECTORY . '/' . 'news' . '/' . 'newsblock.tpl');
+        self::setTemplateClass($tpl, 'news');
+        self::loadLang($tpl, 'news');
+        $tpl->assign('news', $news);
+        $tpl->display(self::getTplDir() . '/' . 'news' . '/' . 'newsblock.tpl');
         return true;
     }
+	public static function __hook_templateSidebarLeft(){
+		self::__hook_showNewsBlock(3);
+		return true;
+	}
 }

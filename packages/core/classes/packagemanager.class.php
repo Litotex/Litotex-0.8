@@ -1,5 +1,20 @@
 <?php
-error_reporting(E_ALL);
+/*
+ * This file is part of Litotex | Open Source Browsergame Engine.
+ *
+ * Litotex is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Litotex is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * Packagemanager class to organize packages to be loaded etc.
  */
@@ -102,7 +117,39 @@ class packages{
 					return false;
 			}
 		}
+		$this->_orderHookCache();
 		return $this->_writeHookCache();
+	}
+	private function _orderHookCache(){
+		$database = package::$db->Execute("SELECT `class`, `function`, `hookName`, `paramNum`, `sort` FROM `lttx_hookSort` ORDER BY `sort` ASC");
+		if(!$database)
+			return false;
+		$cache = array();
+		while(!$database->EOF){
+			$cache[$database->fields[2] . ':' . $database->fields[3]][] = array($database->fields[4], $database->fields[0], $database->fields[1]);
+			$database->MoveNext();
+		}
+		$newOrder = array();
+		foreach($this->_hookCache as $key => $value){
+			if(!isset($cache[$key])){
+				$newOrder[$key] = $value;
+				continue;
+			}
+			$left = $this->_hookCache[$key];
+			foreach($cache[$key] as $order){
+				foreach($this->_hookCache[$key] as $dataKey => $data){
+					if($data[0] == $order[1] && $data[1] == $order[2]){
+						$newOrder[$key][] = $data;
+						unset($left[$dataKey]);
+						break;
+					}
+				}
+			}
+			foreach($left as $item){
+				$newOrder[$key][] = $item;
+			}
+		}
+		$this->_hookCache = $newOrder;
 	}
 	/**
 	 * This function will write hook cache to the cacheing file
@@ -116,9 +163,6 @@ class packages{
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
 		return true;
-	}
-	public function setHookCachePolicy(){
-		//TODO
 	}
 	/**
 	 * This function registers a new hook, it will be casted when generateHookCache is casted

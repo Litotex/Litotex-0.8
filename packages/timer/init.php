@@ -15,15 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-class Date{
-    private $_timestamp = false;
-    public function  __construct($unixTime = false) {
-        if(!$unixTime)
-            $unixTime = time();
-        $this->_timestamp = $unixTime;
-        return;
-    }
-    public function formatDate($format = 'd.m.Y H:i'){
-        return date($format, $this->_timestamp);
-    }
+class package_timer extends package{
+	protected $_availableActions = array();
+	private static $_startTime = false;
+	public function __action_main(){
+		return true;
+	}
+	public static function registerHooks(){
+		self::_registerHook(__CLASS__, 'displayTimer', 0);
+		self::_registerHook(__CLASS__, 'loadCore', 0);
+		return true;
+	}
+	public static function __hook_displayTimer(){
+		echo round(microtime(true) - self::$_startTime, 5);
+	}
+	public static function __hook_loadCore(){
+		self::$_startTime = microtime(true);
+	}
 }
