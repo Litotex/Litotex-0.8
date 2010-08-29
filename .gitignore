@@ -1,4 +1,5 @@
 tpl_c/%%*
 .project
 .buildpath
+.packages/core/config/*
 .settings/*
