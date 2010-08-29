@@ -126,7 +126,7 @@ abstract class package {
      */
     public final function __destruct() {
         if($this->_tpl) {
-            self::$tpl->display($this->_tplDir . '/' . $this->_packageName . '/' . $this->_theme);
+            self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
         }
         return true;
     }
