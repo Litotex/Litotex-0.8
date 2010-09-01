@@ -11,8 +11,13 @@ body,html {
    border: 1px solid #3A3A3C;
 }
 #header {
-    margin: 0 0 0.7em; padding: 0.3em;
+    margin: 0 0 0.0em; padding: 0.3em;
 		background: #3A3A3C;
+ 		color: #FFFEFE;
+}
+#header_second {
+    margin: 0 0 0.7em; padding: 0.3em;
+		background: #F1592A;
  		color: #FFFEFE;
 }
 #leftcolumn {

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 17. August 2010 um 19:55
+-- Erstellungszeit: 31. August 2010 um 20:28
 -- Server Version: 5.1.41
 -- PHP-Version: 5.3.2-1ubuntu4.2
 
@@ -117,7 +117,106 @@ CREATE TABLE IF NOT EXISTS `lttx1_cron` (
 --
 
 INSERT INTO `lttx1_cron` (`ID`, `textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`) VALUES
-(752, 'ressource1_1_1', 'O:9:"ressource":12:{s:23:"\0ressource\0_initialized";b:1;s:16:"\0ressource\0_race";i:1;s:15:"\0ressource\0_res";a:1:{i:1;d:999950;}s:22:"\0ressource\0_resFormula";a:0:{}s:23:"\0ressource\0_saveChanges";b:1;s:15:"\0ressource\0_src";i:1;s:17:"\0ressource\0_table";s:9:"territory";s:19:"\0ressource\0_changed";a:1:{i:0;i:1;}s:26:"\0ressource\0_resNameFetched";b:0;s:17:"\0ressource\0_limit";a:1:{i:1;s:7:"1000000";}s:30:"\0ressource\0_useIncreaseFormula";b:0;s:20:"\0ressource\0_useLimit";b:1;}', 'simpleAddition', 'a:4:{i:0;i:1;i:1;d:0.138888888888888895056794581250869669020175933837890625;i:2;s:7:"$intNum";i:3;b:1;}', 1282067354, 1, 1, '', 'a:1:{i:0;s:14:"core_buildings";}');
+(752, 'ressource1_1_1', 'O:9:"ressource":12:{s:23:"\0ressource\0_initialized";b:1;s:16:"\0ressource\0_race";i:1;s:15:"\0ressource\0_res";a:1:{i:1;d:999950;}s:22:"\0ressource\0_resFormula";a:0:{}s:23:"\0ressource\0_saveChanges";b:1;s:15:"\0ressource\0_src";i:1;s:17:"\0ressource\0_table";s:9:"territory";s:19:"\0ressource\0_changed";a:1:{i:0;i:1;}s:26:"\0ressource\0_resNameFetched";b:0;s:17:"\0ressource\0_limit";a:1:{i:1;s:7:"1000000";}s:30:"\0ressource\0_useIncreaseFormula";b:0;s:20:"\0ressource\0_useLimit";b:1;}', 'simpleAddition', 'a:4:{i:0;i:1;i:1;d:0.138888888888888895056794581250869669020175933837890625;i:2;s:7:"$intNum";i:3;b:1;}', 1283279175, 1, 1, '', 'a:1:{i:0;s:14:"core_buildings";}');
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `lttx1_exploreDependencies`
+--
+
+CREATE TABLE IF NOT EXISTS `lttx1_exploreDependencies` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sourceID` int(11) NOT NULL,
+  `plugin` varchar(100) COLLATE utf8_bin NOT NULL,
+  `pluginPreferences` text COLLATE utf8_bin NOT NULL,
+  `level` int(11) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `lttx1_exploreDependencies`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `lttx1_exploreRessources`
+--
+
+CREATE TABLE IF NOT EXISTS `lttx1_exploreRessources` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `resID` int(11) NOT NULL,
+  `raceID` int(11) NOT NULL,
+  `sourceID` int(11) NOT NULL,
+  `resNum` int(11) NOT NULL,
+  `increaseFormula` varchar(1000) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `resID` (`resID`,`raceID`,`sourceID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `lttx1_exploreRessources`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `lttx1_explores`
+--
+
+CREATE TABLE IF NOT EXISTS `lttx1_explores` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `race` int(11) NOT NULL,
+  `plugin` text NOT NULL,
+  `pluginPreferences` text NOT NULL,
+  `timeFormula` varchar(1000) NOT NULL,
+  `pointsFormula` varchar(1000) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `race` (`race`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `lttx1_explores`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `lttx1_hookSort`
+--
+
+CREATE TABLE IF NOT EXISTS `lttx1_hookSort` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `class` varchar(100) COLLATE utf8_bin NOT NULL,
+  `function` varchar(100) COLLATE utf8_bin NOT NULL,
+  `hookName` varchar(100) COLLATE utf8_bin NOT NULL,
+  `paramNum` int(11) NOT NULL,
+  `sort` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `paramNum` (`paramNum`),
+  KEY `class` (`class`),
+  KEY `hookName` (`hookName`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=10 ;
+
+--
+-- Daten für Tabelle `lttx1_hookSort`
+--
+
+INSERT INTO `lttx1_hookSort` (`ID`, `class`, `function`, `hookName`, `paramNum`, `sort`) VALUES
+(1, 'package_sample1', 'templateSidebarLeft', 'templateSidebarLeft', 0, 0),
+(2, 'package_news', 'templateSidebarLeft', 'templateSidebarLeft', 0, 1),
+(3, 'package_sample2', 'templateSidebarLeft', 'templateSidebarLeft', 0, 2),
+(4, 'package_sample2', 'templateSidebarRight', 'templateSidebarRight', 0, 0),
+(5, 'package_news', 'getNews', 'getNews', 2, 0),
+(6, 'package_news', 'showNewsBlock', 'showNewsBlock', 1, 0),
+(7, 'package_timer', 'loadCore', 'loadCore', 0, 0),
+(8, 'package_core_cron', 'loadCore', 'loadCore', 0, 1),
+(9, 'package_timer', 'displayTimer', 'displayTimer', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -371,6 +470,27 @@ CREATE TABLE IF NOT EXISTS `lttx1_territoryBuildings` (
 
 INSERT INTO `lttx1_territoryBuildings` (`ID`, `territoryID`, `buildingID`, `level`) VALUES
 (1, 1, 1, 25);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `lttx1_territoryExplores`
+--
+
+CREATE TABLE IF NOT EXISTS `lttx1_territoryExplores` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `territoryID` int(11) NOT NULL,
+  `buildingID` int(11) NOT NULL,
+  `level` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `territoryID` (`territoryID`),
+  KEY `buildingID` (`buildingID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Daten für Tabelle `lttx1_territoryExplores`
+--
+
 
 -- --------------------------------------------------------
 

@@ -16,6 +16,9 @@
 		<div id="header">
 		<img src="{$CORE_IMG_URL}litotex_logo.png" Alt="Litotex">Litotex Core-Engine 
 		</div>
+		<div id="header_second">
+			Open Your Source
+		</div>
 		<div id="leftcolumn">
 			{php} package::$packages->callHook('templateSidebarLeft', array()) {/php}
 		</div>

@@ -162,6 +162,21 @@ class packages{
 			return false;
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
+		//And to database...
+		$nHook = array();
+		package::$db->Execute("TRUNCATE TABLE `lttx_hookSort`");
+		foreach($this->_hookCache as $name => $list){
+			foreach($list as $item){
+				if(!isset($nHook[$name])){
+					$n = 0;
+					$nHook[$name] = 0;
+				}else{
+					$n = ++$nHook[$name];
+				}
+				$exploeded = explode(':', $name);
+				package::$db->Execute("INSERT INTO `lttx_hookSort` (`class`, `function`, `hookName`, `paramNum`, `sort`) VALUES (?, ?, ?, ?, ?)", array($item[0], $item[1], $exploeded[0], $exploeded[1], $n));
+			}
+		}
 		return true;
 	}
 	/**
@@ -350,7 +365,13 @@ class packages{
 	}
 	public function deactivatePackage(){
 	}
-	public function installPackage(){
+	public function installPackage($location, $packageName){
+		include_once('installer.class.php');
+		if(!file_exists($location . '/installer.php'))
+			return false;
+		include_once($location . '/installer.php');
+		$className = "installer_" . $packageName;
+		$installer = new $className($location, $packageName);
 	}
 	public function removePackage(){
 	}
