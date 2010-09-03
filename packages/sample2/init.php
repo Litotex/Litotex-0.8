@@ -42,7 +42,7 @@ class package_sample2 extends package {
      */
     public static function __hook_templateSidebarLeft() {
         // print a little Hello World message in the left sidebar
-        echo "Hello World left Sidebar!";
+        echo "Hello World left Sidebar (sample2)!";
         return true;
     }
 
@@ -52,7 +52,7 @@ class package_sample2 extends package {
      */
     public static function __hook_templateSidebarRight() {
         // print a little Hello World message in the right sidebar
-        echo "Hello World right Sidebar!";
+        echo "Hello World right Sidebar (sample2)!";
         return true;
     }
 }
