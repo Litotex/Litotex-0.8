@@ -41,7 +41,7 @@ class package_sample1 extends package {
      */
     public static function __hook_templateSidebarLeft() {
         // print a little Hello World message
-        echo 'Hello World!';
+        echo 'Hello World! (sample1)';
         return true;
     }
 }
