@@ -45,7 +45,7 @@ abstract class installer{
 		}
 	}
 	private final function _install(){
-//		var_dump($this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php'));
+		var_dump($this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php'));
 		$this->_recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . $this->_packageName);
 		$this->_recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
 		$this->_patchDatabase(true);
@@ -65,7 +65,7 @@ abstract class installer{
 		if(!isset($data->query))
 			return true;
 		foreach($data->query as $query){
-//			var_dump($this->_compareVersion('0.8.1', $query->attributes()->version));
+			var_dump($this->_compareVersion('0.8.1', $query->attributes()->version));
 		}
 	}
 	private final function _compareVersion($v1, $v2){
