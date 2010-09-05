@@ -30,7 +30,7 @@ function smarty_function_make_link($params, &$smarty)
     $url .= '?package='.urlencode($params['package']);
     unset($params['package']);
     foreach($params as $key => $value){
-        $url .= '&' . $key . '='.urlencode($value);
+        $url .= '&amp;' . $key . '='.urlencode($value);
     }
     return $url;
 }
