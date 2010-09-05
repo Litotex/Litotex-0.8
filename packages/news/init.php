@@ -52,8 +52,7 @@ class package_news extends package {
     }
     public static function registerHooks() {
         self::_registerHook(__CLASS__, 'getNews', 2);
-//        self::_registerHook(__CLASS__, 'showNewsBlock', 1);
-//        		self::_registerHook(__CLASS__, 'templateSidebarLeft', 0);
+        self::_registerHook(__CLASS__, 'showNewsBlock', 1);
         return true;
     }
     public static function registerTplModifications(){
@@ -85,7 +84,7 @@ class package_news extends package {
         $news = self::getNews(false, 1, $n);
         return true;
     }
-    public static function  __tpl_showNewsBlock($n = 2) {
+    public static function  __hook_showNewsBlock($n) {
         $news = self::getNews(false, 1, $n);
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
@@ -95,8 +94,7 @@ class package_news extends package {
         $tpl->display(self::getTplDir() . '/' . 'news' . '/' . 'newsblock.tpl');
         return true;
     }
-//	public static function __hook_templateSidebarLeft(){
-//		self::__hook_showNewsBlock(3);
-//		return true;
-//	}
+	public static function  __tpl_showNewsBlock() {
+        return self::__hook_showNewsBlock(2);
+    }
 }

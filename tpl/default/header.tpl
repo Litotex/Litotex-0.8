@@ -23,6 +23,6 @@
 			{php} package::$packages->displayTplModification('left') {/php}
 		</div>
 		<div id="rightcolumn">
-		  {php} package::$packages->callHook('templateSidebarRight', array()) {/php}
+		  {php} package::$packages->displayTplModification('right') {/php}
 		</div>
 		<div id="content">
