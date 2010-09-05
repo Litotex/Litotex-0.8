@@ -7,6 +7,7 @@
  * @copyright: 2010
  */
 class package_sample1 extends package {
+    public static $version = '0.8.10';
     /**
      * Package name
      * @var string

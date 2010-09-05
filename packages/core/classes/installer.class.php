@@ -45,6 +45,7 @@ abstract class installer{
 		}
 	}
 	private final function _install(){
+		var_dump($this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php'));
 		$this->_recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . $this->_packageName);
 		$this->_recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
 		$this->_patchDatabase(true);
@@ -54,43 +55,45 @@ abstract class installer{
 		if($install){
 			if(!file_exists($this->_location . '/database/install.sql'))
 				return true;
-			else $file = fopen($this->_location . '/database/install.sql', 'r');
+			else $fileName = $this->_location . '/database/install.sql';
 		} else {
 			if(!file_exists($this->_location . '/database/remove.sql'))
 				return true;
-			else $file = fopen($this->_location . '/database/remove.sql', 'r');
+			else $fileName = $this->_location . '/database/remove.sql';
 		}
-		$puffer = '';
-		$unbuffer = false;
-		$data = array();
-		while(!feof($file)){
-			$puffer .= fread($file, 10000);
-			if(preg_match('/^\-\-/', $puffer)){
-				$puffer = '';
-				continue;
-			}
-			if(preg_match('/^\/\*/', $puffer)){
-				$puffer = '';
-				$unbuffer = true;
-				continue;
-			}
-			if($unbuffer){
-				if(preg_match('/\*\//', $puffer)){
-					$unbuffer = false;
-				}
-				$puffer = '';
-				continue;
-			}
-			if(preg_match('/;$/', $puffer)){
-				$data[] = $puffer;
-				$puffer = '';
-			}
+		$data = simplexml_load_file($fileName);
+		if(!isset($data->query))
+			return true;
+		foreach($data->query as $query){
+			var_dump($this->_compareVersion('0.8.1', $query->attributes()->version));
 		}
-		foreach($data as $query){
-//			$query = explode(':', $)
-			package::$db->Execute($query);
+	}
+	private final function _compareVersion($v1, $v2){
+		if(!preg_match('/^[0-9]{1,}?\.[0-9]{1,}?\.[0-9]{1,}$/', $v1))
+			return false;
+		if(!preg_match('/^[0-9]{1,}?\.[0-9]{1,}?\.[0-9]{1,}$/', $v2))
+			return false;
+		$v1 = explode('.', $v1);
+		$v2 = explode('.', $v2);
+		if($v1[0] > $v2[0]){
+			return 1;
+		} else if($v1[0] < $v2[0]){
+			return -1;
 		}
-		return true;
+		if($v1[1] > $v2[1]){
+			return 1;
+		} else if($v1[1] < $v2[1]){
+			return -1;
+		}
+		if($v1[2] > $v2[2]){
+			return 1;
+		} else if($v1[2] < $v2[2]){
+			return -1;
+		}
+		return 0;
+	}
+	private final function _getVersionNumber($modulName, $file){
+		return eval(preg_replace('/^<\?php/', '', str_replace('class package_'.$modulName, 'class package_' . $modulName . 'INSTALLER', file_get_contents($file))) . " \$vars = get_class_vars('package_".$modulName."INSTALLER'); return (isset(\$vars['version']))?\$vars['version']:false;");
 	}
 	protected abstract function _freeInstall();
 }

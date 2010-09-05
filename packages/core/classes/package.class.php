@@ -167,20 +167,36 @@ abstract class package {
      */
     protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
         if(!self::$packages) {
-            self::printErrorMsg('Fatal', 'Packagemanager was not published for every package', __LINE__, __FILE__); //FIXME... god damned
+            throw new Exception('The packagemanager was not accessible for this package, register it first.');
             exit();
         }
         $function = (!$function)?$hookname:$function;
         $return = self::$packages->registerHook($class, $hookname, $nParams, $function, $file, $packageName);
         if(!$return)
-            self::printErrorMsg('Warning', 'Packagemanager was unable to load hook function "__hook_' . $function . '"', __LINE__, __FILE__);
+            throw new Exception('Packagemanager was unable to load hook function "__hook_' . $function . '"');
     }
     /**
      * This function is used to regenerate the hook cache
-     * It has to be redeclared
      * @return bool
      */
-    abstract static public function registerHooks();
+    static public function registerHooks(){
+    	return true;
+    }
+    
+	static public function registerTplModifications(){
+    	return true;
+    }
+    
+	protected static final function _registerTplModification($class, $function, $file = false, $packageName = false) {
+        if(!self::$packages) {
+            throw new Exception('The packagemanager was not accessible for this package, register it first.');
+            exit();
+        }
+        $return = self::$packages->registerTplModification($class, $function, $file, $packageName);
+        if(!$return)
+            throw new Exception('Packagemanager was unable to load hook function "__hook_' . $function . '"');
+    }
+    
     /**
      * This will save a database instance in the root class
      * Attention! Only allowed on package class
@@ -237,18 +253,6 @@ abstract class package {
         if(__CLASS__ != 'package')
             return false;
         package::$perm = $perm;
-        return true;
-    }
-    /**
-     * This will just print a php like error on the screen
-     * @param str $title Title (Warnin, Fatal Error...)
-     * @param str $description The description of the problem
-     * @param int $line __LINE__
-     * @param str $file __FILE__
-     * @return bool
-     */
-    public static function printErrorMsg($title, $description, $line, $file) {
-        echo '<p><b>' . $title . ': </b>' . $description . ' in <b>' . $file . '</b> on line <b>' . $line . '</b></p>';
         return true;
     }
     /**

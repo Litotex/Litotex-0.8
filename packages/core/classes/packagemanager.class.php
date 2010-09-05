@@ -39,6 +39,9 @@ class packages{
 	 * @var string
 	 */
 	private $_dependencyCacheFile = PACKAGE_CACHE;
+	private $_tplModificationCacheFile = TPLMOD_CACHE;
+	private $_tplModificationCacheExpire = 0;
+	private $_tplModificationCache = array();
 	/**
 	 * Cache hooks are saved in
 	 * @var array
@@ -54,10 +57,10 @@ class packages{
 	 * @var string
 	 */
 	private $_packagesDir = MODULES_DIRECTORY;
-	
+
 	private $_loaded = array();
 	/**
-	 * This will load hook and package cache and save the modulmanager class in packages parent class 
+	 * This will load hook and package cache and save the modulmanager class in packages parent class
 	 * @return void
 	 */
 	public function __construct(){
@@ -68,7 +71,65 @@ class packages{
 		if($this->_loadDependencyCache() === false){
 			$this->generateDependencyCache();
 		}
+		if($this->_loadTplModificationCache() === false){
+			$this->generateTplModificationCache();
+		}
 		return;
+	}
+	private function _loadTplModificationCache(){
+		if(!file_exists($this->_tplModificationCacheFile))
+		return false;
+		$cacheContents = file_get_contents($this->_tplModificationCacheFile);
+		$cacheContents = str_replace('<?php die(); ?>', '', $cacheContents);
+		$cacheContents = explode('%', $cacheContents);
+		if(!$this->_checkTplModificationCacheExpire($cacheContents[0]))
+		return false;
+		return ($this->_tplModificationCache = unserialize($cacheContents[1]));
+	}
+	private function _checkTplModificationCacheExpire($startTime){
+		if((time()-$this->_tplModificationCacheExpire) < $startTime){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public function generateTplModificationCache(){
+		if(!is_dir($this->_packagesDir))
+		return false;
+		$packages = opendir($this->_packagesDir);
+		while($file = readdir($packages)){
+			if($file == '.' || $file == '..')
+			continue;
+			if(!file_exists($this->_packagesDir . '/' . $file . '/init.php'))
+			continue;
+			include_once($this->_packagesDir . '/' . $file . '/init.php');
+			$className = 'package_' . $file;
+			if(class_exists($className)){
+				$newModification = call_user_func(array($className, 'registerTplModifications'));
+				if(!$newModification)
+				return false;
+			}
+		}
+		$this->_orderTplModificationCache();
+		return $this->_writeTplModificationCache();
+	}
+	private function _writeTplModificationCache(){
+		$newfile = '<?php die(); ?>'.time().'%'.serialize($this->_tplModificationCache);
+		$file = fopen($this->_tplModificationCacheFile, 'w');
+		if(!$file)
+		return false;
+		fwrite($file, $newfile, 1000000);
+		fclose($file);
+		//And to database...
+		package::$db->Execute("TRUNCATE TABLE `lttx_tplModificationSort`");
+		foreach($this->_tplModificationCache as $position => $list){
+			$n = 0;
+			foreach($list as $item){
+				package::$db->Execute("INSERT INTO `lttx_tplModificationSort` (`class`, `function`, `position`, `active`, `sort`) VALUES (?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n));
+				$n++;
+			}
+		}
+		return true;
 	}
 	/**
 	 * This function will load hook cach from cacheing file
@@ -76,12 +137,12 @@ class packages{
 	 */
 	private function _loadHookCache(){
 		if(!file_exists($this->_hookCacheFile))
-			return false;
+		return false;
 		$cacheContents = file_get_contents($this->_hookCacheFile);
 		$cacheContents = str_replace('<?php die(); ?>', '', $cacheContents);
 		$cacheContents = explode('%', $cacheContents);
 		if(!$this->_checkHookCacheExpire($cacheContents[0]))
-			return false;
+		return false;
 		return ($this->_hookCache = unserialize($cacheContents[1]));
 	}
 	/**
@@ -102,54 +163,50 @@ class packages{
 	 */
 	public function generateHookCache(){
 		if(!is_dir($this->_packagesDir))
-			return false;
+		return false;
 		$packages = opendir($this->_packagesDir);
 		while($file = readdir($packages)){
 			if($file == '.' || $file == '..')
-				continue;
+			continue;
 			if(!file_exists($this->_packagesDir . '/' . $file . '/init.php'))
-				continue;
+			continue;
 			include_once($this->_packagesDir . '/' . $file . '/init.php');
 			$className = 'package_' . $file;
 			if(class_exists($className)){
 				$newHooks = call_user_func(array($className, 'registerHooks'));
 				if(!$newHooks)
-					return false;
+				return false;
 			}
 		}
-		$this->_orderHookCache();
 		return $this->_writeHookCache();
 	}
-	private function _orderHookCache(){
-		$database = package::$db->Execute("SELECT `class`, `function`, `hookName`, `paramNum`, `sort` FROM `lttx_hookSort` ORDER BY `sort` ASC");
+	private function _orderTplModificationCache(){
+		$database = package::$db->Execute("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx_tplModificationSort` ORDER BY `sort` ASC");
 		if(!$database)
-			return false;
+		return false;
 		$cache = array();
 		while(!$database->EOF){
-			$cache[$database->fields[2] . ':' . $database->fields[3]][] = array($database->fields[4], $database->fields[0], $database->fields[1]);
+			$cache[$database->fields[0] . ':' . $database->fields[1]] = array($database->fields[0], $database->fields[1], $database->fields[2], $database->fields[3], $database->fields[4]);
 			$database->MoveNext();
 		}
 		$newOrder = array();
-		foreach($this->_hookCache as $key => $value){
+		$newOrder['none'] = array();
+		foreach($this->_tplModificationCache as $key => $value){
 			if(!isset($cache[$key])){
-				$newOrder[$key] = $value;
+				array_push($value, false);
+				$newOrder['none'][] = $value;
 				continue;
 			}
-			$left = $this->_hookCache[$key];
-			foreach($cache[$key] as $order){
-				foreach($this->_hookCache[$key] as $dataKey => $data){
-					if($data[0] == $order[1] && $data[1] == $order[2]){
-						$newOrder[$key][] = $data;
-						unset($left[$dataKey]);
-						break;
-					}
+			if(isset($cache[$key])){
+				if(!isset($newOrder[$cache[$key][2]])){
+					$newOrder[$cache[$key][2]] = array();
 				}
-			}
-			foreach($left as $item){
-				$newOrder[$key][] = $item;
+				array_push($value, (bool)$cache[$key][4]);
+				$newOrder[$cache[$key][2]][] = $value;
+				continue;
 			}
 		}
-		$this->_hookCache = $newOrder;
+		$this->_tplModificationCache = $newOrder;
 	}
 	/**
 	 * This function will write hook cache to the cacheing file
@@ -159,24 +216,9 @@ class packages{
 		$newfile = '<?php die(); ?>'.time().'%'.serialize($this->_hookCache);
 		$file = fopen($this->_hookCacheFile, 'w');
 		if(!$file)
-			return false;
+		return false;
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
-		//And to database...
-		$nHook = array();
-		package::$db->Execute("TRUNCATE TABLE `lttx_hookSort`");
-		foreach($this->_hookCache as $name => $list){
-			foreach($list as $item){
-				if(!isset($nHook[$name])){
-					$n = 0;
-					$nHook[$name] = 0;
-				}else{
-					$n = ++$nHook[$name];
-				}
-				$exploeded = explode(':', $name);
-				package::$db->Execute("INSERT INTO `lttx_hookSort` (`class`, `function`, `hookName`, `paramNum`, `sort`) VALUES (?, ?, ?, ?, ?)", array($item[0], $item[1], $exploeded[0], $exploeded[1], $n));
-			}
-		}
 		return true;
 	}
 	/**
@@ -192,8 +234,17 @@ class packages{
 			include_once($file);
 		}
 		if(!method_exists($class, '__hook_'.$function))
-			return false;
+		return false;
 		$this->_hookCache[$hookname.':'.$nParams][] = array($class, $function, $file, $packageName);
+		return true;
+	}
+	public function registerTplModification($class, $function, $file, $packageName){
+		if($file){
+			include_once($file);
+		}
+		if(!method_exists($class, '__tpl_'.$function))
+		return false;
+		$this->_tplModificationCache[$class.':'.$function] = array($class, $function, $file, $packageName);
 		return true;
 	}
 	/**
@@ -205,7 +256,7 @@ class packages{
 	public function callHook($hookname, $args = array()){
 		$nParams = count($args);
 		if(!isset($this->_hookCache[$hookname . ':' . $nParams]))
-			return true;
+		return true;
 		$return = true;
 		foreach($this->_hookCache[$hookname . ':' . $nParams] as $func){
 			if($func[2]){
@@ -215,7 +266,7 @@ class packages{
 			}
 			$this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
 			if(!call_user_func_array(array($func[0], '__hook_' . $func[1]), $args))
-				$return = false;
+			$return = false;
 		}
 		return $return;
 	}
@@ -228,14 +279,14 @@ class packages{
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true){
 		if($initialize == false && in_array($packageName, $this->_loaded))
-			return true;
+		return true;
 		$dep = array();
 		if(isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true){
 			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
 			foreach($this->_dependencyCache[$packageName]['loadDep'] as $depName){
 				$cache = $this->loadPackage($depName, false);
 				if(!$cache)
-					trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 				$dep[$depName] = $cache;
 			}
 			$cname = $this->_dependencyCache[$packageName][1];
@@ -244,7 +295,7 @@ class packages{
 			foreach($this->_dependencyCache[$packageName]['loadDep'] as $depName){
 				$cache = $this->loadPackage($depName, false, false);
 				if(!$cache)
-					trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 			}
 			if($initialize){
 				$pack = new $this->_dependencyCache[$packageName][1];
@@ -264,12 +315,12 @@ class packages{
 	 */
 	private function _loadDependencyCache(){
 		if(!file_exists($this->_dependencyCacheFile))
-			return false;
+		return false;
 		$cacheContents = file_get_contents($this->_dependencyCacheFile);
 		$cacheContents = str_replace('<?php die(); ?>', '', $cacheContents);
 		$cacheContents = explode('%', $cacheContents);
 		if(!$this->_checkDependencyCacheExpire($cacheContents[0]))
-			return false;
+		return false;
 		return ($this->_dependencyCache = unserialize($cacheContents[1]));
 	}
 	/**
@@ -290,19 +341,19 @@ class packages{
 	 */
 	public function generateDependencyCache(){
 		if(!is_dir($this->_packagesDir))
-			return false;
+		return false;
 		$packages = opendir($this->_packagesDir);
 		while($file = readdir($packages)){
 			if($file == '.' || $file == '..')
-				continue;
+			continue;
 			if(!file_exists($this->_packagesDir . '/' . $file . '/init.php'))
-				continue;
+			continue;
 			include_once($this->_packagesDir . '/' . $file . '/init.php');
 			$className = 'package_' . $file;
 			if(class_exists($className)){
 				$newInfo = call_user_func(array($className, 'registerClass'), $className);
 				if(!$newInfo)
-					return false;
+				return false;
 				$prop = get_class_vars($className);
 				$dep = $prop['dependency'];
 				$loadDep = $prop['loadDependency'];
@@ -315,7 +366,7 @@ class packages{
 		$this->_checkDependency();
 		return $this->_writeDependencyCache();
 	}
-	
+
 	private function _checkDependency(){
 		$return = true;
 		$parents = array();
@@ -323,7 +374,7 @@ class packages{
 		for($i = 0; $i < 2; $i++){
 			foreach($this->_dependencyCache as $name => $pack){
 				if($pack['active'] == false)
-					continue;
+				continue;
 				foreach($pack['dep'] as $dep){
 					if(!isset($this->_dependencyCache[$dep])){
 						trigger_error("Could not find package <i>" . $dep . "</i> which is needed by <i>" . $name . "</i>. The package will be deactivated automaticly!", E_USER_NOTICE);
@@ -357,7 +408,7 @@ class packages{
 		$newfile = '<?php die(); ?>'.time().'%'.serialize($this->_dependencyCache);
 		$file = fopen($this->_dependencyCacheFile, 'w');
 		if(!$file)
-			return false;
+		return false;
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
 	}
@@ -368,7 +419,7 @@ class packages{
 	public function installPackage($location, $packageName){
 		include_once('installer.class.php');
 		if(!file_exists($location . '/installer.php'))
-			return false;
+		return false;
 		include_once($location . '/installer.php');
 		$className = "installer_" . $packageName;
 		$installer = new $className($location, $packageName);
@@ -385,14 +436,32 @@ class packages{
 	}
 	public function searchRemotePackageList(){
 	}
-        /**
-         * Checks if a package exists
-         * @param string $package packagename
-         * @return bool
-         */
-        public static function exists($package){
-            if(file_exists(MODULES_DIRECTORY . '/' . $package . '/init.php'))
-                return true;
-            return false;
-        }
+	/**
+	 * Checks if a package exists
+	 * @param string $package packagename
+	 * @return bool
+	 */
+	public static function exists($package){
+		if(file_exists(MODULES_DIRECTORY . '/' . $package . '/init.php'))
+		return true;
+		return false;
+	}
+	public function displayTplModification($position){
+		if(!isset($this->_tplModificationCache[$position]))
+		return true;
+		$return = true;
+		foreach($this->_tplModificationCache[$position] as $func){
+			if($func[4] == false)
+				continue;
+			if($func[2]){
+				if($func[3])
+				$this->loadPackage($func[3], false, false);
+				include_once($func[2]);
+			}
+			$this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
+			if(!call_user_func_array(array($func[0], '__tpl_' . $func[1]), array()))
+			$return = false;
+		}
+		return $return;
+	}
 }

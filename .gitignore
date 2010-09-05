@@ -3,3 +3,4 @@ tpl_c/%%*
 .buildpath
 .packages/core/config/*
 .settings/*
+packages/core/cache/*
