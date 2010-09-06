@@ -56,7 +56,7 @@ package::setDatabaseClass($db);
 //Smarty settings... next
 $smarty = new Smarty();
 $smarty->compile_dir = TEMPLATE_COMPILATION;
-$smarty->debugging = true;
+$smarty->debugging = false;
 $smarty->assign('HEADER', package::getTplDir() . 'header.tpl');
 $smarty->assign('FOOTER', package::getTplDir() . 'footer.tpl');
 $smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
