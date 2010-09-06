@@ -15,6 +15,6 @@
 ; * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
 
 host = "localhost"
-user = "litotex"
-password = "litotex"
+user = "root"
+password = "laptop"
 database = "litotex"
