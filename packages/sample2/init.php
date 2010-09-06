@@ -24,9 +24,12 @@ class package_sample2 extends package {
      * @return bool
      */
     public static function registerHooks(){
-		self::_registerHook(__CLASS__, 'templateSidebarLeft', 0);
-                self::_registerHook(__CLASS__, 'templateSidebarRight', 0);
+		self::_registerHook(__CLASS__, 'sample2', 0);
 		return true;
+    }
+   public static function registerTplModifications(){
+    	self::_registerTplModification(__CLASS__, 'sample2');
+    	return true;
     }
 
     /**
@@ -40,19 +43,12 @@ class package_sample2 extends package {
      * Method of the "tempalteSidebarRight" hook
      * return bool
      */
-    public static function __hook_templateSidebarLeft() {
-        // print a little Hello World message in the left sidebar
-        echo "Hello World left Sidebar (sample2)!";
+    public static function __hook_sample2() {
+        echo "Hello World  (sample2)!";
         return true;
     }
 
-    /**
-     * Method of the "tempalteSidebarRight" hook
-     * return bool
-     */
-    public static function __hook_templateSidebarRight() {
-        // print a little Hello World message in the right sidebar
-        echo "Hello World right Sidebar (sample2)!";
-        return true;
+ 	public static function  __tpl_sample2() {
+        return self::__hook_sample2(2);
     }
 }
