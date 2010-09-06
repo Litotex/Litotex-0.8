@@ -32,17 +32,24 @@ class package_sample1 extends package {
      * @return bool
      */
     public static function registerHooks(){
-        self::_registerHook(__CLASS__, 'templateSidebarLeft', 0);
+        self::_registerHook(__CLASS__, 'sample1', 0);
         return true;
     }
-
+   public static function registerTplModifications(){
+    	self::_registerTplModification(__CLASS__, 'sample1');
+    	return true;
+    }
     /**
      * Method of the "tempalteSidebarLeft" hook
      * return bool
      */
-    public static function __hook_templateSidebarLeft() {
+    public static function __hook_sample1() {
         // print a little Hello World message
-        echo 'Hello World! (sample1)';
+        echo '<p><br>Hello World! (sample1)</p>';
         return true;
     }
+	public static function  __tpl_sample1() {
+        return self::__hook_sample1(2);
+    }
+
 }
