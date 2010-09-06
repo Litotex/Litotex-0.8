@@ -24,15 +24,17 @@ class package_login extends package {
      * @return bool
      */
     public static function registerHooks(){
-      self::_registerHook(__CLASS__, 'templateSidebarLeft', 0);
-         
-		return true;
+		self::_registerHook(__CLASS__, 'showLoginBox', 1);
+ 		return true;
     }
-
+   public static function registerTplModifications(){
+    	self::_registerTplModification(__CLASS__, 'showLoginBox');
+    	return true;
+    }
     /**
      * Main action displays a table in content area
      */
-	public static function __hook_templateSidebarLeft() {
+	public static function __hook_showLoginBox() {
 	   package::addCssFile('login.css');
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
