@@ -194,7 +194,7 @@ abstract class package {
         }
         $return = self::$packages->registerTplModification($class, $function, $file, $packageName);
         if(!$return)
-            throw new Exception('Packagemanager was unable to load hook function "__tpl_' . $function . '"');
+            throw new Exception('Packagemanager was unable to load tplModification function "__tpl_' . $function . '"');
     }
     
     /**
