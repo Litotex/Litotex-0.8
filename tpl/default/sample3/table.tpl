@@ -1,4 +1,4 @@
-{include file=$HEADER}
+<h2>Content Bereich </h2>
 <table>
 <tr>
   <th width="200">Artikel Nr.</th>
@@ -21,4 +21,3 @@
   <td>4.99&euro;</td>
 </tr>
 </table>
-{include file=$FOOTER}
