@@ -53,8 +53,11 @@ class package_news extends package {
     public static function registerHooks() {
         self::_registerHook(__CLASS__, 'getNews', 2);
         self::_registerHook(__CLASS__, 'showNewsBlock', 1);
-        		self::_registerHook(__CLASS__, 'templateSidebarLeft', 0);
         return true;
+    }
+    public static function registerTplModifications(){
+    	self::_registerTplModification(__CLASS__, 'showNewsBlock');
+    	return true;
     }
     public function __action_showComments() {
         if(!isset($_GET['id']))
@@ -91,8 +94,7 @@ class package_news extends package {
         $tpl->display(self::getTplDir() . '/' . 'news' . '/' . 'newsblock.tpl');
         return true;
     }
-	public static function __hook_templateSidebarLeft(){
-		self::__hook_showNewsBlock(3);
-		return true;
-	}
+	public static function  __tpl_showNewsBlock() {
+        return self::__hook_showNewsBlock(2);
+    }
 }

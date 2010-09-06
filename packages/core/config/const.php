@@ -30,5 +30,6 @@ define('TEMPLATE_DIRECTORY', LITO_ROOT . TPL_DIR);
 define('TEMPLATE_COMPILATION', LITO_ROOT . 'tpl_c');
 define('HOOK_CACHE', LITO_ROOT . 'packages/core/cache/hook_cache.php');
 define('PACKAGE_CACHE', LITO_ROOT . 'packages/core/cache/dependency_cache.php');
+define('TPLMOD_CACHE', LITO_ROOT . 'packages/core/cache/tpl_modification_cache.php');
 define('DB_PREFX', 'lttx1_');
 define('RESSOURCE_UPDATE_INTERVAL', 1);

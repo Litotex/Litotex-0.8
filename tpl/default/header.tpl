@@ -20,9 +20,9 @@
 			Open Your Source
 		</div>
 		<div id="leftcolumn">
-			{php} package::$packages->callHook('templateSidebarLeft', array()) {/php}
+			{php} package::$packages->displayTplModification('left') {/php}
 		</div>
 		<div id="rightcolumn">
-		  {php} package::$packages->callHook('templateSidebarRight', array()) {/php}
+		  {php} package::$packages->displayTplModification('right') {/php}
 		</div>
 		<div id="content">

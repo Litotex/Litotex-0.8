@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 31. August 2010 um 20:28
+-- Erstellungszeit: 05. September 2010 um 14:47
 -- Server Version: 5.1.41
 -- PHP-Version: 5.3.2-1ubuntu4.2
 
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `lttx1_cron` (
 --
 
 INSERT INTO `lttx1_cron` (`ID`, `textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`) VALUES
-(752, 'ressource1_1_1', 'O:9:"ressource":12:{s:23:"\0ressource\0_initialized";b:1;s:16:"\0ressource\0_race";i:1;s:15:"\0ressource\0_res";a:1:{i:1;d:999950;}s:22:"\0ressource\0_resFormula";a:0:{}s:23:"\0ressource\0_saveChanges";b:1;s:15:"\0ressource\0_src";i:1;s:17:"\0ressource\0_table";s:9:"territory";s:19:"\0ressource\0_changed";a:1:{i:0;i:1;}s:26:"\0ressource\0_resNameFetched";b:0;s:17:"\0ressource\0_limit";a:1:{i:1;s:7:"1000000";}s:30:"\0ressource\0_useIncreaseFormula";b:0;s:20:"\0ressource\0_useLimit";b:1;}', 'simpleAddition', 'a:4:{i:0;i:1;i:1;d:0.138888888888888895056794581250869669020175933837890625;i:2;s:7:"$intNum";i:3;b:1;}', 1283279175, 1, 1, '', 'a:1:{i:0;s:14:"core_buildings";}');
+(752, 'ressource1_1_1', 'O:9:"ressource":12:{s:23:"\0ressource\0_initialized";b:1;s:16:"\0ressource\0_race";i:1;s:15:"\0ressource\0_res";a:1:{i:1;d:999950;}s:22:"\0ressource\0_resFormula";a:0:{}s:23:"\0ressource\0_saveChanges";b:1;s:15:"\0ressource\0_src";i:1;s:17:"\0ressource\0_table";s:9:"territory";s:19:"\0ressource\0_changed";a:1:{i:0;i:1;}s:26:"\0ressource\0_resNameFetched";b:0;s:17:"\0ressource\0_limit";a:1:{i:1;s:7:"1000000";}s:30:"\0ressource\0_useIncreaseFormula";b:0;s:20:"\0ressource\0_useLimit";b:1;}', 'simpleAddition', 'a:4:{i:0;i:1;i:1;d:0.138888888888888895056794581250869669020175933837890625;i:2;s:7:"$intNum";i:3;b:1;}', 1283690514, 1, 1, '', 'a:1:{i:0;s:14:"core_buildings";}');
 
 -- --------------------------------------------------------
 
@@ -183,40 +183,6 @@ CREATE TABLE IF NOT EXISTS `lttx1_explores` (
 -- Daten für Tabelle `lttx1_explores`
 --
 
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `lttx1_hookSort`
---
-
-CREATE TABLE IF NOT EXISTS `lttx1_hookSort` (
-  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `class` varchar(100) COLLATE utf8_bin NOT NULL,
-  `function` varchar(100) COLLATE utf8_bin NOT NULL,
-  `hookName` varchar(100) COLLATE utf8_bin NOT NULL,
-  `paramNum` int(11) NOT NULL,
-  `sort` int(11) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `paramNum` (`paramNum`),
-  KEY `class` (`class`),
-  KEY `hookName` (`hookName`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=10 ;
-
---
--- Daten für Tabelle `lttx1_hookSort`
---
-
-INSERT INTO `lttx1_hookSort` (`ID`, `class`, `function`, `hookName`, `paramNum`, `sort`) VALUES
-(1, 'package_sample1', 'templateSidebarLeft', 'templateSidebarLeft', 0, 0),
-(2, 'package_news', 'templateSidebarLeft', 'templateSidebarLeft', 0, 1),
-(3, 'package_sample2', 'templateSidebarLeft', 'templateSidebarLeft', 0, 2),
-(4, 'package_sample2', 'templateSidebarRight', 'templateSidebarRight', 0, 0),
-(5, 'package_news', 'getNews', 'getNews', 2, 0),
-(6, 'package_news', 'showNewsBlock', 'showNewsBlock', 1, 0),
-(7, 'package_timer', 'loadCore', 'loadCore', 0, 0),
-(8, 'package_core_cron', 'loadCore', 'loadCore', 0, 1),
-(9, 'package_timer', 'displayTimer', 'displayTimer', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -519,6 +485,32 @@ INSERT INTO `lttx1_territoryRessources` (`ID`, `resID`, `raceID`, `sourceID`, `r
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `lttx1_tplModificationSort`
+--
+
+CREATE TABLE IF NOT EXISTS `lttx1_tplModificationSort` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `class` varchar(100) COLLATE utf8_bin NOT NULL,
+  `function` varchar(100) COLLATE utf8_bin NOT NULL,
+  `position` varchar(100) COLLATE utf8_bin NOT NULL,
+  `active` tinyint(1) NOT NULL,
+  `sort` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `paramNum` (`active`),
+  KEY `class` (`class`),
+  KEY `hookName` (`position`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
+
+--
+-- Daten für Tabelle `lttx1_tplModificationSort`
+--
+
+INSERT INTO `lttx1_tplModificationSort` (`ID`, `class`, `function`, `position`, `active`, `sort`) VALUES
+(1, 'package_news', 'showNewsBlock', 'left', 1, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `lttx1_userGroupConnections`
 --
 
@@ -574,7 +566,7 @@ CREATE TABLE IF NOT EXISTS `lttx1_users` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `username` (`username`),
   KEY `userGroup` (`userGroup`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Daten für Tabelle `lttx1_users`
