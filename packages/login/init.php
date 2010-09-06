@@ -39,12 +39,15 @@ class package_login extends package {
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
 		self::loadLang($tpl, 'table');
-		$tpl->assign('CSS_LOGIN_FILE', self::getTplURL().'login/css/login.css');
-		$tpl->display(self::getTplDir() . '/login/login_template.tpl');
+		$tpl->assign('CSS_LOGIN_FILE', self::getTplURL('login').'css/login.css');
+		$tpl->display(self::getTplDir('login') . 'login_template.tpl');
         return true;
     } 
 	 
     public function __action_main() {
         return true;
+    }
+	public static function  __tpl_showLoginBox() {
+        return self::__hook_showLoginBox(2);
     }
 }
