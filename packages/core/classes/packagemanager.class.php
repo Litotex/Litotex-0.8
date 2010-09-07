@@ -111,6 +111,7 @@ class packages{
 			}
 		}
 		$this->_orderTplModificationCache();
+		package::$db->Execute("TRUNCATE TABLE `lttx_tplModificationSort`");
 		return $this->_writeTplModificationCache();
 	}
 	private function _writeTplModificationCache(){
@@ -341,7 +342,7 @@ class packages{
 	 * @return bool
 	 */
 	public function generateDependencyCache(){
-		package::$db->Execute("DELETE FROM TABLE `lttx_tplModificationSort` WHERE `type` = ?", array(1));
+		package::$db->Execute("TRUNCATE TABLE `lttx_permissionsAvailable`");
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);

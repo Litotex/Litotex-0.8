@@ -455,7 +455,7 @@ CREATE TABLE IF NOT EXISTS `lttx1_territoryExplores` (
 
 --
 -- Daten für Tabelle `lttx1_territoryExplores`
---
+--Suchbegriff hier eingeben...
 
 
 -- --------------------------------------------------------
@@ -575,3 +575,25 @@ CREATE TABLE IF NOT EXISTS `lttx1_users` (
 INSERT INTO `lttx1_users` (`ID`, `userGroup`, `username`, `email`, `password`, `dynamicSalt`, `race`) VALUES
 (1, 0, 'GH1234', '', '39823a1dd1a2c77432afe134a89d0876014ebab95262969fe2c6a7c7b25e49696775ffef1f7742196c91bc751904d3a560876cef354654ca4078f3d342f93205', '`caÂ§Â§$_b....a1337Â§..`Â§1337Â§`..', 1),
 (3, 0, 'test', 'lala', 'bb2105b07ccdc4784035d38af0201b826c4f3bb5', '$1337cÂ§bmwemwe//\\`Â§Â§###`b$1337aÃŸÃŸ?$..', 0);
+
+-- Updates...
+
+CREATE TABLE IF NOT EXISTS `lttx1_permissions` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `associateType` int(11) NOT NULL,
+  `associateID` int(11) NOT NULL,
+  `package` varchar(100) COLLATE utf8_bin NOT NULL,
+  `function` varchar(100) COLLATE utf8_bin NOT NULL,
+  `class` varchar(100) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+CREATE TABLE `litotex`.`lttx1_permissionsAvailable` (
+`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`package` VARCHAR( 100 ) NOT NULL ,
+`class` VARCHAR( 100 ) NOT NULL ,
+`function` VARCHAR( 100 ) NOT NULL
+) ENGINE = MYISAM ;
+
+ALTER TABLE `lttx1_permissionsAvailable` ADD `type` INT NOT NULL AFTER `ID` ;
+ALTER TABLE `lttx1_permissionsAvailable` CHANGE `type` `type` INT( 11 ) NOT NULL COMMENT '1 = action 2 = hook';
+
