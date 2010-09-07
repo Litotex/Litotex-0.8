@@ -30,15 +30,30 @@ class package_sample3 extends package {
      * @return bool
      */
     public static function registerHooks(){
+		self::_registerHook(__CLASS__, 'sample3', 0);
         return true;
     }
+   public static function registerTplModifications(){
+    	self::_registerTplModification(__CLASS__, 'sample3');
+    	return true;
+    }
 
+	
     /**
      * Main action displays a table in content area
      */
     public function __action_main() {
-        // load template
-        $this->_theme = 'table.tpl';
         return true;
     }
+    public static function __hook_sample3() {
+		$tpl = new Smarty();
+        $tpl->compile_dir = TEMPLATE_COMPILATION;
+        $tpl->display(self::getTplDir('sample3') . 'table.tpl');
+        return true;
+    }
+
+ 	public static function  __tpl_sample3() {
+        return self::__hook_sample3(2);
+    }	
+	
 }

@@ -2,8 +2,8 @@ body,html {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 13px;
     min-width: 41em; /* Mindestbreite verhindert Umbruch und Anzeigefehler in modernen Browsern */
-      padding:0px;
-  margin:0px;
+    padding:0px;
+	margin:0px;
   }
 #wrapper { 
    margin: 0 auto;
@@ -12,13 +12,13 @@ body,html {
 }
 #header {
     margin: 0 0 0.0em; padding: 0.3em;
-		background: #3A3A3C;
- 		color: #FFFEFE;
+	background: #3A3A3C;
+ 	color: #FFFEFE;
 }
 #header_second {
     margin: 0 0 0.7em; padding: 0.3em;
-		background: #F1592A;
- 		color: #FFFEFE;
+	background: #F1592A;
+ 	color: #FFFEFE;
 }
 #leftcolumn {
     font-size: 0.83em;
@@ -36,7 +36,7 @@ body,html {
 #rightcolumn{
     font-size: 0.83em;
     float: right; 
-		width: 18em;
+	width: 18em;
     margin: 0 0 1.1em; 
     padding: 0;
     background-color: #eee; 
@@ -79,3 +79,19 @@ h2 {
 	color: #564b47;
 	background-color: transparent;
 }
+.smallfont_white {
+	font-size : 10px;
+	color : #ffffff;
+}
+.smallfont_black{
+	font-size : 10px;
+	color : #000000;
+}
+     
+.textinput { 
+	font-size : 12px;
+	width: 120px;
+	border : 1px solid #999999;
+	color : #000000;
+	background : #fff url(../img/css/textbg.gif) repeat-x;
+}    
