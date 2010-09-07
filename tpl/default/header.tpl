@@ -26,4 +26,3 @@
 		  {php} package::$packages->displayTplModification('right') {/php}
 		</div>
 		<div id="content">
-		{php} package::$packages->displayTplModification('content') {/php}

@@ -1,6 +1,3 @@
 {include file=$HEADER}
-
-          <div class="inhalt_box1">
-{php} package::$packages->callHook('test', array()) {/php}
-         </div>
+{php} package::$packages->displayTplModification('content') {/php}
 {include file=$FOOTER}
