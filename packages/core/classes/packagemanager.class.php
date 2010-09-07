@@ -192,20 +192,17 @@ class packages{
 		}
 		$newOrder = array();
 		$newOrder['none'] = array();
+		foreach($cache as $key => $value){
+			if(!isset($this->_tplModificationCache[$key])){
+				continue;
+			}
+			array_push($this->_tplModificationCache[$key], $value[4]);
+			$newOrder[$value[2]][] = $this->_tplModificationCache[$key];
+			unset($this->_tplModificationCache[$key]);
+		}
 		foreach($this->_tplModificationCache as $key => $value){
-			if(!isset($cache[$key])){
-				array_push($value, false);
-				$newOrder['none'][] = $value;
-				continue;
-			}
-			if(isset($cache[$key])){
-				if(!isset($newOrder[$cache[$key][2]])){
-					$newOrder[$cache[$key][2]] = array();
-				}
-				array_push($value, (bool)$cache[$key][4]);
-				$newOrder[$cache[$key][2]][] = $value;
-				continue;
-			}
+			array_push($value, false);
+			$newOrder['none'][] = $value;
 		}
 		$this->_tplModificationCache = $newOrder;
 	}
