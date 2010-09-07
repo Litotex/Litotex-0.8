@@ -87,3 +87,11 @@ h2 {
 	font-size : 10px;
 	color : #000000;
 }
+     
+.textinput { 
+	font-size : 12px;
+	width: 120px;
+	border : 1px solid #999999;
+	color : #000000;
+	background : #fff url(../img/css/textbg.gif) repeat-x;
+}    
