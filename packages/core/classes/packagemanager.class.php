@@ -121,7 +121,6 @@ class packages{
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
 		//And to database...
-		package::$db->Execute("TRUNCATE TABLE `lttx_tplModificationSort`");
 		foreach($this->_tplModificationCache as $position => $list){
 			$n = 0;
 			foreach($list as $item){
@@ -162,6 +161,7 @@ class packages{
 	 * @return bool
 	 */
 	public function generateHookCache(){
+		package::$db->Execute("DELETe FROM `lttx_permissionsAvailable` WHERE `type` = ?", array(2));
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -235,6 +235,7 @@ class packages{
 		}
 		if(!method_exists($class, '__hook_'.$function))
 		return false;
+		package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`) VALUES (?, ?, ?, ?)", array(2, $packageName, $class, $function));
 		$this->_hookCache[$hookname.':'.$nParams][] = array($class, $function, $file, $packageName);
 		return true;
 	}
@@ -340,6 +341,7 @@ class packages{
 	 * @return bool
 	 */
 	public function generateDependencyCache(){
+		package::$db->Execute("DELETE FROM TABLE `lttx_tplModificationSort` WHERE `type` = ?", array(1));
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -354,13 +356,6 @@ class packages{
 				$newInfo = call_user_func(array($className, 'registerClass'), $className);
 				if(!$newInfo)
 				return false;
-				$prop = get_class_vars($className);
-				$dep = $prop['dependency'];
-				$loadDep = $prop['loadDependency'];
-				$path = str_replace('package_', '', $className);
-				$this->_dependencyCache[$path]['dep'] = $dep;
-				$this->_dependencyCache[$path]['loadDep'] = $loadDep;
-				$this->_dependencyCache[$path]['active'] = true;
 			}
 		}
 		$this->_checkDependency();
@@ -398,6 +393,17 @@ class packages{
 	public function registerClass($class){
 		$path = str_replace('package_', '', $class);
 		$this->_dependencyCache[$path] = array($path, $class);
+		$prop = get_class_vars($class);
+		$dep = $prop['dependency'];
+		$loadDep = $prop['loadDependency'];
+		$this->_dependencyCache[$path]['dep'] = $dep;
+		$this->_dependencyCache[$path]['loadDep'] = $loadDep;
+		$this->_dependencyCache[$path]['active'] = true;
+		$pack = $this->loadPackage($path, false, true);
+		$actions = $pack->getActions();
+		foreach($actions as $action){
+			package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`) VALUES (?, ?, ?, ?)", array(1, $path, $class, $action));
+		}
 		return true;
 	}
 	/**

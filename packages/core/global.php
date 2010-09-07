@@ -93,6 +93,8 @@ if(isset($_GET['package'])) {
 }else {
     $package = $packageManager->loadPackage('main', true);
 }
+
+
 //$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
 $packageManager->callHook('endCore', array());
 package::$tpl->assign('queryCount', package::$db->count);

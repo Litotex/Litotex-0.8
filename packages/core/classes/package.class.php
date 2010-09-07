@@ -369,4 +369,7 @@ abstract class package {
         }
         return true;
     }
+    public function getActions(){
+    	return $this->_availableActions;
+    }
 }
