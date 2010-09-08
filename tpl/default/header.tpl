@@ -14,7 +14,7 @@
 <body>
 	<div id="wrapper">
 		<div id="header">
-		<img src="{$CORE_IMG_URL}litotex_logo.png" Alt="Litotex">Litotex Core-Engine 
+		<a href="index.php"><img src="{$CORE_IMG_URL}litotex_logo.png" Border ="0" Alt="Litotex"></a>Litotex Core-Engine 
 		</div>
 		<div id="header_second">
 			Open Your Source
