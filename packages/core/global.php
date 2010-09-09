@@ -61,8 +61,10 @@ $smarty->assign('HEADER', package::getTplDir() . 'header.tpl');
 $smarty->assign('FOOTER', package::getTplDir() . 'footer.tpl');
 $smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
 package::addCssFile('main.css');
+package::addCssFile('jquery-ui-1.8.4.custom.css');
 package::addJsFile('jquery.js');
 package::addJsFile('jquery.validate.min.js');
+package::addJsFile('jquery-ui-1.8.4.custom.min.js');
 package::setTemplateClass($smarty);
 //Restore Session?
 if(isset($_SESSION['lttx']['session'])){
