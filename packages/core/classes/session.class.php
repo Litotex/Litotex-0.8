@@ -67,10 +67,7 @@ class session{
         $result = package::$db->Execute("INSERT INTO `lttx_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)", array(hash('sha512', $this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
     }
     public function destroy(){
-        if($this->user){
-            $this->user->logout();
-            unset($this->user);
-        }
+        $this->user = false;
         $this->_lastIP = '';
         $this->_sessionKey = '';
         $this->_initialized = false;

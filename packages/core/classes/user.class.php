@@ -538,7 +538,7 @@ class user {
         return userGroup::getUsersGroups($this);
     }
     public function logout(){
-    	
+    	package::$session->destroy();
     }
     public function setPassword($password){
     	$salted = $this->_saltString($password);
