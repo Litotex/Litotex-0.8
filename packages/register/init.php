@@ -38,7 +38,6 @@ class package_register extends package {
 	   
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-		self::loadLang($tpl, 'table');
 		$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     } 
@@ -51,27 +50,22 @@ class package_register extends package {
     }
     
 	public function __action_register_new() {
-		//username
-	
-       $this->_theme = 'register_new.tpl';
-	
+        $this->_theme = 'main.tpl';
         return true;
     }
 	public function __action_register_submit(){
-	
-		$useregeln=0;
+		$rules=0;
 		$username= mysql_real_escape_string(strtolower($_POST['username']));
 		$email= mysql_real_escape_string($_POST['email']);
 		$password= mysql_real_escape_string($_POST['password']);
-		if (isset($_POST['regeln'])) $useregeln = $_POST['regeln'];
-		
+		if (isset($_POST['rules'])) $useregeln = $_POST['rules'];
 		
 		if(!$username || !$email || !$password) {
 			echo("username kennwort fehler");
 			exit();
 		}
 
-		if (!$useregeln){
+		if (!$rules){
 			echo("Regeln nicht zugestimmz");
 			exit()	;
 		}
