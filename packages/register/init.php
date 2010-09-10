@@ -71,13 +71,13 @@ class package_register extends package {
 		}
 
 		if (!preg_match ("/^[0-9a-z_-]{3,15}$/i", $username)) {
-			echo("Ungültiger username");
+			echo("Ungï¿½ltiger username");
 			exit();
 		}
 
 		$pos = strpos ($email, "@");
 		if ($pos < 1 ) { // Achtung: 3 Gleichheits-Zeichen
-			echo("ungültige mail");
+			echo("ungï¿½ltige mail");
 			exit();
 		}
 		
@@ -90,15 +90,16 @@ class package_register extends package {
 		$ret=$user->register($username,$password,$email,$array_data);
 		
 		$return_msg='';
-		
-		if ($ret==-1){
+		if(is_a($ret, 'user')){
+			$return_msg=  'ret OK';
+		}else if ($ret==-1){
 			$return_msg= 'ret -1';
 		}elseif($ret==-2){
 			$return_msg= 'ret -2';
 		}elseif($ret==-3){
 			$return_msg=  'ret -3';
 		}else{
-			$return_msg=  'ret OK';
+			$return_msg=  'ret ?';
 		}
 		
 		package::$tpl->assign('REGISTER_STATUS', $return_msg);
