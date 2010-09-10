@@ -58,7 +58,7 @@ class package_register extends package {
 		$username= mysql_real_escape_string(strtolower($_POST['username']));
 		$email= mysql_real_escape_string($_POST['email']);
 		$password= mysql_real_escape_string($_POST['password']);
-		if (isset($_POST['rules'])) $useregeln = $_POST['rules'];
+		if (isset($_POST['rules'])) $rules = $_POST['rules'];
 		
 		if(!$username || !$email || !$password) {
 			echo("username kennwort fehler");
