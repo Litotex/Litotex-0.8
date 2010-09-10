@@ -17,14 +17,14 @@ class package_login extends package {
      * Avaibilbe actions in this package
      * @var array
      */
-    protected $_availableActions = array('main');
+    protected $_availableActions = array('main','loginsubmit','logout');
 
     /**
      * Register all hooks of this package
      * @return bool
      */
     public static function registerHooks(){
-		self::_registerHook(__CLASS__, 'showLoginBox', 1);
+		self::_registerHook(__CLASS__, 'showLoginBox', 0);
  		return true;
     }
    public static function registerTplModifications(){
@@ -35,12 +35,18 @@ class package_login extends package {
      * Main action displays a table in content area
      */
 	public static function __hook_showLoginBox() {
-	   package::addCssFile('login.css');
+	    package::addCssFile('login.css');
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-		self::loadLang($tpl, 'table');
 		$tpl->assign('CSS_LOGIN_FILE', self::getTplURL('login').'css/login.css');
-		$tpl->display(self::getTplDir('login') . 'login_template.tpl');
+		
+		
+		if(!package::$user){
+			$tpl->display(self::getTplDir('login') . 'login_template.tpl');
+		}else{
+			$tpl->assign('USERNAME',package::$user->getUsername() );
+			$tpl->display(self::getTplDir('login') . 'loggedin_template.tpl');
+		}
         return true;
     } 
 	 
@@ -48,6 +54,38 @@ class package_login extends package {
         return true;
     }
 	public static function  __tpl_showLoginBox() {
-        return self::__hook_showLoginBox(2);
+        return self::__hook_showLoginBox(0);
     }
+	
+	public function __action_logout() {
+			if(package::$user){
+				package::$user->logout();
+				header("Location: index.php"); 
+				exit();
+			}
+	}
+	
+    public function __action_loginsubmit() {
+		
+		$username="";
+		$password="";
+		
+		if (!isset($_POST['username']) && !isset($_POST['password'])){
+			return true;
+		}
+
+		$username= mysql_real_escape_string(strtolower($_POST['username']));
+		$password= mysql_real_escape_string($_POST['password']);
+	
+		$user = new user(0);
+		$ret=$user->login($username,$password);
+		if(package::$user){
+			header("Location: index.php");
+			exit();
+		}
+		package::$tpl->assign('LOGIN_ERROR', 'Du kommst hier net rein');
+		$this->_theme = 'login_error.tpl';
+		return true;
+    }
+	
 }
