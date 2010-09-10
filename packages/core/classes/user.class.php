@@ -154,7 +154,7 @@ class user {
     static public function login($username, $password) {
         $user = self::getUserByName($username);
         if(!$user)
-            return true;
+            return false;
         if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
             $user->setUsersInstance();
             package::$session->setUserObject($user);
