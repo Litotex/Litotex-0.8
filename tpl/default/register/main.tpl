@@ -1,15 +1,6 @@
 {include file=$HEADER}
 <h2>Registrierung</h2>
 {literal} 
-<style type="text/css">
-label { display: inline-block; width: 100px; }
-legend { padding: 0.5em; }
-fieldset fieldset label { display: block; }
-#registerForm { width: 100%; }
-#registerForm label { width: 250px; }
-#registerForm label.error, #registerForm button.submit { margin-left: 253px; }
-
-</style>
 
 
 <script>
