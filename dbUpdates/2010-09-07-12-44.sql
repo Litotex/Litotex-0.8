@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `lttx1_permissions` (
   `class` varchar(100) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-CREATE TABLE `litotex`.`lttx1_permissionsAvailable` (
+CREATE TABLE `lttx1_permissionsAvailable` (
 `ID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `package` VARCHAR( 100 ) NOT NULL ,
 `class` VARCHAR( 100 ) NOT NULL ,
