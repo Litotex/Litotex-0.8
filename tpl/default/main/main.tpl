@@ -1,3 +1,3 @@
 {include file=$HEADER}
-{php} package::$packages->displayTplModification('content') {/php}
+{displayTplModification position=content}
 {include file=$FOOTER}

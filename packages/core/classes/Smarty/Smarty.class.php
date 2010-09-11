@@ -561,7 +561,13 @@ class Smarty
      * @var string
      */
     var $_cache_including = false;
-
+	/**
+	 * Litotex special modifier to offer the possibility to prebuffer output in order to show valid HTML
+	 * 
+	 * @var string
+	 */
+    var $_additionalHeader = '';
+    
     /**#@-*/
     /**
      * The class constructor.
@@ -1479,6 +1485,7 @@ class Smarty
         $smarty_compiler->compile_id        = $this->_compile_id;
         $smarty_compiler->_config            = $this->_config;
         $smarty_compiler->request_use_auto_globals  = $this->request_use_auto_globals;
+        $smarty_compiler->smarty = $this;
 
         if (isset($cache_include_path) && isset($this->_cache_serials[$cache_include_path])) {
             $smarty_compiler->_cache_serial = $this->_cache_serials[$cache_include_path];
@@ -1953,7 +1960,24 @@ class Smarty
 	}
   
     /**#@-*/
-
+	/**
+	 * Litotex special modifier to offer the possibility to prebuffer output in order to show valid HTML
+	 * This will return all modifications done
+	 * @return string
+	 */
+	public function getAdditionalSmartyHeaders(){		
+		return $this->_additionalHeader;
+	}
+	/**
+	 * Litotex special modifier to offer the possibility to prebuffer output in order to show valid HTML
+	 * This will add new modifications
+	 * @param string $code code to add to Smarty header
+	 * @return void
+	 */
+	public function addAditionalSmartyHeader($code){
+		$this->_additionalHeader .= $code;
+	}
+	
 }
 
 /* vim: set expandtab: */

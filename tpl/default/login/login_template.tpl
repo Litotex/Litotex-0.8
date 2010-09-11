@@ -1,7 +1,3 @@
-<link rel="stylesheet" type="text/css" href="{$CSS_LOGIN_FILE}">
-
-
-
 
 <div class="rbroundbox">
 	<div class="rbtop"><div></div></div>

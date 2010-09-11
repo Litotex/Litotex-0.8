@@ -35,11 +35,9 @@ class package_login extends package {
      * Main action displays a table in content area
      */
 	public static function __hook_showLoginBox() {
-	    package::addCssFile('login.css');
+		package::addCssFile('login.css', 'login');
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-		$tpl->assign('CSS_LOGIN_FILE', self::getTplURL('login').'css/login.css');
-		
 		
 		if(!package::$user){
 			$tpl->display(self::getTplDir('login') . 'login_template.tpl');

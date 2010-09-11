@@ -421,7 +421,8 @@ class Smarty_Compiler extends Smarty {
             $template_header .= "<?php require_once(SMARTY_CORE_DIR . 'core.assign_smarty_interface.php');\nsmarty_core_assign_smarty_interface(null, \$this); ?>\n";
             $this->_init_smarty_vars = false;
         }
-
+		
+        $template_header .= $this->smarty->getAdditionalSmartyHeaders();
         $compiled_content = $template_header . $compiled_content;
         return true;
     }
