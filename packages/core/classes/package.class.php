@@ -350,11 +350,15 @@ abstract class package {
     	return 'de';
     }
 	public static function loadLang($tpl, $package = false){
-    	if(file_exists(self::getLangPath(true) . self::getLanguage() . '.lang.php')){
-        	$tpl->config_load(self::getLangPath(true) . self::getLanguage() . '.lang.php');
+    	if(file_exists(self::getLangPath() . self::getLanguage() . '.lang.php')){
+        	$tpl->config_load(self::getLangPath() . self::getLanguage() . '.lang.php');
+        } else if(file_exists(self::getLangPath() . 'en' . '.lang.php')){
+        	$tpl->config_load(self::getLangPath() . 'en' . '.lang.php');
         }
         if($package && file_exists(self::getLangPath($package) .  self::getLanguage() . '.lang.php')){
         	$tpl->config_load(self::getLangPath($package) . self::getLanguage() . '.lang.php');
+        }else if(file_exists(self::getLangPath($package) . 'en' . '.lang.php')){
+        	$tpl->config_load(self::getLangPath($package) . 'en' . '.lang.php');
         }
         return true;
     }

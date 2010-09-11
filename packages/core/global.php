@@ -24,6 +24,7 @@ ini_set('display_errors', true);
 require_once('config/const.php');
 require_once('classes/math.class.php');
 require_once('classes/package.class.php');
+require_once('classes/lttxError.class.php');
 require_once('classes/packagemanager.class.php');
 require_once('classes/AdoDB/adodb.inc.php');
 require_once('classes/plugin.class.php');
@@ -32,6 +33,9 @@ require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
 require_once 'classes/option.class.php';
+
+try{
+
 //Next... Database connection!
 $noDBConfig = false;
 if(!file_exists(DATABASE_CONFIG_FILE)) {
@@ -100,3 +104,34 @@ if(isset($_GET['package'])) {
 //$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
 $packageManager->callHook('endCore', array());
 package::$tpl->assign('queryCount', package::$db->count);
+
+}catch (lttxError $e){
+	if(is_a($package, 'package'))
+		$package->setTemplatePolicy(false);
+	$tpl = new Smarty();
+	$tpl->compile_dir = TEMPLATE_COMPILATION;
+	$tpl->debugging = false;
+	$tpl->assign('HEADER', package::getTplDir() . 'header.tpl');
+	$tpl->assign('FOOTER', package::getTplDir() . 'footer.tpl');
+	$tpl->assign('TITLE', 'Litotex 0.8 Core Engine');
+	$tpl->assign('errorMessage', $e->getMessage());
+	$tpl->assign('CSS_FILES', package::getCssUrl() . 'main.css');
+	$package->setTemplateSettings($tpl);
+	package::loadLang($tpl);
+	$tpl->display(package::getTplDir('main') . 'gameError.tpl');
+	exit();
+}catch (Exception $e){
+	if(is_a($package, 'package'))
+		$package->setTemplatePolicy(false);
+	$tpl = new Smarty();
+	$tpl->compile_dir = TEMPLATE_COMPILATION;
+	$tpl->debugging = false;
+	$tpl->assign('HEADER', package::getTplDir() . 'header.tpl');
+	$tpl->assign('FOOTER', package::getTplDir() . 'footer.tpl');
+	$tpl->assign('TITLE', 'Litotex 0.8 Core Engine');
+	$tpl->assign('errorMessage', $e->getMessage());
+	$tpl->assign('CSS_FILES', package::getCssUrl() . 'main.css');
+	$package->setTemplateSettings($tpl);
+	package::loadLang($tpl);
+	$tpl->display(package::getTplDir('main') . 'fatalError.tpl');
+}
