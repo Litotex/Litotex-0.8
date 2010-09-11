@@ -26,4 +26,16 @@ class Date{
     public function formatDate($format = 'd.m.Y H:i'){
         return date($format, $this->_timestamp);
     }
+    public function getDbDate(){
+    	return str_replace("'", '', package::$db->DBDate($this->_timestamp));
+    }
+    public function getDbTime(){
+    	return str_replace("'", '', package::$db->DBTimeStamp($this->_timestamp));
+    }
+    public static function fromDbDate($date){
+    	return Date(package::$db->UnixDate($date));
+    }
+    public static function fromDbTime($time){
+    	return Date(package::$db->UnixTimeStamp($time));
+    }
 }

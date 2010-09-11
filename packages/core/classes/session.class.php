@@ -16,6 +16,10 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 class session{
+	/**
+	 * User object
+	 * @var user
+	 */
     public $user = false;
     private $_sessionKey = false;
     private $_initialized = false;
@@ -94,6 +98,12 @@ class session{
         $this->_lastIP = self::getIPAdress();
         $this->addHistory(3);
         return true;
+    }
+    public function __wakeup(){
+    	if(!$this->sessionActive())
+    		return;
+    	$currentDate = new Date();
+    	$this->user->setData('lastActive', $currentDate->getDbTime());
     }
 }
 ?>

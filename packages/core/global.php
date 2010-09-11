@@ -100,14 +100,15 @@ if(isset($_GET['package'])) {
     $package = $packageManager->loadPackage('main', true);
 }
 
-
 //$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
 $packageManager->callHook('endCore', array());
 package::$tpl->assign('queryCount', package::$db->count);
 
-}catch (lttxError $e){
+}catch (Exception $e){
 	if(is_a($package, 'package'))
 		$package->setTemplatePolicy(false);
+	if(is_a($e, 'lttxFatalError'))
+		$e->setTraced(false);
 	$tpl = new Smarty();
 	$tpl->compile_dir = TEMPLATE_COMPILATION;
 	$tpl->debugging = false;
@@ -120,18 +121,4 @@ package::$tpl->assign('queryCount', package::$db->count);
 	package::loadLang($tpl);
 	$tpl->display(package::getTplDir('main') . 'gameError.tpl');
 	exit();
-}catch (Exception $e){
-	if(is_a($package, 'package'))
-		$package->setTemplatePolicy(false);
-	$tpl = new Smarty();
-	$tpl->compile_dir = TEMPLATE_COMPILATION;
-	$tpl->debugging = false;
-	$tpl->assign('HEADER', package::getTplDir() . 'header.tpl');
-	$tpl->assign('FOOTER', package::getTplDir() . 'footer.tpl');
-	$tpl->assign('TITLE', 'Litotex 0.8 Core Engine');
-	$tpl->assign('errorMessage', $e->getMessage());
-	$tpl->assign('CSS_FILES', package::getCssUrl() . 'main.css');
-	$package->setTemplateSettings($tpl);
-	package::loadLang($tpl);
-	$tpl->display(package::getTplDir('main') . 'fatalError.tpl');
 }

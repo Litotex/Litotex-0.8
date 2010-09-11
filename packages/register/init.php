@@ -87,6 +87,8 @@ class package_register extends package {
 		
 		$array_data['race']='0';
 		$array_data['userGroup']='0';
+		$date = new Date();
+		$array_data['registerDate'] = $date->getDbTime();
 		$ret=$user->register($username,$password,$email,$array_data);
 		
 		$return_msg='';
