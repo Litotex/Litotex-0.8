@@ -11,3 +11,19 @@ Für weitere Fragen steht unser Forum unter http://www.litotex.de bereit
 Das Litotex Team 
 
 
+Installation:
+Hochladen der Dateien
+folgende Ordner benötigen Schreibrechte:
+packages\core\cache
+tpl_c
+
+Neue Datenbank anlegen aus dbUpdates
+litotex.sql in die Datenbank importieren
+
+unter packages\core\config
+in der Datei const.php
+den LITO_ROOT und LITO_URL ändern
+in der Datei database.conf.php
+SQl Einstellungen ändern.
+
+insert_sample aus dem Ordner dbUpdates importieren
