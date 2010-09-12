@@ -61,23 +61,24 @@ class package_register extends package {
 		if (isset($_POST['rules'])) $rules = $_POST['rules'];
 		
 		if(!$username || !$email || !$password) {
-			echo("username kennwort fehler");
+			
+			throw new lttxError('LN_REGISTER_ERROR_1'); 
 			exit();
 		}
 
 		if (!$rules){
-			echo("Regeln nicht zugestimmz");
+			throw new lttxError('LN_REGISTER_ERROR_2');
 			exit()	;
 		}
 
 		if (!preg_match ("/^[0-9a-z_-]{3,15}$/i", $username)) {
-			echo("Ung�ltiger username");
+			throw new lttxError('LN_REGISTER_ERROR_4');
 			exit();
 		}
 
 		$pos = strpos ($email, "@");
 		if ($pos < 1 ) { // Achtung: 3 Gleichheits-Zeichen
-			echo("ung�ltige mail");
+			throw new lttxError('LN_REGISTER_ERROR_3');
 			exit();
 		}
 		
@@ -95,16 +96,15 @@ class package_register extends package {
 		if(is_a($ret, 'user')){
 			$return_msg=  'ret OK';
 		}else if ($ret==-1){
-			$return_msg= 'ret -1';
+			throw new lttxError('LN_REGISTER_ERROR_5');
 		}elseif($ret==-2){
-			$return_msg= 'ret -2';
+			throw new lttxError('LN_REGISTER_ERROR_6');
 		}elseif($ret==-3){
-			$return_msg=  'ret -3';
+			throw new lttxError('LN_REGISTER_ERROR_7');
 		}else{
 			$return_msg=  'ret ?';
 		}
 		
-		package::$tpl->assign('REGISTER_STATUS', $return_msg);
 		$this->_theme = 'register_ok.tpl';
 		        return true;
 		
