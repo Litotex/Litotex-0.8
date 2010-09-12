@@ -1,7 +1,3 @@
 {include file=$HEADER}
-
-Registrierung erfolgreich
-<p> Status :{$REGISTER_STATUS} </p>
-
-
+<p> {$LN_REGISTER_OK}</p>
 {include file=$FOOTER}

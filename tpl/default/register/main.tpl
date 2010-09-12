@@ -51,7 +51,7 @@ $.validator.setDefaults({
 			confirm_password: {
 				required: "Bitte trage erneut dein Kennwort ein",
 				minlength: "Das Kennwort muss 5 Zeichen haben",
-				equalTo: "Die Kennwörter sind unterschiedlich"
+				equalTo: "Die Kennw&ouml;rter sind unterschiedlich"
 			},
 			email: "Bitte trage eine richtige Mailadresse ein",
 			rules: "AGBs nicht zugestimmt"
@@ -66,24 +66,24 @@ $.validator.setDefaults({
 <br>
 <form class="cmxform" id="registerForm" method="post" action="index.php?package=register&amp;action=register_submit">
 	<fieldset class="ui-widget ui-widget-content ui-corner-all">
-		<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_NOTE_REGISTER_2#}</legend>
+		<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_REGISTER_NOTE_REGISTER_1#}</legend>
 		<p>
-			<label for="username">{#LN_NAME_USERNAME#}</label>
+			<label for="username">{#LN_REGSITER_NAME_USERNAME#}</label>
 			<input id="username" name="username" class="required ui-widget-content" minlength="2" >
 		<p>
 		<p>
-			<label for="password">{#LN_NAME_PASSWORD#}</label>
+			<label for="password">{#LN_REGISTER_PASSWORD#}</label>
 			<input id="password" name="password" class="required ui-widget-content" minlength="2" >
 		<p>
 		<p>
-			<label for="confirm_password">{#LN_NAME_PASSWORD2#}</label>
+			<label for="confirm_password">{#LN_REGISTER_PASSWORD_2#}</label>
 			<input id="confirm_password" name="confirm_password" class="required ui-widget-content" minlength="2" >
 		<p>
-			<label for="email">{#LN_NAME_EMAIL#}</label>
+			<label for="email">{#LN_REGSITER_NAME_EMAIL#}</label>
 			<input id="email" name="email" class="required email ui-widget-content" />
 		</p>
 		<p>
-			<label for="rules">{#LN_NOTE_REGISTER_3#}</label>
+			<label for="rules">{#LN_REGISTER_NOTE_REGISTER_2#}</label>
 			<input id="rules" name="rules" type="checkbox" class="required ui-widget-content" />
 		</p>
 		<p>

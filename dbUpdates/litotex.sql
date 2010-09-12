@@ -1,4 +1,4 @@
--- phpMyAdmin SQL Dump
+﻿-- phpMyAdmin SQL Dump
 -- version 3.3.2deb1
 -- http://www.phpmyadmin.net
 --
@@ -453,17 +453,6 @@ CREATE TABLE IF NOT EXISTS `lttx1_territoryExplores` (
   KEY `buildingID` (`buildingID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `lttx1_territoryExplores`
---Suchbegriff hier eingeben...
-
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `lttx1_territoryRessources`
---
-
 CREATE TABLE IF NOT EXISTS `lttx1_territoryRessources` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `resID` int(11) NOT NULL,
@@ -599,9 +588,10 @@ ALTER TABLE `lttx1_permissionsAvailable` CHANGE `type` `type` INT( 11 ) NOT NULL
 ALTER TABLE `lttx1_users` ADD `lastActive` DATE NOT NULL ;
 ALTER TABLE `lttx1_users` ADD `registerDate` DATE NOT NULL ;
 
-CREATE TABLE `litotex`.`lttx1_errorLog` (
+CREATE TABLE `lttx1_errorLog` (
 `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
 `package` VARCHAR( 100 ) NOT NULL ,
 `traced` BOOLEAN NOT NULL ,
-`backtrace` TEXT NOT NULL
-) ENGINE = MYISAM ;
+`backtrace` TEXT NOT NULL,
+PRIMARY KEY (`ID`)
+) ENGINE = MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
