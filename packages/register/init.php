@@ -35,7 +35,6 @@ class package_register extends package {
      * Main action displays a table in content area
      */
 	public static function __hook_showRegisterLink() {
-	   
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
 		$tpl->display(self::getTplDir('register') . 'register.tpl');
@@ -50,7 +49,8 @@ class package_register extends package {
     }
     
 	public function __action_register_new() {
-        $this->_theme = 'main.tpl';
+        package::addCssFile('register.css', 'register');
+		$this->_theme = 'main.tpl';
         return true;
     }
 	public function __action_register_submit(){

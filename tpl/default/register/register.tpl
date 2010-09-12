@@ -1,1 +1,1 @@
-<p> <a href="index.php?package=register&action=register_new">Registrieren</a></p>
+<p> <a href="index.php?package=register&amp;action=register_new">Registrieren</a></p>

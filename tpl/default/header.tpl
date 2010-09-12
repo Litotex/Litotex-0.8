@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>{$TITLE}</title>
 {foreach from=$CSS_FILES item=CSS_FILE}
 <link rel="stylesheet" type="text/css" href="{$CSS_FILE}">
