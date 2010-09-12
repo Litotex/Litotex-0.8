@@ -106,6 +106,8 @@ abstract class package {
     public final function __construct($init = true) {
     	if(!$init)return;
     	$this->_tplDir = self::getTplDir();
+    	self::loadLang(self::$tpl, $this->_packageName);
+        $this->setTemplateSettings(self::$tpl, $this->_packageName);
         if(!isset($_GET['action']))
             $action = 'main';
         else
@@ -114,8 +116,6 @@ abstract class package {
         if(!is_bool($this->_returnValue)) {
             $this->_returnValue = (bool)$this->_returnValue;
         }
-        self::loadLang(self::$tpl, $this->_packageName);
-        $this->setTemplateSettings(self::$tpl, $this->_packageName);
         return;
     }
     public final function success(){
