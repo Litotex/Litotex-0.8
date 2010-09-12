@@ -81,8 +81,9 @@ class package_login extends package {
 			header("Location: index.php");
 			exit();
 		}
-		package::$tpl->assign('LOGIN_ERROR', 'Du kommst hier net rein');
-		$this->_theme = 'login_error.tpl';
+		throw new lttxError('LN_LOGIN_NO_USERNAME'); 
+		//package::$tpl->assign('LOGIN_ERROR', 'Du kommst hier net rein');
+		//$this->_theme = 'login_error.tpl';
 		return true;
     }
 	
