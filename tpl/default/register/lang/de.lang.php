@@ -1,4 +1,5 @@
 ;<?php exit(); ?>
+LN_REGISTER_LINK_NAME=Registrieren
 LN_REGSITER_NAME_USERNAME=Username
 LN_REGISTER_NOTE_REGISTER_1=Hiermit legst du einen neuen Account an.
 LN_REGSITER_NAME_EMAIL= Mailadresse

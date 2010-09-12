@@ -1,7 +1,9 @@
 <?php
 /**
- * This is a sample package which displays a little message in
- * the left and the right sidebar
+ * It's a simple login module with
+ * username
+ * Mailadress
+ * second Mailadress
  *
  * @author: Litotex Team
  * @copyright: 2010
@@ -31,12 +33,10 @@ class package_register extends package {
     	self::_registerTplModification(__CLASS__, 'showRegisterLink');
     	return true;
     }
-    /**
-     * Main action displays a table in content area
-     */
 	public static function __hook_showRegisterLink() {
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
+		self::loadLang($tpl, 'register');
 		$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     } 
@@ -77,7 +77,7 @@ class package_register extends package {
 		}
 
 		$pos = strpos ($email, "@");
-		if ($pos < 1 ) { // Achtung: 3 Gleichheits-Zeichen
+		if ($pos < 1 ) { 
 			throw new lttxError('LN_REGISTER_ERROR_3');
 			exit();
 		}
@@ -111,5 +111,4 @@ class package_register extends package {
 		}
 			
 	}	
-	
 }

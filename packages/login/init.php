@@ -1,7 +1,6 @@
 <?php
 /**
- * This is a sample package which displays a little message in
- * the left and the right sidebar
+ * It's a simple login module
  *
  * @author: Litotex Team
  * @copyright: 2010
@@ -17,7 +16,7 @@ class package_login extends package {
      * Avaibilbe actions in this package
      * @var array
      */
-    protected $_availableActions = array('main','loginsubmit','logout');
+    protected $_availableActions = array('main','loginsubmit','logout','forget');
 
     /**
      * Register all hooks of this package
@@ -27,18 +26,18 @@ class package_login extends package {
 		self::_registerHook(__CLASS__, 'showLoginBox', 0);
  		return true;
     }
-   public static function registerTplModifications(){
+    public static function registerTplModifications(){
     	self::_registerTplModification(__CLASS__, 'showLoginBox');
     	return true;
     }
     /**
-     * Main action displays a table in content area
-     */
+     *Hook function for LoginBox
+    */
 	public static function __hook_showLoginBox() {
 		package::addCssFile('login.css', 'login');
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-		
+		self::loadLang($tpl, 'login');
 		if(!package::$user){
 			$tpl->display(self::getTplDir('login') . 'login_template.tpl');
 		}else{
@@ -47,14 +46,18 @@ class package_login extends package {
 		}
         return true;
     } 
-	 
+    /**
+     *Main function for LoginBox
+    */
     public function __action_main() {
         return true;
     }
 	public static function  __tpl_showLoginBox() {
         return self::__hook_showLoginBox(0);
     }
-	
+    /**
+     *Logout an destrooy Session
+    */
 	public function __action_logout() {
 			if(package::$user){
 				package::$user->logout();
@@ -62,6 +65,10 @@ class package_login extends package {
 				exit();
 			}
 	}
+	public function __action_forget() {
+		throw new lttxFatalError('LN_LOGIN_FORGET'); 
+	}
+
 	
     public function __action_loginsubmit() {
 		
@@ -82,8 +89,6 @@ class package_login extends package {
 			exit();
 		}
 		throw new lttxError('LN_LOGIN_NO_USERNAME'); 
-		//package::$tpl->assign('LOGIN_ERROR', 'Du kommst hier net rein');
-		//$this->_theme = 'login_error.tpl';
 		return true;
     }
 	
