@@ -296,11 +296,11 @@ class packages{
 				if(!$cache)
 				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $packageName . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 			}
-			if($initialize){
-				$pack = new $this->_dependencyCache[$packageName][1];
-				$pack->setTemplatePolicy($tplEnable);
-				return $pack;
-			}
+
+			$pack = new $this->_dependencyCache[$packageName][1]($initialize);
+			$pack->setTemplatePolicy($tplEnable);
+			return $pack;
+			
 			return true;
 		} else {
 			return false;
@@ -397,7 +397,7 @@ class packages{
 		$this->_dependencyCache[$path]['dep'] = $dep;
 		$this->_dependencyCache[$path]['loadDep'] = $loadDep;
 		$this->_dependencyCache[$path]['active'] = true;
-		$pack = $this->loadPackage($path, false, true);
+		$pack = $this->loadPackage($path, false, false);
 		$actions = $pack->getActions();
 		foreach($actions as $action){
 			package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`) VALUES (?, ?, ?, ?)", array(1, $path, $class, $action));

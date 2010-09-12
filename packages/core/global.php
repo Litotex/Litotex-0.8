@@ -117,8 +117,8 @@ package::$tpl->assign('queryCount', package::$db->count);
 	$tpl->assign('TITLE', 'Litotex 0.8 Core Engine');
 	$tpl->assign('errorMessage', $e->getMessage());
 	$tpl->assign('CSS_FILES', package::getCssUrl() . 'main.css');
-	if(isset($package) && is_a($package, 'package'))
-		$package->setTemplateSettings($tpl);
+	package::setTemplateClass($tpl);
+	package::setTemplateSettings($tpl);
 	package::loadLang($tpl);
 	$tpl->display(package::getTplDir('main') . 'gameError.tpl');
 	exit();

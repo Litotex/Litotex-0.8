@@ -103,7 +103,8 @@ abstract class package {
     
     protected static $_dep = array();
     
-    public final function __construct() {
+    public final function __construct($init = true) {
+    	if(!$init)return;
     	$this->_tplDir = self::getTplDir();
         if(!isset($_GET['action']))
             $action = 'main';
