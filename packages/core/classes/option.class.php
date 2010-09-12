@@ -103,5 +103,11 @@ class option{
                 return false;
         return true;
     }
+    public function addIfNExists($key, $value, $default){
+    	if($this->get($key))
+    	return $this->set($key, $value);
+    	else
+    	return $this->add($key, $value, $default);
+    }
 }
 ?>
