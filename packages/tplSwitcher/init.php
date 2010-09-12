@@ -65,6 +65,7 @@ class package_tplSwitcher extends package {
 		}
 		$option = new option('tplSwitcher');
 		$option->addIfNExists('tpl', $file, 'default');
-		return $this->__action_main();
+		header('Location:index.php?package=tplSwitcher');
+		exit();
     }
 }
