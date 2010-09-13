@@ -46,10 +46,8 @@ class package_sample3 extends package {
         return true;
     }
     public static function __hook_sample3() {
-		$tpl = new Smarty();
-        $tpl->compile_dir = TEMPLATE_COMPILATION;
-        $tpl->display(self::getTplDir('sample3') . 'table.tpl');
-        return true;
+		package::$tpl->display(self::getTplDir('sample3') . 'table.tpl');
+		return true;
     }
 
  	public static function  __tpl_sample3() {
