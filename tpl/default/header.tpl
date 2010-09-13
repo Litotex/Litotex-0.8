@@ -20,9 +20,9 @@
 			Open Your Source
 		</div>
 		<div id="leftcolumn">
-			{displayTplModification position=left}
+			{php} package::$packages->displayTplModification('left') {/php}
 		</div>
 		<div id="rightcolumn">
-		  {displayTplModification position=right}
+		 {php} package::$packages->displayTplModification('right') {/php}
 		</div>
 		<div id="content">
