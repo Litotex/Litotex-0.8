@@ -34,14 +34,12 @@ class package_register extends package {
     	return true;
     }
 	public static function __hook_showRegisterLink() {
-        $tpl = new Smarty();
-        $tpl->compile_dir = TEMPLATE_COMPILATION;
-		$tpl->display(self::getTplDir('register') . 'register.tpl');
+		package::$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     } 
 	 
     public function __action_main() {
-        return true;
+		return true;
     }
 	public static function  __tpl_showRegisterLink() {
         return self::__hook_showRegisterLink(0);
@@ -49,7 +47,7 @@ class package_register extends package {
     
 	public function __action_register_new() {
         package::addCssFile('register.css', 'register');
-		$this->_theme = 'main.tpl';
+		package::$tpl->display(self::getTplDir('register') . 'main.tpl');
         return true;
     }
 	public function __action_register_submit(){
