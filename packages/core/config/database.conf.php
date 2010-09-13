@@ -16,5 +16,5 @@
 
 host = "localhost"
 user = "root"
-password = "laptop"
+password = "root"
 database = "litotex"
