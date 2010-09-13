@@ -23,7 +23,6 @@ class package_login extends package {
      * @return bool
      */
     public static function registerHooks(){
-		package::addCssFile('login.css', 'login');
 		self::_registerHook(__CLASS__, 'showLoginBox', 0);
  		return true;
     }
@@ -37,7 +36,7 @@ class package_login extends package {
      *Hook function for LoginBox
     */
 	public static function __hook_showLoginBox() {
-		//package::addCssFile('login.css', 'login');
+		package::addCssFile('login.css', 'login');
 		
         
 		$tpl = new Smarty();
