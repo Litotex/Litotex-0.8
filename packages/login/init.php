@@ -23,6 +23,7 @@ class package_login extends package {
      * @return bool
      */
     public static function registerHooks(){
+		package::addCssFile('login.css', 'login');
 		self::_registerHook(__CLASS__, 'showLoginBox', 0);
  		return true;
     }
@@ -30,12 +31,16 @@ class package_login extends package {
     	self::_registerTplModification(__CLASS__, 'showLoginBox');
     	return true;
     }
+	
+	
     /**
      *Hook function for LoginBox
     */
 	public static function __hook_showLoginBox() {
-		package::addCssFile('login.css', 'login');
-        $tpl = new Smarty();
+		//package::addCssFile('login.css', 'login');
+		
+        
+		$tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
 		self::loadLang($tpl, 'login');
 		if(!package::$user){
@@ -44,6 +49,7 @@ class package_login extends package {
 			$tpl->assign('USERNAME',package::$user->getUsername() );
 			$tpl->display(self::getTplDir('login') . 'loggedin_template.tpl');
 		}
+		
         return true;
     } 
     /**
