@@ -91,7 +91,7 @@ class package_news extends package {
         self::setTemplateClass($tpl, 'news');
         self::loadLang($tpl, 'news');
         $tpl->assign('news', $news);
-        $tpl->display(self::getTplDir() . '/' . 'news' . '/' . 'newsblock.tpl');
+        $tpl->display(self::getTplDir('news') . 'newsblock.tpl');
         return true;
     }
 	public static function  __tpl_showNewsBlock() {

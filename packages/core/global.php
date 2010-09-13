@@ -36,84 +36,102 @@ require_once 'classes/option.class.php';
 
 try{
 
-//Next... Database connection!
-$noDBConfig = false;
-if(!file_exists(DATABASE_CONFIG_FILE)) {
-    $noDBConfig = true;
-} else if(!($dbConfig = parse_ini_file(DATABASE_CONFIG_FILE))) {
-    $noDBConfig = true;
-} else if(!isset($dbConfig['host']) || !isset($dbConfig['user']) || !isset($dbConfig['password']) || !isset($dbConfig['database'])) {
-    $noDBConfig = true;
-}
-if($noDBConfig) {
-    throw new Exception('No databasesettings saved at ' . DATABASE_CONFIG_FILE);
-    exit();
-}
-$db = NewADOConnection('mysql');
-$db->charSet = 'utf8';
-$db->connect($dbConfig['host'], $dbConfig['user'], $dbConfig['password'], $dbConfig['database']);
-//mysql_set_charset('utf8');
-if($db->ErrorMsg()) {
-    die('Database connection failed!');
-}
-package::setDatabaseClass($db);
-//Smarty settings... next
-$smarty = new Smarty();
-$smarty->compile_dir = TEMPLATE_COMPILATION;
-$smarty->debugging = false;
-$smarty->assign('HEADER', package::getTplDir() . 'header.tpl');
-$smarty->assign('FOOTER', package::getTplDir() . 'footer.tpl');
-$smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
-package::addCssFile('main.css');
-package::addCssFile('jquery-ui-1.8.4.custom.css');
-package::addJsFile('jquery.js');
-package::addJsFile('jquery.validate.min.js');
-package::addJsFile('jquery-ui-1.8.4.custom.min.js');
-package::setTemplateClass($smarty);
-//Restore Session?
-if(isset($_SESSION['lttx']['session'])){
-    $session = unserialize($_SESSION['lttx']['session']);
-    if(!$session->sessionActive())
-            $session->destroy();
-    else
-        $session->refresh();
-}else
-    $session = new session();
-package::setSessionClass($session);
-//Package next
-$packageManager = new packages();
-package::setPackageManagerClass($packageManager);
+	//Next... Database connection!
+	$noDBConfig = false;
+	if(!file_exists(DATABASE_CONFIG_FILE)) {
+		$noDBConfig = true;
+	} else if(!($dbConfig = parse_ini_file(DATABASE_CONFIG_FILE))) {
+		$noDBConfig = true;
+	} else if(!isset($dbConfig['host']) || !isset($dbConfig['user']) || !isset($dbConfig['password']) || !isset($dbConfig['database'])) {
+		$noDBConfig = true;
+	}
+	if($noDBConfig) {
+		throw new Exception('No databasesettings saved at ' . DATABASE_CONFIG_FILE);
+		exit();
+	}
+	$db = NewADOConnection('mysql');
+	$db->charSet = 'utf8';
+	$db->connect($dbConfig['host'], $dbConfig['user'], $dbConfig['password'], $dbConfig['database']);
+	//mysql_set_charset('utf8');
+	if($db->ErrorMsg()) {
+		die('Database connection failed!');
+	}
+	package::setDatabaseClass($db);
 
-$packageManager->callHook('loadCore', array());
+	$packageManager = new packages();
+	package::setPackageManagerClass($packageManager);
 
-if(!package::$user)
-    $perm = new perm(new user(0));
-else
-$perm = new perm(package::$user);
-package::setPermClass($perm);
-if(isset($_GET['package'])) {
-    $package = $_GET['package'];
-    $package = $packageManager->loadPackage($package, true);
-    if(!$package)
-        $packageManager->loadPackage('404', true);
-}else {
-    $package = $packageManager->loadPackage('main', true);
-}
+	//Smarty settings... next
+	$smarty = new Smarty();
+	$smarty->compile_dir = TEMPLATE_COMPILATION;
+	$smarty->debugging = false;
+	if(file_exists(package::getTplDir() . 'header.tpl')){
+		$smarty->assign('HEADER', package::getTplDir() . 'header.tpl');
+	}else{
+		$smarty->assign('HEADER', package::getTplDir(false, 'default') . 'header.tpl');
+	}
+	if(file_exists(package::getTplDir() . 'footer.tpl')){
+		$smarty->assign('FOOTER', package::getTplDir() . 'footer.tpl');
+	}else{
+		$smarty->assign('FOOTER', package::getTplDir(false, 'default') . 'footer.tpl');
+	}
+	$smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
+	package::addCssFile('main.css');
+	package::addCssFile('jquery-ui-1.8.4.custom.css');
+	package::addJsFile('jquery.js');
+	package::addJsFile('jquery.validate.min.js');
+	package::addJsFile('jquery-ui-1.8.4.custom.min.js');
+	package::setTemplateClass($smarty);
+	//Restore Session?
+	if(isset($_SESSION['lttx']['session'])){
+		$session = unserialize($_SESSION['lttx']['session']);
+		if(!$session->sessionActive())
+		$session->destroy();
+		else
+		$session->refresh();
+	}else
+	$session = new session();
+	package::setSessionClass($session);
+	//Package next
 
-//$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
-$packageManager->callHook('endCore', array());
-package::$tpl->assign('queryCount', package::$db->count);
+	$packageManager->callHook('loadCore', array());
+
+	if(!package::$user)
+	$perm = new perm(new user(0));
+	else
+	$perm = new perm(package::$user);
+	package::setPermClass($perm);
+	if(isset($_GET['package'])) {
+		$package = $_GET['package'];
+		$package = $packageManager->loadPackage($package, true);
+		if(!$package)
+		$packageManager->loadPackage('404', true);
+	}else {
+		$package = $packageManager->loadPackage('main', true);
+	}
+
+	//$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
+	$packageManager->callHook('endCore', array());
+	package::$tpl->assign('queryCount', package::$db->count);
 
 }catch (Exception $e){
 	if(isset($package) && is_a($package, 'package'))
-		$package->setTemplatePolicy(false);
+	$package->setTemplatePolicy(false);
 	if(is_a($e, 'lttxFatalError'))
-		$e->setTraced(false);
+	$e->setTraced(false);
 	$tpl = new Smarty();
 	$tpl->compile_dir = TEMPLATE_COMPILATION;
 	$tpl->debugging = false;
-	$tpl->assign('HEADER', package::getTplDir() . 'header.tpl');
-	$tpl->assign('FOOTER', package::getTplDir() . 'footer.tpl');
+	if(file_exists(package::getTplDir() . 'header.tpl')){
+		$tpl->assign('HEADER', package::getTplDir() . 'header.tpl');
+	}else{
+		$tpl->assign('HEADER', package::getTplDir(false, 'default') . 'header.tpl');
+	}
+	if(file_exists(package::getTplDir() . 'footer.tpl')){
+		$tpl->assign('FOOTER', package::getTplDir() . 'footer.tpl');
+	}else{
+		$tpl->assign('FOOTER', package::getTplDir(false, 'default') . 'footer.tpl');
+	}
 	$tpl->assign('TITLE', 'Litotex 0.8 Core Engine');
 	$tpl->assign('errorMessage', $e->getMessage());
 	$tpl->assign('CSS_FILES', package::getCssUrl() . 'main.css');

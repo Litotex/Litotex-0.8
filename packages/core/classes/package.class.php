@@ -103,6 +103,8 @@ abstract class package {
     
     protected static $_dep = array();
     
+    protected $_defaultTpl = 'default';
+    
     public final function __construct($init = true) {
     	if(!$init)return;
     	$this->_tplDir = self::getTplDir();
@@ -127,7 +129,11 @@ abstract class package {
      */
     public final function __destruct() {
         if($this->_tpl) {
-            self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
+        	if(file_exists(self::getTplDir($this->_packageName) . $this->_theme)){
+            	self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
+        	}else{
+        		self::$tpl->display(self::getTplDir($this->_packageName, 'default') . $this->_theme);
+        	}
         }
         return true;
     }
@@ -282,7 +288,11 @@ abstract class package {
      * @return bool
      */
     public function addCssFile($href, $package = false) {
-        self::$_cssFiles[] = self::getCssUrl($package) . $href;
+    	if(file_exists(self::getCssDir($package) . $href)){
+        	self::$_cssFiles[] = self::getCssUrl($package) . $href;
+    	}else{
+    		self::$_cssFiles[] = self::getCssUrl($package, 'default') . $href;
+    	}
         if(self::$tpl)
             self::$tpl->assign('CSS_FILES', self::$_cssFiles);
         return true;
@@ -294,7 +304,11 @@ abstract class package {
      * @return bool
      */
     public static function addJsFile($href, $package = false) {
-        self::$_jsFiles[] = self::getJsUrl($package) . $href;
+    	if(file_exists(self::getJsDir($package) . $href)){
+        	self::$_jsFiles[] = self::getJsUrl($package) . $href;
+    	}else{
+    		self::$_jsFiles[] = self::getJsUrl($package, 'default') . $href;
+    	}
         if(self::$tpl)
             self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
@@ -320,32 +334,67 @@ abstract class package {
     public static function registerDependency($dep){
     	self::$_dep = $dep;
     }
-    public function getTplDir($package = false){
-    	if(!$package)
-    		return TEMPLATE_DIRECTORY . self::getTemplate() . '/';
-    	else
-    		return TEMPLATE_DIRECTORY . self::getTemplate() . '/' . $package . '/';
+    public function getTplDir($package = false, $tpl = false){
+    	if(!$package){
+    		if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))){
+    			return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/';
+    		}else{
+    			return TEMPLATE_DIRECTORY . self::getTemplate('default') . '/';
+    		}
+    	}else{
+    		if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/')){
+    			return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/';
+    		}else{
+    			return TEMPLATE_DIRECTORY . self::getTemplate('default') . '/' . $package . '/';
+    		}
+    	}
     }
-	public function getTplURL($package = false){
-		if(!$package)
-    		return TPL_DIRNAME . self::getTemplate() . '/';
-    	else
-    		return TPL_DIRNAME . self::getTemplate() . '/' . $package . '/';
+	public function getTplURL($package = false, $tpl = false){
+		if(!$package){
+			if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))){
+	    		return TPL_DIRNAME . self::getTemplate($tpl) . '/';
+			}else{
+				return TPL_DIRNAME . self::getTemplate('default') . '/';
+			}
+		}else{
+			if(is_dir(TPL_DIRNAME . self::getTemplate($tpl) . '/' . $package . '/')){
+    			return TPL_DIRNAME . self::getTemplate($tpl) . '/' . $package . '/';
+			}else{
+				return TPL_DIRNAME . self::getTemplate('default') . '/' . $package . '/';
+			}
+		}
     }
-    public static function getTemplate(){
-    	return 'default';
+    public static function getTemplate($tpl = false){
+    	if($tpl)
+    		return $tpl;
+    	$return = 'default';
+    	self::$packages->callHook('getTemplateName', array(&$return));
+    	return $return;
     }
-    public function getImgUrl($package = false){
-    	return self::getTplURL($package) . IMG_DIR;
+    public function getImgUrl($package = false, $tpl = false){
+    	return self::getTplURL($package, $tpl) . IMG_DIR;
     }
-	public function getJsUrl($package = false){
-    		return self::getTplURL($package) . JS_DIR;
+	public function getJsUrl($package = false, $tpl = false){
+    		return self::getTplURL($package, $tpl) . JS_DIR;
     }
-	public function getCssUrl($package = false){
-    	return self::getTplURL($package) . CSS_DIR;
+	public function getCssUrl($package = false, $tpl = false){
+    	return self::getTplURL($package, $tpl) . CSS_DIR;
     }
-	public function getLangPath($package = false){
-    	return self::getTplDir($package) . LANG_DIR;
+	public function getImgDir($package = false, $tpl = false){
+    	return self::getTplDir($package, $tpl) . IMG_DIR;
+    }
+	public function getJsDir($package = false, $tpl = false){
+    		return self::getTplDir($package, $tpl) . JS_DIR;
+    }
+	public function getCssDir($package = false, $tpl = false){
+    	return self::getTplDir($package, $tpl) . CSS_DIR;
+    }
+	public function getLangPath($package = false, $tpl = false){
+		if(is_dir(self::getTplDir($package, $tpl) . LANG_DIR)){
+    		return self::getTplDir($package, $tpl) . LANG_DIR;
+		}else{
+			return self::getTplDir($package, 'default') . LANG_DIR;
+		}
     }
     public static function getLanguage(){
     	return 'de';
@@ -364,13 +413,37 @@ abstract class package {
         return true;
     }
     public static function setTemplateSettings($tpl, $package = false){
-    	$tpl->assign('CORE_IMG_URL', self::getImgUrl(false));
-        $tpl->assign('CORE_CSS_URL', self::getCssUrl(false));
-        $tpl->assign('CORE_JS_URL', self::getJsUrl(false));
+    	if(is_dir(self::getImgDir(false))){
+    		$tpl->assign('CORE_IMG_URL', self::getImgUrl(false));
+    	}else{
+    		$tpl->assign('CORE_IMG_URL', self::getImgUrl(false, 'default'));
+    	}
+    	if(is_dir(self::getCssDir(false))){
+        	$tpl->assign('CORE_CSS_URL', self::getCssUrl(false));
+    	}else{
+    		$tpl->assign('CORE_CSS_URL', self::getCssUrl(false, 'default'));
+    	}
+    	if(is_dir(self::getJsDir(false))){
+        	$tpl->assign('CORE_JS_URL', self::getJsUrl(false));
+    	}else{
+    		$tpl->assign('CORE_JS_URL', self::getJsUrl(false, 'default'));
+    	}
         if($package){
-	        $tpl->assign('IMG_URL', self::getImgUrl($package));
-	        $tpl->assign('CSS_URL', self::getCssUrl($package));
-	        $tpl->assign('JS_URL', self::getJsUrl($package));
+        	if(is_dir(self::getImgDir($package))){
+	        	$tpl->assign('IMG_URL', self::getImgUrl($package));
+        	}else{
+        		$tpl->assign('IMG_URL', self::getImgUrl($package, 'default'));
+        	}
+        	if(is_dir(self::getCssDir($package))){
+	        	$tpl->assign('CSS_URL', self::getCssUrl($package));
+        	}else{
+        		$tpl->assign('CSS_URL', self::getCssUrl($package, 'default'));
+        	}
+        	if(is_dir(self::getJsDir($package))){
+	        	$tpl->assign('JS_URL', self::getJsUrl($package));
+        	}else{
+        		$tpl->assign('JS_URL', self::getJsUrl($package, 'default'));
+        	}
         }
         return true;
     }
