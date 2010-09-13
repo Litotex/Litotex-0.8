@@ -50,7 +50,6 @@ class package_tplSwitcher extends package {
 			if(is_dir(TEMPLATE_DIRECTORY . $file))
 			$tpls[] = array($file, ($now == $file)?true:false);
 		}
-		self::loadLang(package::$tpl, 'tplSwitcher');
 		package::$tpl->assign('tpls', $tpls);
 		package::$tpl->display(self::getTplDir('tplSwitcher') . 'switch.tpl'); 	
     	return true;

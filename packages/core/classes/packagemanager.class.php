@@ -281,6 +281,7 @@ class packages{
 		return true;
 		$dep = array();
 		if(isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true){
+			package::loadLang(package::$tpl, $packageName);
 			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
 			foreach($this->_dependencyCache[$packageName]['loadDep'] as $depName){
 				$cache = $this->loadPackage($depName, false);

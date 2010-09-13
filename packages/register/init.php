@@ -36,7 +36,6 @@ class package_register extends package {
 	public static function __hook_showRegisterLink() {
         $tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-		self::loadLang($tpl, 'register');
 		$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     } 

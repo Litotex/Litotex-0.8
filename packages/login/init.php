@@ -41,7 +41,6 @@ class package_login extends package {
         
 		$tpl = new Smarty();
         $tpl->compile_dir = TEMPLATE_COMPILATION;
-		self::loadLang($tpl, 'login');
 		if(!package::$user){
 			$tpl->display(self::getTplDir('login') . 'login_template.tpl');
 		}else{
