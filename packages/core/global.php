@@ -20,7 +20,6 @@ define("DEVDEBUG", true);
 header("Content-Type: text/html; charset=utf-8");
 session_start();
 error_reporting(E_ALL);
-ini_set('display_errors', true);
 require_once('config/const.php');
 require_once('classes/math.class.php');
 require_once('classes/package.class.php');
@@ -46,7 +45,7 @@ try{
 		$noDBConfig = true;
 	}
 	if($noDBConfig) {
-		throw new Exception('No databasesettings saved at ' . DATABASE_CONFIG_FILE);
+		trigger_error('No databasesettings saved at ' . DATABASE_CONFIG_FILE, E_USER_ERROR);
 		exit();
 	}
 	$db = NewADOConnection('mysql');
