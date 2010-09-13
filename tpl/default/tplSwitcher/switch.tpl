@@ -1,4 +1,3 @@
-
 <h2>{#titleTplSwitcher#}</h2>
 <form method="post" action="?package=tplSwitcher&action=save">
 <select name="tpl">
@@ -9,3 +8,4 @@
 <br />
 <input type="submit" />
 </form>
+<br />
