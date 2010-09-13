@@ -19,7 +19,7 @@ class package_register extends package {
      * Avaibilbe actions in this package
      * @var array
      */
-    protected $_availableActions = array('main','register_new','register_submit');
+    protected $_availableActions = array('main','register_submit');
 
     /**
      * Register all hooks of this package
@@ -39,18 +39,14 @@ class package_register extends package {
     } 
 	 
     public function __action_main() {
+		package::addCssFile('register.css', 'register');
 		return true;
     }
 	public static function  __tpl_showRegisterLink() {
         return self::__hook_showRegisterLink(0);
     }
-    
-	public function __action_register_new() {
-        package::addCssFile('register.css', 'register');
-		package::$tpl->display(self::getTplDir('register') . 'main.tpl');
-        return true;
-    }
-	public function __action_register_submit(){
+ 
+ public function __action_register_submit(){
 		$rules=0;
 		$username= mysql_real_escape_string(strtolower($_POST['username']));
 		$email= mysql_real_escape_string($_POST['email']);
