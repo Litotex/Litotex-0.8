@@ -59,6 +59,8 @@ class packages{
 	private $_packagesDir = MODULES_DIRECTORY;
 
 	private $_loaded = array();
+	
+	private $_loadedLang = array();
 	/**
 	 * This will load hook and package cache and save the modulmanager class in packages parent class
 	 * @return void
@@ -277,11 +279,19 @@ class packages{
 	 * @return bool on failure | instance of class | true if not initialized
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true){
-		if($initialize == false && in_array($packageName, $this->_loaded))
-		return true;
+		if($initialize == false && in_array($packageName, $this->_loaded)){
+			if(!in_array($packageName, $this->_loadedLang) && is_a(package::$tpl, 'Smarty')){
+				$this->_loadedLang[] = $packageName;
+				package::loadLang(package::$tpl, $packageName);
+			}
+			return true;
+		}
 		$dep = array();
 		if(isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true){
-			package::loadLang(package::$tpl, $packageName);
+			if(!in_array($packageName, $this->_loadedLang) && is_a(package::$tpl, 'Smarty')){
+				$this->_loadedLang[] = $packageName;
+				package::loadLang(package::$tpl, $packageName);
+			}
 			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
 			foreach($this->_dependencyCache[$packageName]['loadDep'] as $depName){
 				$cache = $this->loadPackage($depName, false);
