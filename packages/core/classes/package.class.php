@@ -375,7 +375,7 @@ abstract class package {
 				return TPL_DIRNAME . self::getTemplate('default') . '/';
 			}
 		}else{
-			if(is_dir(TPL_DIRNAME . self::getTemplate($tpl) . '/' . $package . '/')){
+			if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/')){
     			return TPL_DIRNAME . self::getTemplate($tpl) . '/' . $package . '/';
 			}else{
 				return TPL_DIRNAME . self::getTemplate('default') . '/' . $package . '/';

@@ -164,7 +164,7 @@ class packages{
 	 * @return bool
 	 */
 	public function generateHookCache(){
-		package::$db->Execute("DELETe FROM `lttx_permissionsAvailable` WHERE `type` = ?", array(2));
+		package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `type` = ?", array(2));
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
