@@ -29,13 +29,15 @@ class option{
      * Cached options
      * @var array
      */
-    private $_cache = array();
+    private static $_cache = array();
     /**
      * This will load the cache and initialize the class
      * @param string $package packagename
      * @return void
      */
     public function  __construct($package) {
+    	if(isset(self::$_cache[$package]))
+    		return;
         if(!packages::exists($package))
             return false;
         $this->_package = $package;
@@ -45,7 +47,7 @@ class option{
             return;
         }
         while(!$cache->EOF){
-            $this->_cache[$cache->fields[0]] = array($cache->fields[1], $cache->fields[2]);
+            self::$_cache[$package][$cache->fields[0]] = array($cache->fields[1], $cache->fields[2]);
             $cache->MoveNext();
         }
         return;
@@ -56,7 +58,7 @@ class option{
      * @return bool on failure | mixed
      */
     public function get($key){
-        return (isset($this->_cache[$key][0])) ? $this->_cache[$key][0] : false;
+        return (isset(self::$_cache[$this->_package][$key][0])) ? self::$_cache[$this->_package][$key][0] : false;
     }
     /**
      * This function saves a new value for an existing key
@@ -70,7 +72,7 @@ class option{
         package::$db->Execute("UPDATE `lttx_options` SET `value` = ? WHERE `package` = ? AND `key` = ?", array($value, $this->_package, $key));
         if(package::$db->Affected_Rows() <= 0)
                 return false;
-        $this->_cache[$key][0] = $value;
+        self::$_cache[$this->_package][$key][0] = $value;
         return true;
     }
     /**
@@ -81,13 +83,13 @@ class option{
      * @return bool
      */
     public function add($key, $value, $default){
-        if(isset($this->_cache[$key][0]))
+        if(isset(self::$_cache[$this->_package][$key][0]))
                 return false;
         package::$db->Execute("INSERT INTO `lttx_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)", array($this->_package, $key, $value, $default));
         if(package::$db->Affected_Rows() <= 0)
                 return false;
-        $this->_cache[$key][0] = $value;
-        $this->_cache[$key][1] = $default;
+        self::$_cache[$this->_package][$key][0] = $value;
+        self::$_cache[$this->_package][$key][1] = $default;
         return true;
     }
     /**
@@ -96,11 +98,12 @@ class option{
      * @return bool
      */
     public function reset($key){
-        if(!isset($this->_cache[$key][0]))
+        if(!isset(self::$_cache[$this->_package][$key][0]))
                 return false;
         package::$db->Execute("UPDATE `lttx_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?", array($this->_package, $key));
         if(package::$db->Affected_Rows() <= 0)
                 return false;
+        self::$_cache[$this->_package][$key][0] = self::$_cache[$this->_package][$key][1];
         return true;
     }
     public function addIfNExists($key, $value, $default){
