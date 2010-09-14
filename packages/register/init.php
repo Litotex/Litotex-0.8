@@ -98,8 +98,9 @@ class package_register extends package {
 			$return_msg=  'ret ?';
 		}
 		
-		$this->_theme = 'register_ok.tpl';
-		        return true;
+			package::debug('new registration:'.$username);
+			$this->_theme = 'register_ok.tpl';
+			return true;
 		
 		}
 			
