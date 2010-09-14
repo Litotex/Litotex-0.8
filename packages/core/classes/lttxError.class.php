@@ -5,6 +5,18 @@ class lttxError extends Exception{
 		$this->message = package::getLanguageVar($messageCode);
 	}
 }
+class lttxLog{
+	public function __construct  ($message = ''){
+		$message=mysql_real_escape_string($message);
+		$currentuser=0;
+		$curenttime=package::$db->DBTimeStamp(date("Y-m-d H:m:s", time()));
+		if(package::$user){
+			$currentuser=package::$user->getUserID();
+		}
+		package::$db->Execute("INSERT INTO `lttx_log` (`userid`, `logdate`, `message`) VALUES (".$currentuser.",".$curenttime.",'".$message."')");
+	}
+}
+
 
 class lttxFatalError extends Exception{
 	private $_oID = false;

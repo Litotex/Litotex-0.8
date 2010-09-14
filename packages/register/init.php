@@ -19,7 +19,7 @@ class package_register extends package {
      * Avaibilbe actions in this package
      * @var array
      */
-    protected $_availableActions = array('main','register_new','register_submit');
+    protected $_availableActions = array('main','register_submit');
 
     /**
      * Register all hooks of this package
@@ -34,26 +34,19 @@ class package_register extends package {
     	return true;
     }
 	public static function __hook_showRegisterLink() {
-        $tpl = new Smarty();
-        $tpl->compile_dir = TEMPLATE_COMPILATION;
-		self::loadLang($tpl, 'register');
-		$tpl->display(self::getTplDir('register') . 'register.tpl');
+		package::$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     } 
 	 
     public function __action_main() {
-        return true;
+		package::addCssFile('register.css', 'register');
+		return true;
     }
 	public static function  __tpl_showRegisterLink() {
         return self::__hook_showRegisterLink(0);
     }
-    
-	public function __action_register_new() {
-        package::addCssFile('register.css', 'register');
-		$this->_theme = 'main.tpl';
-        return true;
-    }
-	public function __action_register_submit(){
+ 
+ public function __action_register_submit(){
 		$rules=0;
 		$username= mysql_real_escape_string(strtolower($_POST['username']));
 		$email= mysql_real_escape_string($_POST['email']);

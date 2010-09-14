@@ -30,25 +30,18 @@ class package_login extends package {
     	self::_registerTplModification(__CLASS__, 'showLoginBox');
     	return true;
     }
-	
-	
     /**
      *Hook function for LoginBox
     */
 	public static function __hook_showLoginBox() {
 		package::addCssFile('login.css', 'login');
-		
-        
-		$tpl = new Smarty();
-        $tpl->compile_dir = TEMPLATE_COMPILATION;
-		self::loadLang($tpl, 'login');
+
 		if(!package::$user){
-			$tpl->display(self::getTplDir('login') . 'login_template.tpl');
+			package::$tpl->display(self::getTplDir('login') . 'login_template.tpl');
 		}else{
-			$tpl->assign('USERNAME',package::$user->getUsername() );
-			$tpl->display(self::getTplDir('login') . 'loggedin_template.tpl');
+			package::$tpl->assign('USERNAME',package::$user->getUsername() );
+			package::$tpl->display(self::getTplDir('login') . 'loggedin_template.tpl');
 		}
-		
         return true;
     } 
     /**
@@ -73,10 +66,8 @@ class package_login extends package {
 	public function __action_forget() {
 		throw new lttxFatalError('LN_LOGIN_FORGET'); 
 	}
-
 	
     public function __action_loginsubmit() {
-		
 		$username="";
 		$password="";
 		

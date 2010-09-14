@@ -108,7 +108,6 @@ abstract class package {
     public final function __construct($init = true) {
     	if(!$init)return;
     	$this->_tplDir = self::getTplDir();
-    	self::loadLang(self::$tpl, $this->_packageName);
         $this->setTemplateSettings(self::$tpl, $this->_packageName);
         if(!isset($_GET['action']))
             $action = 'main';
@@ -400,6 +399,8 @@ abstract class package {
     	return 'de';
     }
 	public static function loadLang($tpl, $package = false){
+		if(!is_a($tpl, 'Smarty'))
+			return false;
     	if(file_exists(self::getLangPath() . self::getLanguage() . '.lang.php')){
         	$tpl->config_load(self::getLangPath() . self::getLanguage() . '.lang.php');
         } else if(file_exists(self::getLangPath() . 'en' . '.lang.php')){

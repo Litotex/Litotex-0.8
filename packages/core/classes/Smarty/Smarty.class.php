@@ -1965,8 +1965,11 @@ class Smarty
 	 * This will return all modifications done
 	 * @return string
 	 */
-	public function getAdditionalSmartyHeaders(){		
-		return $this->_additionalHeader;
+	public function getAdditionalSmartyHeaders(){
+		$return = $this->_additionalHeader;
+		$this->_additionalHeader = '';
+		return $return;
+		
 	}
 	/**
 	 * Litotex special modifier to offer the possibility to prebuffer output in order to show valid HTML
