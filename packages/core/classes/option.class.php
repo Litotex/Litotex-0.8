@@ -36,8 +36,10 @@ class option{
      * @return void
      */
     public function  __construct($package) {
-    	if(isset(self::$_cache[$package]))
+    	if(isset(self::$_cache[$package])){
+    		$this->_package = $package;
     		return;
+    	}
         if(!packages::exists($package))
             return false;
         $this->_package = $package;
@@ -67,9 +69,10 @@ class option{
      * @return bool
      */
     public function set($key, $value){
-        if(!isset($this->_cache[$key][0]))
+        if(!isset(self::$_cache[$this->_package][$key][0]))
                 return false;
         package::$db->Execute("UPDATE `lttx_options` SET `value` = ? WHERE `package` = ? AND `key` = ?", array($value, $this->_package, $key));
+        echo mysql_error() . package::$db->Affected_Rows();
         if(package::$db->Affected_Rows() <= 0)
                 return false;
         self::$_cache[$this->_package][$key][0] = $value;
