@@ -551,7 +551,9 @@ CREATE TABLE IF NOT EXISTS `lttx1_users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(128) NOT NULL,
   `dynamicSalt` varchar(100) NOT NULL,
-  `race` int(11) NOT NULL,
+  `race` int(11) DEFAULT NULL,
+  `lastActive` date DEFAULT NULL,
+  `registerDate` date DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `username` (`username`),
   KEY `userGroup` (`userGroup`)
