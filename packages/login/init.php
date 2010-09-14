@@ -81,9 +81,12 @@ class package_login extends package {
 		$user = new user(0);
 		$ret=$user->login($username,$password);
 		if(package::$user){
+			package::debug('Login successfully Username:'.$username);
 			header("Location: index.php");
 			exit();
 		}
+		package::debug('Login error Username:'.$username);
+		
 		throw new lttxError('LN_LOGIN_NO_USERNAME'); 
 		return true;
     }
