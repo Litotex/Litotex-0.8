@@ -59,7 +59,11 @@ try{
 
 	$packageManager = new packages();
 	package::setPackageManagerClass($packageManager);
-
+	
+	$log =new lttxLog();
+	package::setlttxLogClass($log);
+	
+	
 	//Smarty settings... next
 	$smarty = new Smarty();
 	$smarty->compile_dir = TEMPLATE_COMPILATION;
