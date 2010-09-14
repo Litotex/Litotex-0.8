@@ -606,3 +606,39 @@ CREATE TABLE IF NOT EXISTS `lttx1_log` (
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+DROP TABLE IF EXISTS `lttx1_users`;
+CREATE TABLE IF NOT EXISTS `lttx1_users` (
+  `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userGroup` int(11) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `dynamicSalt` varchar(100) NOT NULL,
+  `race` int(11) DEFAULT NULL,
+  `lastActive` date DEFAULT NULL,
+  `registerDate` date DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `username` (`username`),
+  KEY `userGroup` (`userGroup`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `lttx1_users`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_buildings`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_buildingRessources`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_cron`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+TRUNCATE TABLE `lttx1_cron`;
+ALTER TABLE `lttx1_exploreRessources`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_explores`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_news`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_newsCategories`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_newsComments`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_options`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_ressources`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_sessions`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_territory`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_territoryBuildings`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_territoryExplores`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_territoryRessources`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_userGroupConnections`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `lttx1_userGroups`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+
