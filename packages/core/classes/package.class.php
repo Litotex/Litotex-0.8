@@ -31,6 +31,11 @@ abstract class package {
      * @var Smarty
      */
     public static $tpl;
+	    /**
+     * This will keep an instance of the lttxLog.log classes
+     * @var lttxLog
+     */
+    public static $log;
     /**
      * This will keep an instance of the package and hook manager for usage in extending classes
      * @var packages
@@ -203,6 +208,20 @@ abstract class package {
             throw new Exception('Packagemanager was unable to load tplModification function "__tpl_' . $function . '"');
     }
     
+	    /**
+     * This will save a database instance in the root class
+     * Attention! Only allowed on package class
+     * @return bool
+     */
+    static public final function setlttxLogClass($log) {
+        if(__CLASS__ != 'package')
+            return false;
+		package::$log = $log;
+        return true;
+    }
+	
+	
+	
     /**
      * This will save a database instance in the root class
      * Attention! Only allowed on package class
@@ -450,5 +469,9 @@ abstract class package {
     }
     public function getActions(){
     	return $this->_availableActions;
+    }
+	public function debug($message = ''){
+    	self::$log->debug($message);
+		return true;
     }
 }

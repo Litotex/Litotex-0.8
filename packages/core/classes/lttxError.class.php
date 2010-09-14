@@ -6,7 +6,9 @@ class lttxError extends Exception{
 	}
 }
 class lttxLog{
-	public function __construct  ($message = ''){
+	public function __construct  (){
+	}
+	public function debug($message = ''){
 		$message=mysql_real_escape_string($message);
 		$currentuser=0;
 		$curenttime=package::$db->DBTimeStamp(date("Y-m-d H:m:s", time()));
