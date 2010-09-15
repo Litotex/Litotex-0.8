@@ -67,7 +67,7 @@ abstract class package {
      * @var array
      */
     protected static $_cssFiles = array();
-    /*
+    /**
 	 * This var contains a list of every JavaScript file that should be loaded by smarty
 	 * @var array
     */
@@ -98,18 +98,29 @@ abstract class package {
      */
     protected $_tpl = false;
     /**
+     * Packages to be loaded but not to be initialized when the package in favour is loaded
+     * @var array
+     */
+    public static $dependency = array();
+    /**
+     * Packages to be loaded and to be initlized + passed to the constructor when the package in favour is loaded
+     * @var array
+     */
+    public static $loadDependency = array();
+    /**
+     * Loaded and initialized objects set which one in $loadDependency 
+     * @var array
+     */
+    protected static $_dep = array();
+    /**
+     * Template to be loaded
+     * @var string
+     */
+    protected $_defaultTpl = 'default';
+    /**
      * This function registers the class into the package manager and loads the casted action
      * @return void
      */
-    
-    public static $dependency = array();
-    
-    public static $loadDependency = array();
-    
-    protected static $_dep = array();
-    
-    protected $_defaultTpl = 'default';
-    
     public final function __construct($init = true) {
     	if(!$init)return;
     	$this->_tplDir = self::getTplDir();
@@ -141,6 +152,11 @@ abstract class package {
         }
         return true;
     }
+    /**
+     * Returns a language variable
+     * @param string $var key to lookup
+     * @return string language var
+     */
     public static function getLanguageVar($var){
     	if(isset(self::$tpl->_config[0]['vars'][$var]))
     		return self::$tpl->_config[0]['vars'][$var];
@@ -193,11 +209,20 @@ abstract class package {
     static public function registerHooks(){
     	return true;
     }
-    
+    /**
+     * This function is used to regenerate the tplMod cache
+     * @return bool
+     */
 	static public function registerTplModifications(){
     	return true;
     }
-    
+    /**
+     * This function passes a tplMod to the package manager for further usage.
+     * This function is cached so that it should do the job if every hook is registered in registerHooks()
+     * @param string $hookname name of the hook to be registered
+     * @param bool | str $function name of function, used if the function is overloaded
+     * @return bool was the hook registered successfully?
+     */
 	protected static final function _registerTplModification($class, $function, $file = false, $packageName = false) {
         if(!self::$packages) {
             throw new Exception('The packagemanager was not accessible for this package, register it first.');
