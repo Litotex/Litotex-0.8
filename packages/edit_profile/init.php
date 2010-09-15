@@ -38,6 +38,10 @@ class package_edit_profile extends package {
     } 
 	 
     public function __action_main() {
+		if(!package::$user){
+		header("Location: index.php");
+		exit();
+		}
 		package::$tpl->assign('EMAIL', package::$user->getData('email'));
 		package::addCssFile('edit_profile.css', 'edit_profile');
 		return true;
@@ -61,12 +65,12 @@ class package_edit_profile extends package {
 				throw new lttxError('LN_EDIT_PROFILE_ERROR_1');
 				exit();
 			}
-		 // BUG ?? geht nur wenn auf false steht	
-			package::$user->setData('email',$email, true);
+		 
+			package::$user->setData('email',$email);
 		}	
 		
 		if ($password !=''){
-			package::$user->setData('email',email);
+			package::$user->setPassword($password);;
 		}
 		
 		header("Location: index.php"); 
