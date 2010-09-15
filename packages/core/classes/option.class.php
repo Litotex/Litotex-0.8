@@ -109,6 +109,13 @@ class option{
         self::$_cache[$this->_package][$key][0] = self::$_cache[$this->_package][$key][1];
         return true;
     }
+    /**
+     * This will check wheather or not an option exists, if so update it else add a new option and set it
+     * @param string $key option to be saved
+     * @param mixed $value value to be saved
+     * @param mixed $default value to reset to
+     * @return bool
+     */
     public function addIfNExists($key, $value, $default){
     	if($this->get($key))
     	return $this->set($key, $value);
