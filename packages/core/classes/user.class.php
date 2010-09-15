@@ -426,6 +426,7 @@ class user {
             }
             $queryString .= '`' . $key . '` = ?';
             $values[] = $value;
+            $i++;
         }
         $queryString .= ' WHERE `ID` = ?';
         $values[] = $this->_currentID;
