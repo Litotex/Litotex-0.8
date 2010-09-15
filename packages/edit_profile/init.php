@@ -62,7 +62,7 @@ class package_edit_profile extends package {
 				exit();
 			}
 		 // BUG ?? geht nur wenn auf false steht	
-			package::$user->setData('email',$email,false);
+			package::$user->setData('email',$email, true);
 		}	
 		
 		if ($password !=''){
