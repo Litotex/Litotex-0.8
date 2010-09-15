@@ -39,8 +39,20 @@ class packages{
 	 * @var string
 	 */
 	private $_dependencyCacheFile = PACKAGE_CACHE;
+	/**
+	 * Path to tplMod cachefile
+	 * @var string
+	 */
 	private $_tplModificationCacheFile = TPLMOD_CACHE;
+	/**
+	 * Time until the tplMod cache expires
+	 * @var int
+	 */
 	private $_tplModificationCacheExpire = 0;
+	/**
+	 * Template modification cache
+	 * @var array
+	 */
 	private $_tplModificationCache = array();
 	/**
 	 * Cache hooks are saved in
@@ -57,9 +69,15 @@ class packages{
 	 * @var string
 	 */
 	private $_packagesDir = MODULES_DIRECTORY;
-
+	/**
+	 * List of all loaded packages
+	 * @var array
+	 */
 	private $_loaded = array();
-	
+	/**
+	 * List of all packages which had the ability to load lang files
+	 * @var array
+	 */
 	private $_loadedLang = array();
 	/**
 	 * This will load hook and package cache and save the modulmanager class in packages parent class
@@ -78,6 +96,11 @@ class packages{
 		}
 		return;
 	}
+	/**
+	 * This will automaticly check the tplMod cache expire and load it if it is still working
+	 * if so it will load it automaticly
+	 * @return bool
+	 */
 	private function _loadTplModificationCache(){
 		if(!file_exists($this->_tplModificationCacheFile))
 		return false;
@@ -88,6 +111,11 @@ class packages{
 		return false;
 		return ($this->_tplModificationCache = unserialize($cacheContents[1]));
 	}
+	/**
+	 * This will check whether or not the tplMod cache is expired
+	 * @param int $startTime unix timestamp (generation time of the cache)
+	 * @return bool expired
+	 */
 	private function _checkTplModificationCacheExpire($startTime){
 		if((time()-$this->_tplModificationCacheExpire) < $startTime){
 			return true;
@@ -95,6 +123,10 @@ class packages{
 			return false;
 		}
 	}
+	/**
+	 * This will generate a new tplModCache and saves it when it's done
+	 * @return bool
+	 */
 	public function generateTplModificationCache(){
 		if(!is_dir($this->_packagesDir))
 		return false;
@@ -116,6 +148,10 @@ class packages{
 		package::$db->Execute("TRUNCATE TABLE `lttx_tplModificationSort`");
 		return $this->_writeTplModificationCache();
 	}
+	/**
+	 * This will write a new tplMod cache to the disc
+	 * @return bool
+	 */
 	private function _writeTplModificationCache(){
 		$newfile = '<?php die(); ?>'.time().'%'.serialize($this->_tplModificationCache);
 		$file = fopen($this->_tplModificationCacheFile, 'w');
@@ -183,6 +219,10 @@ class packages{
 		}
 		return $this->_writeHookCache();
 	}
+	/**
+	 * This will rearange the tplMod cache by using the settings saved in the darabase
+	 * @return bool
+	 */
 	private function _orderTplModificationCache(){
 		$database = package::$db->Execute("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx_tplModificationSort` ORDER BY `sort` ASC");
 		if(!$database)
@@ -207,6 +247,7 @@ class packages{
 			$newOrder['none'][] = $value;
 		}
 		$this->_tplModificationCache = $newOrder;
+		return true;
 	}
 	/**
 	 * This function will write hook cache to the cacheing file
@@ -239,6 +280,14 @@ class packages{
 		$this->_hookCache[$hookname.':'.$nParams][] = array($class, $function, $file, $packageName);
 		return true;
 	}
+	/**
+	 * This will add a new tplMod to the cache
+	 * @param string $class classname
+	 * @param string $function name of the function to be called
+	 * @param string $file name of the file to be loaded (optional! false) for plugins
+	 * @param string $packageName name of the package to be loaded (optional! false) for plugins
+	 * @return bool
+	 */
 	public function registerTplModification($class, $function, $file, $packageName){
 		if($file){
 			include_once($file);
@@ -277,6 +326,7 @@ class packages{
 	 * @param bool Should a template be showed?
 	 * @param bool Should the package be initlaized at all? If not only include it...
 	 * @return bool on failure | instance of class | true if not initialized
+	 * @FIXME: use _getPackageDependencies
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true){
 		if($initialize == false && in_array($packageName, $this->_loaded)){
@@ -317,6 +367,9 @@ class packages{
 			return false;
 		}
 	}
+	/**
+	 * @FIXME: Almost everything
+	 */
 	private function _getPackageDependencies(){
 	}
 	/**
@@ -370,7 +423,11 @@ class packages{
 		$this->_checkDependency();
 		return $this->_writeDependencyCache();
 	}
-
+	/**
+	 * This will check wheather or not alle packages needed by a specific package are available
+	 * @TODO: Version numbers?!
+	 * @return bool
+	 */
 	private function _checkDependency(){
 		$return = true;
 		$parents = array();
@@ -427,10 +484,21 @@ class packages{
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function activatePackage(){
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function deactivatePackage(){
 	}
+	/**
+	 * This will install a new package
+	 * @param string $location path to the package
+	 * @param string $packageName name of the package
+	 */
 	public function installPackage($location, $packageName){
 		include_once('installer.class.php');
 		if(!file_exists($location . '/installer.php'))
@@ -439,16 +507,34 @@ class packages{
 		$className = "installer_" . $packageName;
 		$installer = new $className($location, $packageName);
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function removePackage(){
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function updatePackage(){
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function getChangeLog(){
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function updateRemotePackageList(){
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function copyRemotePackage(){
 	}
+	/**
+	 * @TODO: Almost everything
+	 */
 	public function searchRemotePackageList(){
 	}
 	/**
@@ -461,6 +547,11 @@ class packages{
 		return true;
 		return false;
 	}
+	/**
+	 * This will display tplMods please use the smarty function in order to get the best results!
+	 * @param string $position name of the position
+	 * @return bool
+	 */
 	public function displayTplModification($position){
 		if(!isset($this->_tplModificationCache[$position]))
 		return true;
