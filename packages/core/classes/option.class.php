@@ -72,7 +72,6 @@ class option{
         if(!isset(self::$_cache[$this->_package][$key][0]))
                 return false;
         package::$db->Execute("UPDATE `lttx_options` SET `value` = ? WHERE `package` = ? AND `key` = ?", array($value, $this->_package, $key));
-        echo mysql_error() . package::$db->Affected_Rows();
         if(package::$db->Affected_Rows() <= 0)
                 return false;
         self::$_cache[$this->_package][$key][0] = $value;
