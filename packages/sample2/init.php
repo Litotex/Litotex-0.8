@@ -51,4 +51,7 @@ class package_sample2 extends package {
  	public static function  __tpl_sample2() {
         return self::__hook_sample2(2);
     }
+    public function displayDepExample(){
+    	return "<p>Hallo Welt! Ich bin eine Demonstration der Funktion des automatischen ladens und initilisierens von Abhängigkeiten, betet doch den Paketmanager einfach mal an. Weil ich eine echte Instanz bin, kann ich auch Variablen anzeigen, die nicht als static deklariert worden sind... hier ein Beispiel anhand von \"\$_packageName\": " . $this->_packageName . " Viel Spaß!</p>";
+    }
 }

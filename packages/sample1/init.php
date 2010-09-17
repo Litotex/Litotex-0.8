@@ -51,5 +51,8 @@ class package_sample1 extends package {
 	public static function  __tpl_sample1() {
         return self::__hook_sample1(2);
     }
+    public static function displayDepExample(){
+    	return "<p>Hallo Welt! Ich bin eine statische Funktion, die mit Hilfe des Paketmanagers automatisch zur Verfügung gestellt wurde. Viel Spaß! Nebenbei, ich komme aus Sample1!</p>";
+    }
 
 }

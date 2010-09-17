@@ -333,7 +333,6 @@ class packages{
 			$this->_loadedLang[] = $packageName;
 			package::loadLang(package::$tpl, $packageName);
 		}
-		
 		$dep = array();
 		if(isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true){
 			if(!in_array($packageName, $this->_loadedLang) && is_a(package::$tpl, 'Smarty')){
@@ -342,9 +341,8 @@ class packages{
 			}
 			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
 			if($loadDep)
-				$this->_getPackageDependencies($packageName);
-			
-			$pack = new $this->_dependencyCache[$packageName][1]($initialize);
+				$dep = $this->_getPackageDependencies($packageName);
+			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			return $pack;
@@ -360,7 +358,8 @@ class packages{
 		$cache = $this->_dependencyCache[$package];
 		foreach($cache['loadDep'] as $depName){
 			if(isset($this->_loaded[$depName])){
-				$dep[] = $this->_loaded[$depName];
+				$this->_loaded[$depName]->__construct(false, $this->_getPackageDependencies($depName));
+				$dep[$depName] = $this->_loaded[$depName];
 				continue;
 			}
 			$cache = $this->loadPackage($depName, false, false);
@@ -368,7 +367,6 @@ class packages{
 				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 			$dep[$depName] = $cache;
 		}
-		call_user_func(array($cache[1], 'registerDependency'), $dep);
 		foreach($cache['dep'] as $depName){
 			if(isset($this->_loaded[$depName]))
 				continue;
@@ -377,7 +375,7 @@ class packages{
 				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 			}
 		}
-		return true;
+		return $dep;
 	}
 	/**
 	 * This function will load package cache from cacheing file

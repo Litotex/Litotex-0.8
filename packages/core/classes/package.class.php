@@ -111,7 +111,7 @@ abstract class package {
      * Loaded and initialized objects set which one in $loadDependency 
      * @var array
      */
-    protected static $_dep = array();
+    protected $_dep = array();
     /**
      * Template to be loaded
      * @var string
@@ -121,7 +121,8 @@ abstract class package {
      * This function registers the class into the package manager and loads the casted action
      * @return void
      */
-    public final function __construct($init = true) {
+    public final function __construct($init = true, $dep = array()) {
+    	$this->_dep = $dep;
     	if(!$init)return;
     	$this->_tplDir = self::getTplDir();
         $this->setTemplateSettings(self::$tpl, $this->_packageName);
@@ -372,10 +373,6 @@ abstract class package {
      */
     public final function getPackageName(){
         return $this->_packageName;
-    }
-    
-    public static function registerDependency($dep){
-    	self::$_dep = $dep;
     }
     public function getTplDir($package = false, $tpl = false){
     	if(!$package){
