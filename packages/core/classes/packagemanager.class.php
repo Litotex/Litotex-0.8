@@ -28,12 +28,12 @@ class packages{
 	 * Time (sec) hook cached is saved
 	 * @var int
 	 */
-	private $_hookCacheExpire = 0;
+	private $_hookCacheExpire = 11111110;
 	/**
 	 * Time (sec) packages cache is saved
 	 * @var int
 	 */
-	private $_dependencyCacheExpire = 0;
+	private $_dependencyCacheExpire = 11111110;
 	/**
 	 * File package cache is saved in
 	 * @var string
@@ -48,7 +48,7 @@ class packages{
 	 * Time until the tplMod cache expires
 	 * @var int
 	 */
-	private $_tplModificationCacheExpire = 0;
+	private $_tplModificationCacheExpire = 11111110;
 	/**
 	 * Template modification cache
 	 * @var array
@@ -362,16 +362,16 @@ class packages{
 				$dep[$depName] = $this->_loaded[$depName];
 				continue;
 			}
-			$cache = $this->loadPackage($depName, false, false);
-			if(!$cache)
+			$loadCache = $this->loadPackage($depName, false, false);
+			if(!$loadCache)
 				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
-			$dep[$depName] = $cache;
+			$dep[$depName] = $loadCache;
 		}
 		foreach($cache['dep'] as $depName){
 			if(isset($this->_loaded[$depName]))
 				continue;
-			$cache = $this->loadPackage($depName, false, false);
-			if(!$cache){
+			$loadCache = $this->loadPackage($depName, false, false);
+			if(!$loadCache){
 				trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
 			}
 		}
