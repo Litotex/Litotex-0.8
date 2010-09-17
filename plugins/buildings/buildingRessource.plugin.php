@@ -15,6 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+define('RESSOURCE_UPDATE_INTERVAL', 10);
+
 class plugin_buildingRessource extends plugin{
 	public static $handlerName = 'buildings';
 	public static $name = 'Ressource';

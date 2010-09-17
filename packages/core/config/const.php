@@ -15,21 +15,37 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-define('LITO_ROOT', 'C:/xampp/htdocs/08/');
-define('LITO_PLUGIN_ROOT', LITO_ROOT . 'plugins/');
-define('LITO_URL', 'http://localhost/08/');
-define('DATABASE_CONFIG_FILE', LITO_ROOT . 'packages/core/config/database.conf.php');
-define('MODULES_DIRECTORY', LITO_ROOT . 'packages/');
-define('TPL_DIR', 'tpl/');
-define('IMG_DIR', 'img/');
-define('JS_DIR', 'js/');
-define('CSS_DIR', 'css/');
-define('LANG_DIR', 'lang/');
-define('TPL_DIRNAME', LITO_URL . TPL_DIR);
-define('TEMPLATE_DIRECTORY', LITO_ROOT . TPL_DIR);
-define('TEMPLATE_COMPILATION', LITO_ROOT . 'tpl_c');
-define('HOOK_CACHE', LITO_ROOT . 'packages/core/cache/hook_cache.php');
-define('PACKAGE_CACHE', LITO_ROOT . 'packages/core/cache/dependency_cache.php');
-define('TPLMOD_CACHE', LITO_ROOT . 'packages/core/cache/tpl_modification_cache.php');
-define('DB_PREFX', 'lttx1_');
-define('RESSOURCE_UPDATE_INTERVAL', 1);
+if(!defined('LITO_ROOT'))
+	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/');
+if(!defined('LITO_PLUGIN_ROOT'))
+	define('LITO_PLUGIN_ROOT', LITO_ROOT . 'plugins/');
+if(!defined('LITO_URL'))
+	define('LITO_URL', 'http://localhost/Litotex8/');
+if(!defined('DATABASE_CONFIG_FILE'))
+	define('DATABASE_CONFIG_FILE', LITO_ROOT . 'packages/core/config/database.conf.php');
+if(!defined('MODULES_DIRECTORY'))
+	define('MODULES_DIRECTORY', LITO_ROOT . 'packages/');
+if(!defined('TPL_DIR'))
+	define('TPL_DIR', 'tpl/');
+if(!defined('IMG_DIR'))
+	define('IMG_DIR', 'img/');
+if(!defined('JS_DIR'))
+	define('JS_DIR', 'js/');
+if(!defined('CSS_DIR'))
+	define('CSS_DIR', 'css/');
+if(!defined('LANG_DIR'))
+	define('LANG_DIR', 'lang/');
+if(!defined('TPL_DIRNAME'))
+	define('TPL_DIRNAME', LITO_URL . TPL_DIR);
+if(!defined('TEMPLATE_DIRECTORY'))
+	define('TEMPLATE_DIRECTORY', LITO_ROOT . TPL_DIR);
+if(!defined('TEMPLATE_COMPILATION'))
+	define('TEMPLATE_COMPILATION', LITO_ROOT . 'tpl_c');
+if(!defined('HOOK_CACHE'))
+	define('HOOK_CACHE', LITO_ROOT . 'packages/core/cache/hook_cache.php');
+if(!defined('PACKAGE_CACHE'))
+	define('PACKAGE_CACHE', LITO_ROOT . 'packages/core/cache/dependency_cache.php');
+if(!defined('TPLMOD_CACHE'))
+	define('TPLMOD_CACHE', LITO_ROOT . 'packages/core/cache/tpl_modification_cache.php');
+if(!defined('DB_PREFX'))
+	define('DB_PREFX', 'lttx1_');
