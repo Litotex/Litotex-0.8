@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-define('LITO_ROOT', 'C:/xampp/xampp/htdocs/08/');
+define('LITO_ROOT', 'C:/xampp/htdocs/08/');
 define('LITO_PLUGIN_ROOT', LITO_ROOT . 'plugins/');
 define('LITO_URL', 'http://localhost/08/');
 define('DATABASE_CONFIG_FILE', LITO_ROOT . 'packages/core/config/database.conf.php');
