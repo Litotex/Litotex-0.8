@@ -136,15 +136,15 @@ abstract class package {
         }
         return;
     }
-    public final function success(){
+	public final function success(){
     	return $this->_returnValue;
     }
     /**
      * Displays the template if set to do
      * @return bool
      */
-    public final function __destruct() {
-        if($this->_tpl) {
+    public final function displayTpl(){
+    	if($this->_tpl) {
         	if(file_exists(self::getTplDir($this->_packageName) . $this->_theme)){
             	self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
         	}else{

@@ -345,6 +345,7 @@ class packages{
 			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
+			$pack->displayTpl();
 			return $pack;
 		} else {
 			return false;
