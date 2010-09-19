@@ -586,3 +586,6 @@ ALTER TABLE `lttx1_territoryRessources`  DEFAULT CHARACTER SET utf8 COLLATE utf8
 ALTER TABLE `lttx1_userGroupConnections`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 ALTER TABLE `lttx1_userGroups`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 
+INSERT INTO `lttx1_options` (`ID`, `package`, `key`, `value`, `default`) VALUES (27, 'mail', 'AdminEmail', 'info@freebg.de', 'info@freebg.de');
+INSERT INTO `lttx1_options` (`ID`, `package`, `key`, `value`, `default`) VALUES (28, 'mail', 'AdminEmailName', 'adminEmailName', 'Admin');
+
