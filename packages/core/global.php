@@ -124,6 +124,9 @@ try{
 	$tpl = package::$tpl;
 	$tpl->assign('errorMessage', $e->getMessage());
 	package::loadLang($tpl);
-	$tpl->display(package::getTplDir('main') . 'gameError.tpl');
+	if(is_a($e, 'lttxError'))
+	$tpl->display(package::getTplDir('main') . 'CoreError.tpl');
+	if(is_a($e, 'lttxInfo'))
+	$tpl->display(package::getTplDir('main') . 'CoreInfo.tpl');
 	exit();
 }
