@@ -16,8 +16,10 @@ class package_login extends package {
      * Avaibilbe actions in this package
      * @var array
      */
-    protected $_availableActions = array('main','loginsubmit','logout','forget');
+    protected $_availableActions = array('main','loginsubmit','logout','forget','forget_submit');
 
+	
+	 public static $dependency = array('mail');
     /**
      * Register all hooks of this package
      * @return bool
@@ -64,7 +66,73 @@ class package_login extends package {
 			}
 	}
 	public function __action_forget() {
-		throw new lttxFatalError('LN_LOGIN_FORGET'); 
+		package::$tpl->display(self::getTplDir('login') . 'login_forget.tpl');
+	}
+	
+	public function __action_forget_submit() {
+		$email= mysql_real_escape_string($_POST['email']);		
+
+		$pos = strpos ($email, "@");
+		if ($pos < 1 ) { 
+			throw new lttxError('LN_LOGIN_FORGET_NOTE3');
+			exit();
+		}
+		
+		if(package::$user){
+				header("Location: index.php"); 
+				exit();
+			}
+		
+		$result = package::$db->Execute("
+            SELECT *
+            FROM `lttx_users`
+            WHERE `email` = ?",
+                $email);
+		
+		
+		if(!$result || !$result->RecordCount() ){
+				throw new lttxError('LN_LOGIN_FORGET_ERROR_1');
+				return true;
+		}
+		
+		if ($result->RecordCount() > 1 ){
+			throw new lttxError('LN_LOGIN_FORGET_ERROR');
+			return true;
+		}
+		
+		$forgetUsername =$result->fields['username'];
+		$forgetUserID =$result->fields['ID'];
+		
+		$password="";
+		$pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$pool .= "abcdefghijklmnopqrstuvwxyz";
+		$pool .= "1234567890";
+
+		srand ((double)microtime()*1000000);
+		for ($i = 0; $i < intval(10); $i++) {
+			$password .= $pool{rand(0, strlen($pool)-1)};
+		}
+		
+		$MailSubject=package::$tpl->get_config_vars('LN_LOGIN_MAIL_SUBJECT');
+		$MailMessage=package::$tpl->get_config_vars('LN_LOGIN_MAIL_MESSAGE');
+		
+		$MailMessage = str_replace("%%Username%%", $forgetUsername, $MailMessage);
+		$MailMessage = str_replace("%%Password%%", $password, $MailMessage);
+
+		$forget_password_user=new user($forgetUserID);
+		$forget_password_user->setPassword($password);
+		$forget_password_user->logout();
+		
+		
+		$ret=package_mail::sendMailPlain($email,$MailSubject,$MailMessage);
+		
+		if ($ret){
+			throw new lttxInfo('LN_LOGIN_FORGET_OK');
+			return true;
+		}
+		
+		return true;
+			
 	}
 	
     public function __action_loginsubmit() {
