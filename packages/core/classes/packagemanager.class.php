@@ -145,7 +145,7 @@ class packages{
 			}
 		}
 		$this->_orderTplModificationCache();
-		package::$db->Execute("TRUNCATE TABLE `lttx_tplModificationSort`");
+		package::$db->Execute("DELETE FROM `lttx_tplModificationSort` WHERE `packageDir` = ?", array($this->_packagesDir));
 		return $this->_writeTplModificationCache();
 	}
 	/**
@@ -163,7 +163,7 @@ class packages{
 		foreach($this->_tplModificationCache as $position => $list){
 			$n = 0;
 			foreach($list as $item){
-				package::$db->Execute("INSERT INTO `lttx_tplModificationSort` (`class`, `function`, `position`, `active`, `sort`) VALUES (?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n));
+				package::$db->Execute("INSERT INTO `lttx_tplModificationSort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n, $this->_packagesDir));
 				$n++;
 			}
 		}
@@ -224,7 +224,7 @@ class packages{
 	 * @return bool
 	 */
 	private function _orderTplModificationCache(){
-		$database = package::$db->Execute("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx_tplModificationSort` ORDER BY `sort` ASC");
+		$database = package::$db->Execute("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx_tplModificationSort` WHERE `packageDir` = ? ORDER BY `sort` ASC", array($this->_packagesDir));
 		if(!$database)
 		return false;
 		$cache = array();

@@ -32,7 +32,6 @@ require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
 require_once 'classes/option.class.php';
-
 try{
 
 	//Next... Database connection!
@@ -110,7 +109,7 @@ try{
 		if(!$package)
 		$packageManager->loadPackage('404', true);
 	}else {
-		$package = $packageManager->loadPackage('main', true);
+		$package = $packageManager->loadPackage(defaultPackage, true);
 	}
 
 	//$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
