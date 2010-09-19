@@ -5,6 +5,15 @@ class lttxError extends Exception{
 		$this->message = package::getLanguageVar($messageCode);
 	}
 }
+class lttxInfo extends Exception{
+	public function __construct  ($messageCode = ''){
+		package::loadLang(package::$tpl);
+		$this->message = package::getLanguageVar($messageCode);
+	}
+}
+
+
+
 class lttxLog{
 	public function __construct  (){
 	}
