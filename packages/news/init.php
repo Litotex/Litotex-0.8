@@ -86,12 +86,9 @@ class package_news extends package {
     }
     public static function  __hook_showNewsBlock($n) {
         $news = self::getNews(false, 1, $n);
-        $tpl = new Smarty();
-        $tpl->compile_dir = TEMPLATE_COMPILATION;
-        self::setTemplateClass($tpl, 'news');
         self::loadLang($tpl, 'news');
-        $tpl->assign('news', $news);
-        $tpl->display(self::getTplDir('news') . 'newsblock.tpl');
+        self::$tpl->assign('news', $news);
+        self::$tpl->display(self::getTplDir('news') . 'newsblock.tpl');
         return true;
     }
 	public static function  __tpl_showNewsBlock() {
