@@ -16,8 +16,7 @@ font-size: 1px;
 
 
 .login {
-	margin-left: 40%;
-	padding-left: 5px;
+	margin: auto auto;
 	width: 600px;
 }
 label { width: 10em; float: left; }
