@@ -6,4 +6,7 @@ class package_acp_main extends package{
 	public function __action_main(){
 		return true;
 	}
+	public static function registerHooks(){
+		return true;
+	}
 }
