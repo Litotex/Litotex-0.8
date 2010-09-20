@@ -1,0 +1,16 @@
+/* set millions of background images */
+.rbroundbox { background: url(../img/nt.png) repeat; }
+.rbtop div { background: url(../img/tl.png) no-repeat top left; }
+.rbtop { background: url(../img/tr.png) no-repeat top right; }
+.rbbot div { background: url(../img/bl.png) no-repeat bottom left; }
+.rbbot { background: url(../img/br.png) no-repeat bottom right; }
+
+/* height and width stuff, width not really nessisary. */
+.rbtop div, .rbtop, .rbbot div, .rbbot {
+width: 100%;
+height: 7px;
+font-size: 1px;
+}
+.rbcontent { margin: 0 7px; }
+.rbroundbox { width: 95%; margin: 1em auto; }
+
