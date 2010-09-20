@@ -1,17 +1,51 @@
+{literal} 
+<script>
+$.validator.setDefaults({
+	submitHandler: function() { form.submit() },
+	highlight: function(input) {
+		$(input).addClass("ui-state-highlight");
+	},
+	unhighlight: function(input) {
+		$(input).removeClass("ui-state-highlight");
+	}
+});
+  $(document).ready(function(){
+    $("#loginForm").validate({
+  		rules: {
+			username: {
+				required: true,
+			},
+			password: {
+				required: true,
+			},},
+			messages: {
+			username: "Bitte trage deinen Usernamen ein",
+			password: "Bitte trage das Kennwort ein"
+			}
+  });
+  });
+  </script>
+{/literal} 
 
-<div class="rbroundbox">
-	<div class="rbtop"><div></div></div>
-		<div class="rbcontent">
-			<h2>Login </h2>
-			 <form action="index.php?package=login&amp;action=loginsubmit" name="frm_login" method="post">
-					<p>{#LN_LOGIN_USERNAME#}
-					<input class="textinput" name="username" type="text" value="" maxlength="255" ></p>
-					<p>{#LN_LOGIN_PASSWORD#}
-					<input class="textinput" name="password" type="password" value="" maxlength="255" >
-					</p>
-					<p> <a href="index.php?package=login&amp;action=forget">{#LN_LOGIN_FORGET_LINKNAME#}</a> | <a href="#" onClick="document.frm_login.submit();">{#LN_LOGIN_LINKNAME#}</a></p>
-				 </form>
-	 </div><!-- /rbcontent -->
-	<div class="rbbot"><div></div></div>
-</div><!-- /rbroundbox -->
 
+<div class="login">
+		<form class="cmxform" id="loginForm" method="post" action="index.php?package=acp_login&amp;action=loginsubmit">
+			<fieldset class="ui-widget ui-widget-content ui-corner-all">
+				<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_LOGIN_ACP#}</legend>
+				<p>
+					<label for="username">{#LN_LOGIN_USERNAME#}</label>
+					<input id="username" name="username" class="required ui-widget-content" />
+				</p>
+				<p>
+					<label for="password">{#LN_LOGIN_PASSWORD#}</label>
+					<input id="password" type="password" name="password" class="required ui-widget-content" />
+				</p>
+				<p>
+					<button class="submit" type="submit">{#LN_LOGIN_LINKNAME#}</button>
+				</p>
+				<p>
+				<div class="forget"><a href="index.php?package=acp_login&amp;action=forget">{#LN_LOGIN_FORGET_LINKNAME#}</a></div> 
+				</p>
+			</fieldset>
+		</form>
+</div>

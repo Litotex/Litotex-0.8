@@ -7,6 +7,9 @@
 {foreach from=$CSS_FILES item=CSS_FILE}
 <link rel="stylesheet" type="text/css" href="{$CSS_FILE}">
 {/foreach}
+{foreach from=$JS_FILES item=JS_FILE}
+<script type="text/javascript" src="{$JS_FILE}"></script>
+{/foreach}
 
 </head>
 <body>
@@ -23,6 +26,4 @@
 <div id="navi">
 {displayTplModification position=acp_navi}
 </div>
-<table border="0">
-  <tr>
-    <td>
+<div class="content">
