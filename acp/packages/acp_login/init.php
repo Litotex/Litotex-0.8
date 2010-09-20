@@ -66,6 +66,7 @@ class package_acp_login extends package {
 			}
 	}
 	public function __action_forget() {
+		package::addCssFile('login.css', 'acp_login');
 		package::$tpl->display(self::getTplDir('acp_login') . 'login_forget.tpl');
 	}
 	
