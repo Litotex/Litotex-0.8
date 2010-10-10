@@ -128,6 +128,7 @@ class packages{
 	 * @return bool
 	 */
 	public function generateTplModificationCache(){
+		package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `type` = ? AND `packageDir` = ?", array(2, $this->_packagesDir));
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -200,7 +201,6 @@ class packages{
 	 * @return bool
 	 */
 	public function generateHookCache(){
-		package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `type` = ?", array(2));
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -276,7 +276,6 @@ class packages{
 		}
 		if(!method_exists($class, '__hook_'.$function))
 		return false;
-		package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`) VALUES (?, ?, ?, ?)", array(2, $packageName, $class, $function));
 		$this->_hookCache[$hookname.':'.$nParams][] = array($class, $function, $file, $packageName);
 		return true;
 	}
@@ -294,6 +293,7 @@ class packages{
 		}
 		if(!method_exists($class, '__tpl_'.$function))
 		return false;
+		package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(2, $packageName, $class, $function, $this->_packagesDir));
 		$this->_tplModificationCache[$class.':'.$function] = array($class, $function, $file, $packageName);
 		return true;
 	}
@@ -409,7 +409,7 @@ class packages{
 	 * @return bool
 	 */
 	public function generateDependencyCache(){
-		package::$db->Execute("TRUNCATE TABLE `lttx_permissionsAvailable`");
+		package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `packageDir` = ? AND `type` = ?", array($this->_packagesDir, 1));
 		if(!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -474,7 +474,7 @@ class packages{
 		$pack = $this->loadPackage($path, false, false, false);
 		$actions = $pack->getActions();
 		foreach($actions as $action){
-			package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`) VALUES (?, ?, ?, ?)", array(1, $path, $class, $action));
+			package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(1, $path, $class, $action, $this->_packagesDir));
 		}
 		return true;
 	}
@@ -570,7 +570,10 @@ class packages{
 				$this->loadPackage($func[3], false, false);
 				include_once($func[2]);
 			}
-			$this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
+			$pack = $this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
+			if(!package::$perm->checkPerm($pack, $func[1])){
+				continue;
+			}
 			if(!call_user_func_array(array($func[0], '__tpl_' . $func[1]), array()))
 			$return = false;
 		}

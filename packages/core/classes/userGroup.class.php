@@ -374,4 +374,20 @@ class userGroup {
         }
         return $return;
     }
+    public static function getDefault(){
+    	$return = array();
+        $result = package::$db->Execute("
+            SELECT `ID`
+            FROM `lttx_userGroups`
+            WHERE `default` = ?",
+                array(1));
+                echo mysql_error();
+        if(!$result || !isset($result->fields[0]))
+                return false;
+        while(!$result->EOF){
+            $return[] = new userGroup($result->fields[0]);
+            $result->MoveNext();
+        }
+        return $return;
+    }
 }

@@ -534,8 +534,9 @@ class user {
         return $this->_saveWriteBuffer();
     }
     public function getUserGroups() {
-        if(!$this->_initialized)
-            return false;
+        if(!$this->_initialized || !$this->isUsersInstance()){
+            return userGroup::getDefault();
+        }
         return userGroup::getUsersGroups($this);
     }
     public function logout(){

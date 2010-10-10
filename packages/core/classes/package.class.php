@@ -170,14 +170,19 @@ abstract class package {
     protected final function _castAction($action) {
         if(in_array($action, $this->_availableActions)) {
             $functionName = '__action_' . $action;
-            return $this->$functionName();
         }else {
         	if(in_array('main', $this->_availableActions)){
+        		$action = 'main';
         		$functionName = '__action_main';
-        		return $this->$functionName();
+        	} else return false;
+        	if(!self::$perm->checkPerm($this->_packageName, $action)){
+        		throw new lttxError('E_noPermission');
         	}
-            return false;
         }
+   		if(!self::$perm->checkPerm($this, $action)){
+        	throw new lttxError('E_noPermission');
+       	}
+        return $this->$functionName();
     }
     /**
      * This is the main function which is called if no other function is avaialbe
@@ -193,7 +198,7 @@ abstract class package {
      * @param bool | str $function name of function, used if the function is overloaded
      * @return bool was the hook registered successfully?
      */
-    protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
+    protected static final function _registerHook($class, $hookname, $nParams, $packageName, $function = false, $file = false) {
         if(!self::$packages) {
             throw new Exception('The packagemanager was not accessible for this package, register it first.');
             exit();
@@ -224,7 +229,7 @@ abstract class package {
      * @param bool | str $function name of function, used if the function is overloaded
      * @return bool was the hook registered successfully?
      */
-	protected static final function _registerTplModification($class, $function, $file = false, $packageName = false) {
+	protected static final function _registerTplModification($class, $function, $packageName, $file = false) {
         if(!self::$packages) {
             throw new Exception('The packagemanager was not accessible for this package, register it first.');
             exit();

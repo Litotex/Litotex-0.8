@@ -146,7 +146,7 @@ class perm {
      * @return int
      */
     private function _getUserPerm($package, $function, $class = false) {
-        return $this->_getPermissionDummy($package, $function, 1, $this->_user->getID(), $class);
+        return $this->_getPermissionDummy($package, $function, 1, $this->_user->getUserID(), $class);
     }
     /**
      * Dummy class (gets permissions from groups and users)
