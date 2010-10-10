@@ -198,7 +198,7 @@ abstract class package {
      * @param bool | str $function name of function, used if the function is overloaded
      * @return bool was the hook registered successfully?
      */
-    protected static final function _registerHook($class, $hookname, $nParams, $packageName, $function = false, $file = false) {
+    protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
         if(!self::$packages) {
             throw new Exception('The packagemanager was not accessible for this package, register it first.');
             exit();
