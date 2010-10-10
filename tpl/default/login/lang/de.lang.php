@@ -1,5 +1,7 @@
 ;<?php exit(); ?>
-LN_LOGIN_NO_USERNAME = "Bitte gib deinen Usernamen an."
+login_noUsername = "Bitte geben sie ihren Usernamen an."
+login_noPassword = "Bitte geben sie ihr Passwort an."
+login_incorrect = "Das eingegebene Passwort konnte dem Benutzer nicht zugeordnet werden."
 LN_LOGIN_FORGET="Diese Funktion wurde noch nicht implementiert.<br>Wir bitten um Entschuldigung."
 LN_LOGIN_FORGET_LINKNAME="Passwort vergessen?"
 LN_LOGIN_LINKNAME="Anmelden"

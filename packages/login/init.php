@@ -136,27 +136,18 @@ class package_login extends package {
 	}
 	
     public function __action_loginsubmit() {
-		$username="";
-		$password="";
-		
-		if (!isset($_POST['username']) && !isset($_POST['password'])){
-			return true;
+		if (!isset($_POST['username'])){
+			throw new lttxError('login_noUsername');
 		}
-
-		$username= mysql_real_escape_string(strtolower($_POST['username']));
-		$password= mysql_real_escape_string($_POST['password']);
-	
-		$user = new user(0);
-		$ret=$user->login($username,$password);
-		if(package::$user){
-			package::debug('Login successfully Username:'.$username);
-			header("Location: index.php");
-			exit();
+		if(!isset($_POST['password'])){
+			throw new lttxError('login_noUsername');
 		}
-		package::debug('Login error Username:'.$username);
-		
-		throw new lttxError('LN_LOGIN_NO_USERNAME'); 
-		return true;
+		$user = user::login($_POST['username'],$_POST['password']);
+		if(!$user){
+			throw new lttxError('login_incorrect');
+		}
+		header("Location:index.php");
+		exit();
     }
 	
 }
