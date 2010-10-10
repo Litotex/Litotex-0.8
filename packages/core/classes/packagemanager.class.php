@@ -571,7 +571,7 @@ class packages{
 				include_once($func[2]);
 			}
 			$pack = $this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
-			if(!package::$perm->checkPerm($pack, $func[1])){
+			if(!package::$perm->checkPerm($pack, $func[1], $func[0])){
 				continue;
 			}
 			if(!call_user_func_array(array($func[0], '__tpl_' . $func[1]), array()))

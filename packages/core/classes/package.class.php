@@ -175,11 +175,11 @@ abstract class package {
         		$action = 'main';
         		$functionName = '__action_main';
         	} else return false;
-        	if(!self::$perm->checkPerm($this->_packageName, $action)){
+        	if(!self::$perm->checkPerm($this->_packageName, $action, 'package_' . $this->_packageName)){
         		throw new lttxError('E_noPermission');
         	}
         }
-   		if(!self::$perm->checkPerm($this, $action)){
+   		if(!self::$perm->checkPerm($this, $action, 'package_' . $this->_packageName)){
         	throw new lttxError('E_noPermission');
        	}
         return $this->$functionName();

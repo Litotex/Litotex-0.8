@@ -615,3 +615,5 @@ CREATE TABLE IF NOT EXISTS `lttx1_tplModificationSort` (
 -- Daten für Tabelle `lttx1_tplModificationSort`
 --
 
+
+ ALTER TABLE `lttx1_users` ADD `serverAdmin` BOOLEAN NOT NULL  

@@ -33,6 +33,11 @@ class perm {
      */
     private static $_cache = array();
     /**
+     * true if user flag serveradmin is set in database, just ignore all limitations
+     * @var bool
+     */
+    private $_serverAdmin = false;
+    /**
      * This will set up permission handlich for a user
      * @param user $user
      * @return void
@@ -42,6 +47,7 @@ class perm {
             throw new Exception('User class has to be passed');
             return;
         }
+        $this->_serverAdmin = (bool)$user->getData('serverAdmin');
         $this->_user = $user;
         $this->_groups = $user->getUserGroups();
         if(!$this->_groups)
@@ -70,6 +76,7 @@ class perm {
      * @return bool
      */
     public function  checkPerm($package, $function, $class = false) {
+    	if($this->_serverAdmin) return true;
         return ($this->_getPerm($package, $function, $class) == 1)?true:false;
     }
     /**
@@ -84,14 +91,16 @@ class perm {
      * @return mixed
      */
     public function  castFuntion($package, $function, $vars = false, $class = false) {
-        if(get_parent_class($package) != 'package')
-            return false;
-        if(!$this->checkPerm($package, $function, $class))
-            return false;
-        if($class !== false) {
-            $vars = ($vars === false)?array():$vars;
-            return call_user_func($class . '::' . $function, $vars);
-        }
+    	if(!$this->_serverAdmin){
+	        if(get_parent_class($package) != 'package')
+	            return false;
+	        if(!$this->checkPerm($package, $function, $class))
+	            return false;
+	        if($class !== false) {
+	            $vars = ($vars === false)?array():$vars;
+	            return call_user_func($class . '::' . $function, $vars);
+	        }
+    	}
         return call_user_func(array($package, $function), $vars);
     }
     /**
