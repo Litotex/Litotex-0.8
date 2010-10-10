@@ -25,25 +25,18 @@ class package_register extends package {
      * Register all hooks of this package
      * @return bool
      */
-    public static function registerHooks(){
-		self::_registerHook(__CLASS__, 'showRegisterLink', 1);
- 		return true;
-    }
    public static function registerTplModifications(){
-    	self::_registerTplModification(__CLASS__, 'showRegisterLink');
+    	self::_registerTplModification(__CLASS__, 'showRegisterLink', 'register');
     	return true;
     }
-	public static function __hook_showRegisterLink() {
-		package::$tpl->display(self::getTplDir('register') . 'register.tpl');
-        return true;
-    } 
 	 
     public function __action_main() {
 		package::addCssFile('register.css', 'register');
 		return true;
     }
 	public static function  __tpl_showRegisterLink() {
-        return self::__hook_showRegisterLink(0);
+        package::$tpl->display(self::getTplDir('register') . 'register.tpl');
+        return true;
     }
  
  public function __action_register_submit(){

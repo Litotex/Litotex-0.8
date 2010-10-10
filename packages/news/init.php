@@ -56,7 +56,7 @@ class package_news extends package {
         return true;
     }
     public static function registerTplModifications(){
-    	self::_registerTplModification(__CLASS__, 'showNewsBlock');
+    	self::_registerTplModification(__CLASS__, 'showNewsBlock', 'news');
     	return true;
     }
     public function __action_showComments() {

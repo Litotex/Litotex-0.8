@@ -30,7 +30,7 @@ class package_tplSwitcher extends package {
 	 * @return bool
 	 */
 	public static function registerTplModifications(){
-		self::_registerTplModification(__CLASS__, 'showTemplateSwitch');
+		self::_registerTplModification(__CLASS__, 'showTemplateSwitch', 'tplSwitcher');
 		return true;
 	}
 	/**

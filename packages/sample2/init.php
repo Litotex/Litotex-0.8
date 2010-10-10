@@ -28,7 +28,7 @@ class package_sample2 extends package {
 		return true;
     }
    public static function registerTplModifications(){
-    	self::_registerTplModification(__CLASS__, 'sample2');
+    	self::_registerTplModification(__CLASS__, 'sample2', 'sample2');
     	return true;
     }
 

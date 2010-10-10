@@ -23,20 +23,12 @@ class package_edit_profile extends package {
      * @return bool
      */
     public static function registerHooks(){
-		self::_registerHook(__CLASS__, 'showProfileLink', 0);
- 		return true;
+  		return true;
     }
    public static function registerTplModifications(){
-    	self::_registerTplModification(__CLASS__, 'showProfileLink');
+    	self::_registerTplModification(__CLASS__, 'showProfileLink', 'edit_profile');
     	return true;
-    }
-	public static function __hook_showProfileLink() {
-		if(package::$user){
-		package::$tpl->display(self::getTplDir('edit_profile') . 'edit_profile_link.tpl');
-        }
-		return true;
-    } 
-	 
+   }
     public function __action_main() {
 		if(!package::$user){
 		header("Location: index.php");
@@ -47,7 +39,10 @@ class package_edit_profile extends package {
 		return true;
     }
 	public static function  __tpl_showProfileLink() {
-        return self::__hook_showProfileLink(0);
+        if(package::$user){
+			package::$tpl->display(self::getTplDir('edit_profile') . 'edit_profile_link.tpl');
+        }
+		return true;
     }
  
 	public function __action_profile_submit(){

@@ -29,7 +29,7 @@ class package_login extends package {
  		return true;
     }
     public static function registerTplModifications(){
-    	self::_registerTplModification(__CLASS__, 'showLoginBox');
+    	self::_registerTplModification(__CLASS__, 'showLoginBox', 'login');
     	return true;
     }
     /**
