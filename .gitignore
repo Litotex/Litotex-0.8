@@ -4,3 +4,4 @@ tpl_c/%%*
 .packages/core/config/*
 .settings/*
 packages/core/cache/*
+acp/tpl_c/%%*

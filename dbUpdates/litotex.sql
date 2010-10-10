@@ -615,13 +615,3 @@ CREATE TABLE IF NOT EXISTS `lttx1_tplModificationSort` (
 -- Daten für Tabelle `lttx1_tplModificationSort`
 --
 
-INSERT INTO `lttx1_tplModificationSort` (`ID`, `class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES
-(408, 'package_sample3', 'sample3', 'content', 1, 0, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(406, 'package_register', 'showRegisterLink', 'left', 1, 2, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(407, 'package_news', 'showNewsBlock', 'left', 1, 3, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(405, 'package_edit_profile', 'showProfileLink', 'left', 1, 1, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(404, 'package_login', 'showLoginBox', 'left', 1, 0, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(402, 'package_sample2', 'sample2', 'right', 1, 1, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(403, 'package_tplSwitcher', 'showTemplateSwitch', 'right', 1, 2, '/home/jonas/Dokumente/PHP/Litotex8/packages/'),
-(401, 'package_sample1', 'sample1', 'right', 1, 0, '/home/jonas/Dokumente/PHP/Litotex8/packages/');
-
