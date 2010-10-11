@@ -201,13 +201,13 @@ abstract class package {
      */
     protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
         if(!self::$packages) {
-            throw new Exception('The packagemanager was not accessible for this package, register it first.');
+            trigger_error('The packagemanager was not accessible for this package, register it first.', E_USER_ERROR);
             exit();
         }
         $function = (!$function)?$hookname:$function;
         $return = self::$packages->registerHook($class, $hookname, $nParams, $function, $file, $packageName);
         if(!$return)
-            throw new Exception('Packagemanager was unable to load hook function "__hook_' . $function . '"');
+            trigger_error('Packagemanager was unable to load hook function "__hook_' . $function . '"', E_USER_ERROR);
     }
     /**
      * This function is used to regenerate the hook cache
