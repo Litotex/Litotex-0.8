@@ -109,8 +109,21 @@ class user {
      * @var bool
      */
     private $_loggedIn = false;
-    
+    /**
+     * Set to true if the acp is accessable
+     * @var bool
+     */
     private $_acpLegit = false;
+    /**
+     * Timestamp of acp access
+     * @var int
+     */
+    private $_acpLegitTime = 0;
+    /**
+     * Time after the acp legitimation is expired and will be revoked default: 1h (3600sec)
+     * @var int
+     */
+    private $_acpLegitExpire = 3600;
     /**
      * This function loads data of a new user from the database
      * There are more ways to get an instance
@@ -550,12 +563,43 @@ class user {
     	return true;
     }
     public function setAcpLogin(){
-    	if(!$this->isUsersInstance())
+    	if(!$this->_initialized)
     		return false;
     	$this->_acpLegit = true;
+    	$this->_acpLegitTime = time();
+    	return true;
+    }
+	public function revokeAcpLogin(){
+    	if(!$this->_initialized)
+    		return false;
+    	$this->_acpLegit = false;
+    	$this->_acpLegitTime = 0;
     	return true;
     }
     public function isAcpLogin(){
     	return $this->_acpLegit;
+    }
+    public function checkAcpLoginExpired(){
+    	if(!$this->_acpLegit){
+    		return false;
+    	}
+    	return (time() > ($this->_acpLegitTime + $this->_acpLegitExpire))?false:true;
+    }
+    public function acpReLegit(){
+	    if(!$this->_acpLegit){
+	    	return false;
+	    }
+    	$this->_acpLegitTime = time();
+    	return true;
+    }
+    public function initialized(){
+    	return (bool)$this->_initialized;
+    }
+    public static function compare(user $u1, user $u2){
+    	if(!$u1->initialized() || !$u2->initialized())
+    		return false;
+    	if($u1->getUserID() == $u2->getUserID())
+    		return true;
+    	return false;
     }
 }
