@@ -123,7 +123,7 @@ class user {
      * Time after the acp legitimation is expired and will be revoked default: 1h (3600sec)
      * @var int
      */
-    private $_acpLegitExpire = 3600;
+    private static $_acpLegitExpire = 3600;
     /**
      * This function loads data of a new user from the database
      * There are more ways to get an instance
@@ -583,7 +583,7 @@ class user {
     	if(!$this->_acpLegit){
     		return false;
     	}
-    	return (time() > ($this->_acpLegitTime + $this->_acpLegitExpire))?false:true;
+    	return (time() > ($this->_acpLegitTime + self::$_acpLegitExpire))?false:true;
     }
     public function acpReLegit(){
 	    if(!$this->_acpLegit){
