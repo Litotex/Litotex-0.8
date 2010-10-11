@@ -5,7 +5,7 @@
  * @author: Litotex Team
  * @copyright: 2010
  */
-class package_acp_login extends package {
+class package_acp_login extends acpPackage {
     /**
      * Package name
      * @var string
@@ -36,10 +36,4 @@ class package_acp_login extends package {
     	package::$user->setAcpLogin();
     	return true;
     }
-	public function runtime(){
-		if(package::$user->isAcpLogin()){
-    		header('Location: index.php?package=acp_main');
-    		exit();
-    	}
-	}
 }

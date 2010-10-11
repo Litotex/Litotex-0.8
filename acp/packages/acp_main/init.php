@@ -1,5 +1,5 @@
 <?php
-class package_acp_main extends package{
+class package_acp_main extends acpPackage{
 	protected $_availableActions = array('main');
 	protected $_packageName = 'acp_main';
 	protected $_theme = 'main.tpl';
@@ -8,11 +8,5 @@ class package_acp_main extends package{
 	}
 	public static function registerHooks(){
 		return true;
-	}
-	public function runtime(){
-		if(!package::$user->isAcpLogin()){
-    		header('Location: index.php?package=acp_login');
-    		exit();
-    	}
 	}
 }
