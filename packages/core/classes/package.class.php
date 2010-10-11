@@ -182,6 +182,7 @@ abstract class package {
    		if(!self::$perm->checkPerm($this, $action, 'package_' . $this->_packageName)){
         	throw new lttxError('E_noPermission');
        	}
+       	$this->runtime();
         return $this->$functionName();
     }
     /**
@@ -501,4 +502,10 @@ abstract class package {
     	self::$log->debug($message);
 		return true;
     }
+    /**
+     * This function will be called automaticly before every other __action_method is used on a package
+     * It can be empty as well
+     * @return void
+     */
+    public function runtime(){}
 }
