@@ -109,6 +109,8 @@ class user {
      * @var bool
      */
     private $_loggedIn = false;
+    
+    private $_acpLegit = false;
     /**
      * This function loads data of a new user from the database
      * There are more ways to get an instance
@@ -546,5 +548,14 @@ class user {
     	$salted = $this->_saltString($password);
     	package::$db->Execute("UPDATE `lttx_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?", array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
     	return true;
+    }
+    public function setAcpLogin(){
+    	if(!$this->isUsersInstance())
+    		return false;
+    	$this->_acpLegit = true;
+    	return true;
+    }
+    public function isAcpLogin(){
+    	return $this->_acpLegit;
     }
 }

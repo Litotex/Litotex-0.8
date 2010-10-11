@@ -9,4 +9,10 @@ class package_acp_main extends package{
 	public static function registerHooks(){
 		return true;
 	}
+	public function runtime(){
+		if(!package::$user->isAcpLogin()){
+    		header('Location: index.php?package=acp_login');
+    		exit();
+    	}
+	}
 }
