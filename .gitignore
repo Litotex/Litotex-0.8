@@ -4,4 +4,5 @@ tpl_c/%%*
 .packages/core/config/*
 .settings/*
 packages/core/cache/*
+acp/packages/acp_config/cache/config.cache.php
 acp/tpl_c/%%*
