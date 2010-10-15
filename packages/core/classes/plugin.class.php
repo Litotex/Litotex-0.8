@@ -79,7 +79,7 @@ abstract class plugin_handler{
 		$prop = get_class_vars($classname);
 		if($prop['handlerName'] != $this->_name){
 			if(DEVDEBUG)
-				trigger_error("The plugin " . $pluginname . " was found but does not use this class as it's handler. Please check toe documentation to get more information about the plugin system.", E_USER_NOTICE);
+				trigger_error("The plugin " . $pluginname . " was found but does not use this class as it's handler. Please check the documentation to get more information about the plugin system.", E_USER_NOTICE);
 			return false;
 		}
 		return true;
