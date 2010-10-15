@@ -48,9 +48,12 @@ a:hover {
 }
 
 #content {
+	left: 250px;
+	position: absolute;
 }
 
 #navi {
+	width: 250px;
 	float: left;
 }
 

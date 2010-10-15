@@ -24,6 +24,6 @@
   </div>
 <div>
 <div id="navi">
-{displayTplModification position=acp_navi}
+{displayTplModification position=acpNavi}
 </div>
-<div class="content">
+<div id="content">
