@@ -84,7 +84,7 @@ abstract class plugin_handler{
 		}
 		return true;
 	}
-	public final function callPluginFunc($pluginName, $pluginFunc, $params){
+	public final function callPluginFunc($pluginName, $pluginFunc, $params = array()){
 		if(!isset($this->_cache[$pluginName]))
 			return false;
 		$this->_location = preg_replace("!/$!", '', $this->_location);
