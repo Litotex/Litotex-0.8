@@ -232,12 +232,12 @@ abstract class package {
      */
 	protected static final function _registerTplModification($class, $function, $packageName, $file = false) {
         if(!self::$packages) {
-            throw new Exception('The packagemanager was not accessible for this package, register it first.');
+            trigger_error('The packagemanager was not accessible for this package, register it first.', E_USER_ERROR);
             exit();
         }
         $return = self::$packages->registerTplModification($class, $function, $file, $packageName);
         if(!$return)
-            throw new Exception('Packagemanager was unable to load tplModification function "__tpl_' . $function . '"');
+            trigger_error('Packagemanager was unable to load tplModification function "__tpl_' . $function . '"', E_USER_ERROR);
     }
     
 	    /**
