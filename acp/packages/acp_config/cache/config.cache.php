@@ -1,0 +1,1 @@
+1287167734;a:1:{s:4:"text";a:3:{i:0;s:11:"plugin_text";i:1;s:4:"text";i:2;a:2:{i:0;s:6:"exists";i:1;s:15:"registerElement";}}}
