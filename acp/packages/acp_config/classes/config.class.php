@@ -39,7 +39,7 @@ class config{
 		$exists = $this->_pluginHandler->callPluginFunc($type, 'exists');
 		if(!$exists)
 			throw new lttxFatalError('Config plugin ' . $name . ' could not be found within the plugin directory.');
-		$return = $this->_pluginHandler->callPluginFunc($type, 'registerElement', array(array()));
+		$return = $this->_pluginHandler->callPluginFunc($type, 'registerElement', array($name, array()));
 		if(!is_a($return, 'configElement'))
 			throw new lttxFatalError('Config plugin ' . $name . ' could not initialize a new element, it returned an undefined problem.');
 		$this->_elements[] = $return;
