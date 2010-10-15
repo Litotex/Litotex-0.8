@@ -123,7 +123,7 @@ try{
 	$tpl = package::$tpl;
 	$tpl->assign('errorMessage', $e->getMessage());
 	package::loadLang($tpl);
-	if(is_a($e, 'lttxError'))
+	if(is_a($e, 'lttxError') || is_a($e, 'lttxFatalError'))
 	$tpl->display(package::getTplDir('main') . 'CoreError.tpl');
 	if(is_a($e, 'lttxInfo'))
 	$tpl->display(package::getTplDir('main') . 'CoreInfo.tpl');
