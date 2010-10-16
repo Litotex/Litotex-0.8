@@ -355,9 +355,11 @@ abstract class package {
      */
     public static function addJsFile($href, $package = false) {
     	if(file_exists(self::getJsDir($package) . $href)){
-        	self::$_jsFiles[] = self::getJsUrl($package) . $href;
+    		if(!in_array(self::getJsUrl($package) . $href, self::$_jsFiles))
+        		self::$_jsFiles[] = self::getJsUrl($package) . $href;
     	}else{
-    		self::$_jsFiles[] = self::getJsUrl($package, 'default') . $href;
+    		if(!in_array(self::getJsUrl($package, 'default') . $href, self::$_jsFiles))
+    			self::$_jsFiles[] = self::getJsUrl($package, 'default') . $href;
     	}
         if(self::$tpl)
             self::$tpl->assign('JS_FILES', self::$_jsFiles);
@@ -369,7 +371,8 @@ abstract class package {
      * @return bool
      */
     public static function addNonPackageJsFile($href){
-    	self::$_jsFiles[] = $href;
+    	if(!in_array($href, self::$_jsFiles))
+    		self::$_jsFiles[] = $href;
     	if(self::$tpl)
             self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
