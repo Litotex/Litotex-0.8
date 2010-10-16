@@ -339,9 +339,11 @@ abstract class package {
      */
     public function addCssFile($href, $package = false) {
     	if(file_exists(self::getCssDir($package) . $href)){
-        	self::$_cssFiles[] = self::getCssUrl($package) . $href;
+    		if(!in_array(self::getCssUrl($package) . $href, self::$_cssFiles))
+        		self::$_cssFiles[] = self::getCssUrl($package) . $href;
     	}else{
-    		self::$_cssFiles[] = self::getCssUrl($package, 'default') . $href;
+    		if(!in_array(self::getCssUrl($package, 'default') . $href, self::$_cssFiles))
+    			self::$_cssFiles[] = self::getCssUrl($package, 'default') . $href;
     	}
         if(self::$tpl)
             self::$tpl->assign('CSS_FILES', self::$_cssFiles);
@@ -473,6 +475,15 @@ abstract class package {
         	$tpl->config_load(self::getLangPath($package) . 'en' . '.lang.php');
         }
         return true;
+    }
+    public static function loadNonPackageLang($tpl, $href){
+    	if(!is_a($tpl, 'Smarty'))
+			return false;
+    	if(file_exists($href . '.' . self::getLanguage() . '.lang.php')){
+        	$tpl->config_load($href . '.' . self::getLanguage() . '.lang.php');
+        } else {
+        	$tpl->config_load($href . '.en' . '.lang.php');
+        }
     }
     public static function setTemplateSettings($tpl, $package = false){
     	if(is_dir(self::getImgDir(false))){
