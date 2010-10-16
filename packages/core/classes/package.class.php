@@ -364,6 +364,17 @@ abstract class package {
         return true;
     }
     /**
+     * Adds a new JS file with no relations to a package, just type the url to use
+     * @param str $href
+     * @return bool
+     */
+    public static function addNonPackageJsFile($href){
+    	self::$_jsFiles[] = $href;
+    	if(self::$tpl)
+            self::$tpl->assign('JS_FILES', self::$_jsFiles);
+        return true;
+    }
+    /**
      * This will refer the user back to the front page of a package
      * It will prevent from refering to the same page again due to errors by passing an error!
      */
