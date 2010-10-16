@@ -1,5 +1,5 @@
 {include file=$HEADER}
 
-{displayTplModification position=content}
+{$configForm}
 
 {include file=$FOOTER}

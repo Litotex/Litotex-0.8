@@ -17,8 +17,10 @@
  */
 if(!defined('LITO_ROOT'))
 	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/');
+if(!defined('LITO_PLUGIN_DIRNAME'))
+	define('LITO_PLUGIN_DIRNAME', 'plugins/');
 if(!defined('LITO_PLUGIN_ROOT'))
-	define('LITO_PLUGIN_ROOT', LITO_ROOT . 'plugins/');
+	define('LITO_PLUGIN_ROOT', LITO_ROOT . LITO_PLUGIN_DIRNAME);
 if(!defined('LITO_URL'))
 	define('LITO_URL', 'http://localhost/Litotex8/');
 if(!defined('DATABASE_CONFIG_FILE'))

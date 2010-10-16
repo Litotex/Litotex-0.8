@@ -1,1 +1,1 @@
-<input type="text" name="{$cfgElementName}" />
+<input type="text" name="{$cfgElementName}"{if $cfgElementSettings.maxLength > 0}" maxlength="{$cfgElementSettings.maxLength}"{/if} size="{$cfgElementSettings.width}" />
