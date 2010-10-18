@@ -19,3 +19,23 @@
 </script>
 {/literal}
 {/if}
+{if $cfgElementSettings.allowedChars}
+<div id="{$cfgElementName}AllowedChars">{#acp_usersAllowedChars#}{foreach from=$cfgElementSettings.allowedChars item=char} "{$char}" {/foreach}</div>
+{literal}
+<script type="text/javascript">
+<!--
+	element = document.getElementById("{/literal}{$cfgElementName}{literal}");
+	$(element).keyup(function(){
+		//{/literal}
+		checkAllowedSigns(this, "{$cfgElementName}", '{foreach from=$cfgElementSettings.allowedChars item=char}\\{$char}{/foreach}');
+		//{literal}
+	});
+	$(document).ready(function(){
+		//{/literal}
+		registerSubmitFunction(checkAllowedSignsSubmit, new Array(element, '{$cfgElementName}', '{foreach from=$cfgElementSettings.allowedChars item=char}\\{$char}{/foreach}', "{#E_notAllowedSigns#}"));
+		//{literal}
+	});
+//-->
+</script>
+{/literal}
+{/if}

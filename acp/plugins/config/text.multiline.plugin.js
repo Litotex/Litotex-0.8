@@ -20,3 +20,19 @@ function countTextSignsSubmit(params){
 		}
 	}
 }
+function checkAllowedSigns(object, name, allowedChars){
+	regex = new RegExp('^[' + allowedChars + ']*$');
+	if(object.value.search(regex))
+		document.getElementById(name+'AllowedChars').style['color'] = 'red';
+	else
+		document.getElementById(name+'AllowedChars').style['color'] = '';
+}
+function checkAllowedSignsSubmit(params){
+	object = params[0];
+	name = params[1];
+	allowedChars = params[2];
+	message = params[3];
+	regex = new RegExp('^[' + allowedChars + ']*$');
+	if(object.value.search(regex))
+		alert(message);
+}

@@ -8,7 +8,7 @@ function checkSet($array, $key, $default, $values = array()){
 class plugin_text extends plugin{
 	public static $handlerName = 'config';
 	public static $name = 'text';
-	public static $availableFunctions = array('exists', 'registerElement', 'cleanSettings');
+	public static $availableFunctions = array('exists', 'registerElement', 'cleanSettings', 'checkInput', 'cleanInput');
 	public static function exists(){
 		return true;
 	}
@@ -16,7 +16,7 @@ class plugin_text extends plugin{
 		package::$tpl->assign('cfgElementName', $name);
 		package::$tpl->assign('cfgElementSettings', $settings);
 		package::loadNonPackageLang(package::$tpl, LITO_ROOT . LITO_PLUGIN_DIRNAME . 'config/' . 'text.' . $settings['type'].'.plugin');
-		$element = new configElement(self::$name);
+		$element = new configElement(self::$name, $name, $settings);
 		$code = package::$tpl->fetch(dirname(__FILE__) . '/text.'.$settings['type'].'.plugin.tpl');
 		package::addNonPackageJsFile(LITO_URL . LITO_PLUGIN_DIRNAME . 'config/' . 'text.' . $settings['type'].'.plugin.js');
 		$element->setHTML($code);
@@ -31,5 +31,25 @@ class plugin_text extends plugin{
 		$settings = checkSet($settings, 'maxLength', 0);
 		$settings = checkSet($settings, 'allowedChars', array()); //TODO
 		return $settings;
+	}
+	public static function checkInput($input, $settings){
+		$len = strlen($input);
+		package::loadNonPackageLang(package::$tpl, LITO_ROOT . LITO_PLUGIN_DIRNAME . 'config/' . 'text.' . $settings['type'].'.plugin');
+		if($len != 0 && $len > $settings['maxLength'])
+			throw new lttxError('E_tooMuchSigns');
+		if(count($settings['allowedChars']) > 0){
+			$regex = '/^[';
+			foreach ($settings['allowedChars'] as $char){
+				$regex .= '\\\\' . $char[0];
+			}
+			$regex .= ']*$/';
+			var_dump($regex);
+			if(!preg_match($regex, $input))
+				throw new lttxError('E_notAllowedSigns');
+		}
+		
+	}
+	public static function cleanInput($input, $settings){
+		
 	}
 }

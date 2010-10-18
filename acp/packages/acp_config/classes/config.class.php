@@ -8,14 +8,32 @@ class configPluginHandler extends plugin_handler{
 class configElement{
 	private $_HTML = '';
 	private $_type = false;
-	public function __construct($type){
+	private $_nodeName = '';
+	private $_settings = array();
+	public function __construct($type, $name, $settings){
 		$this->_type = $type;
+		$this->_nodeName = $name;
+		$this->_settings = $settings;
 	}
 	public function setHTML($code){
 		$this->_HTML = $code;
 	}
 	public function getHTML(){
 		return $this->_HTML;
+	}
+	public function getSaveValue(configPluginHandler $pluginHandler){
+		$value = $this->_getSystemSaveValue();
+		if(!$pluginHandler->callPluginFunc($this->_type, 'checkInput', array($value, $this->_settings)))
+			return false;
+		return $pluginHandler->callPluginFunc($this->_type, 'cleanInput', array($value, $this->_settings));
+	}
+	private function _getSystemSaveValue(){
+		if(!isset($_POST[$this->_nodeName]))
+			throw new lttxFatalError('Unable to fetch value for ' . $this->_nodeName . '. Use the predefined form!');
+		return $_POST[$this->_nodeName];
+	}
+	public function getName(){
+		return $this->_nodeName;
 	}
 }
 class config{
@@ -47,9 +65,21 @@ class config{
 		$this->_elements[] = $return;
 	}
 	public function getHTML(){
-		$return = '';
+		$formCode = '';
 		foreach($this->_elements as $element){
-			$return .= $element->getHTML();
+			$formCode .= $element->getHTML();
+		}
+		package::$tpl->assign('formCode', $formCode);
+		package::loadLang(package::$tpl, 'acp_config');
+		$return = package::$tpl->fetch(package::getTplDir('acp_config') . 'defaultConfig.tpl');
+		return $return;
+	}
+	public function getData(){
+		if(!isset($_POST['lttxForm']))
+			return false;
+		$return = array();
+		foreach($this->_elements as $element){
+			$return[$element->getName()] = $element->getSaveValue($this->_pluginHandler);
 		}
 		return $return;
 	}
