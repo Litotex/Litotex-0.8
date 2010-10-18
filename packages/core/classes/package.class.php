@@ -473,6 +473,8 @@ abstract class package {
         	$tpl->config_load(self::getLangPath($package) . self::getLanguage() . '.lang.php');
         }else if(file_exists(self::getLangPath($package) . 'en' . '.lang.php')){
         	$tpl->config_load(self::getLangPath($package) . 'en' . '.lang.php');
+        } else {
+        	return false;
         }
         return true;
     }
