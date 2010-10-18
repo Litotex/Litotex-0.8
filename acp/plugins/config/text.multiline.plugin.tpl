@@ -1,4 +1,4 @@
-<textarea name="{$cfgElementName}" id="{$cfgElementName}" rows="{$cfgElementSettings.height}" cols="{$cfgElementSettings.width}">{$cfgElementDefaultValue}</textarea>
+<p>{$cfgElementLabel}</p><textarea name="{$cfgElementName}" id="{$cfgElementName}" rows="{$cfgElementSettings.height}" cols="{$cfgElementSettings.width}">{$cfgElementDefaultValue}</textarea>
 {if $cfgElementSettings.maxLength > 0}
 <div id="{$cfgElementName}TextCounter">0/{$cfgElementSettings.maxLength}</div>
 {literal}
@@ -10,6 +10,9 @@
 		countTextSigns(this, '{$cfgElementName}', {$cfgElementSettings.maxLength});
 		//{literal}
 	});
+	//{/literal}
+	countTextSigns(element, '{$cfgElementName}', {$cfgElementSettings.maxLength});
+	//{literal}
 	$(document).ready(function(){
 		//{/literal}
 		registerSubmitFunction(countTextSignsSubmit, new Array(element, '{$cfgElementName}', {$cfgElementSettings.maxLength}, "{#E_tooMuchSigns#}"));
