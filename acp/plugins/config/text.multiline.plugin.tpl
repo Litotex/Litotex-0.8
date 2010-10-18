@@ -1,4 +1,4 @@
-<textarea name="{$cfgElementName}" id="{$cfgElementName}" rows="{$cfgElementSettings.height}" cols="{$cfgElementSettings.width}"></textarea>
+<textarea name="{$cfgElementName}" id="{$cfgElementName}" rows="{$cfgElementSettings.height}" cols="{$cfgElementSettings.width}">{$cfgElementDefaultValue}</textarea>
 {if $cfgElementSettings.maxLength > 0}
 <div id="{$cfgElementName}TextCounter">0/{$cfgElementSettings.maxLength}</div>
 {literal}

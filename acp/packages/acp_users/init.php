@@ -6,9 +6,10 @@ class package_acp_users extends acpPackage{
 	protected $_theme = 'main.tpl';
 	public function __action_main(){
 		$config = new config();
-		$config->addElement('text', 'text', array('type' => 'multiline', 'width' => 100, 'maxLength' => 100, 'allowedChars' => array('h', "\n", ' ')));
+		$config->addElement('text', 'text', array('type' => 'multiline', 'width' => 100, 'maxLength' => 100), 'default?!');
 		package::$tpl->assign('configForm', $config->getHTML());
-		$config->getData();
+		$config = $config->getData();
+		var_dump($config);
 		return true;
 	}
 	public static function registerHooks(){

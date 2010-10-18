@@ -54,12 +54,12 @@ class config{
 		$this->_pluginHandler = new configPluginHandler();
 		$this->_initialized = true;
 	}
-	public function addElement($name, $type, $settings){
+	public function addElement($name, $type, $settings, $default){
 		$exists = $this->_pluginHandler->callPluginFunc($type, 'exists');
 		if(!$exists)
 			throw new lttxFatalError('Config plugin ' . $name . ' could not be found within the plugin directory.');
 		$settings = $this->_pluginHandler->callPluginFunc($type, 'cleanSettings', array($settings));
-		$return = $this->_pluginHandler->callPluginFunc($type, 'registerElement', array($name, $settings));
+		$return = $this->_pluginHandler->callPluginFunc($type, 'registerElement', array($name, $settings, $default));
 		if(!is_a($return, 'configElement'))
 			throw new lttxFatalError('Config plugin ' . $name . ' could not initialize a new element, it returned an undefined problem.');
 		$this->_elements[] = $return;
