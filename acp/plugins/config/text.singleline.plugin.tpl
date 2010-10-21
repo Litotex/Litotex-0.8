@@ -1,4 +1,4 @@
-<p>{$cfgElementLabel}</p><input type="text" name="{$cfgElementName}"{if $cfgElementSettings.maxLength > 0}" maxlength="{$cfgElementSettings.maxLength}"{/if} size="{$cfgElementSettings.width}" value="{$cfgElementDefaultValue}" />
+<p>{$cfgElementLabel}</p><input type="text" id="{$cfgElementName}" name="{$cfgElementName}"{if $cfgElementSettings.maxLength > 0}" maxlength="{$cfgElementSettings.maxLength}"{/if} size="{$cfgElementSettings.width}" value="{$cfgElementDefaultValue}" />
 {if $cfgElementSettings.maxLength > 0}
 <div id="{$cfgElementName}TextCounter">0/{$cfgElementSettings.maxLength}</div>
 {literal}
