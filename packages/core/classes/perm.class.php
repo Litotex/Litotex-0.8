@@ -182,6 +182,8 @@ class perm {
             AND `class` = ?",
                 array($type, $ID, $packageName, $function, $class)
         );
+        if(!$result)
+        	return 0;
         if($result->NumRows() <= 0)
             return 0;
         if($result->NumRows() > 1)
