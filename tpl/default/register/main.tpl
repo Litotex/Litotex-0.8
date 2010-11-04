@@ -73,11 +73,11 @@ $.validator.setDefaults({
 		<p>
 		<p>
 			<label for="password">{#LN_REGISTER_PASSWORD#}</label>
-			<input id="password" name="password" class="required ui-widget-content" minlength="2" >
+			<input type="password" id="password" name="password" class="required ui-widget-content" minlength="2" >
 		<p>
 		<p>
 			<label for="confirm_password">{#LN_REGISTER_PASSWORD_2#}</label>
-			<input id="confirm_password" name="confirm_password" class="required ui-widget-content" minlength="2" >
+			<input type="password" id="confirm_password" name="confirm_password" class="required ui-widget-content" minlength="2" >
 		<p>
 			<label for="email">{#LN_REGSITER_NAME_EMAIL#}</label>
 			<input id="email" name="email" class="required email ui-widget-content" />
