@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packages>
+    <package name="packageServer">
+        <name>packageServer</name>
+        <description>Ein Projektverwaltungspaket àla WCom.
+
+Paket Server gibt es als extra Paket.</description>
+        <version></version>
+        <time>01.01.70</time>
+        <changelog></changelog>
+    </package>
+    <package name="projects">
+        <name>projects</name>
+        <description>Ein Projektverwaltungspaket àla WCom.
+
+Paket Server gibt es als extra Paket.</description>
+        <version>0.1.0</version>
+        <time>06.11.10</time>
+        <changelog>- Initial Release</changelog>
+    </package>
+</packages>
