@@ -52,9 +52,12 @@ class package_acp_projects extends acpPackage {
         $var = array();
         while(!$result->EOF) {
             // get username
-            $user = new user($result->fields[2]);
-            $username = $user->getData('username');
-            unset($user);
+            try{
+            	$user = new user($result->fields[2]);
+            	$username = $user->getData('username');
+            } catch(Exception $e){
+            	$username = "---";
+            }
 
             // put all to tpl var
             $var[$i]['id'] = $result->fields[0];
