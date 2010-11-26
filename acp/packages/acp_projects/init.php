@@ -55,6 +55,7 @@ class package_acp_projects extends acpPackage {
             try{
             	$user = new user($result->fields[2]);
             	$username = $user->getData('username');
+            	unset($user);
             } catch(Exception $e){
             	$username = "---";
             }
@@ -127,10 +128,13 @@ class package_acp_projects extends acpPackage {
 
         // get project info
         $project = self::$db->Execute('SELECT name, description, owner FROM lttx1_projects WHERE id = ?', array($projectID));
-
-        $user = new user($project->fields[2]);
-        $owner = $user->getData('username');
-        unset($user);
+		try {
+	        $user = new user($project->fields[2]);
+	        $owner = $user->getData('username');
+        	unset($user);
+		}catch (Exception $e){
+			$owner = '---';
+		}
 
         self::$tpl->assign('projectID', $projectID);
         self::$tpl->assign('projectName', $project->fields[0]);
@@ -143,9 +147,13 @@ class package_acp_projects extends acpPackage {
         $i = 0;
         while(!$result->EOF) {
             // get username
-            $user = new user($result->fields[0]);
-            $uploader = $user->getData('username');
-            unset($user);
+            try{
+	            $user = new user($result->fields[0]);
+	            $uploader = $user->getData('username');
+	            unset($user);
+            }catch (Exception $e){
+            	$uploader = '---';
+            }
 
             // put all to tpl var
             $var[$i]['uploader'] = $uploader;
@@ -183,11 +191,13 @@ class package_acp_projects extends acpPackage {
                             SET
                                 name = ?,
                                 owner = ?,
-                                description = ?',
+                                description = ?
+                            WHERE `id` = ?',
                             array(
                                 $name,
                                 user::getUserByName($owner)->getData('id'),
-                                $description
+                                $description,
+                                $projectID
                             ));
 
         header('Location: index.php?package=acp_projects&action=editProject&projectID='.$projectID);
