@@ -135,7 +135,7 @@ class user {
     		return;
         $userID = intval($userID);
         if(!self::userExists($userID))
-            throw new Exception('User ' . $userID . ' was not found');
+            throw new lttxFatalError('User ' . $userID . ' was not found');
         $this->_currentID = $userID;
         $this->_initialized = true;
         $this->_bufferActive = self::$_globalBufferActive;
