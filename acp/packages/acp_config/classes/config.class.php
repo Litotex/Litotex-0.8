@@ -198,4 +198,12 @@ class config{
 		}
 		return $return;
 	}
+	
+	public function getElementNames(){
+		$return = array();
+		foreach($this->_elements as $element){
+			$return[] = $element->getName();
+		}
+		return $return;
+	} 
 }
