@@ -1,14 +1,28 @@
 <?php
 class package_acp_users extends acpPackage{
-	protected $_availableActions = array('main');
+	protected $_availableActions = array('main', 'editUser', 'searchUser', 'addUser');
 	public static $dependency = array('acp_config');
 	protected $_packageName = 'acp_users';
 	protected $_theme = 'main.tpl';
 	public function __action_main(){
-		$config = new config();
-		$config->addElement('text', 'text', array('type' => 'singleline', 'width' => 100, 'maxLength' => 100), 'default?!', 'LABEL');
-		package::$tpl->assign('configForm', $config->getHTML());
-		$config = $config->getData();
+		return true;
+	}
+	public function __action_editUser(){
+		$this->_theme = 'editUser.tpl'; 
+		if(!isset($_GET['ID'])){
+			header("Location: ?package=acp_users");
+			exit();
+		}
+		$user = new user($_GET['ID']);
+		self::$tpl->assign('user', $user);
+		return true;
+	}
+	public function __action_searchUser(){
+		$this->_theme = 'searchUser.tpl';
+		return true;
+	}
+	public function __action_addUser(){
+		$this->_theme = 'addUser.tpl';
 		return true;
 	}
 	public static function registerHooks(){

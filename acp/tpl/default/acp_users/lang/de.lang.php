@@ -1,2 +1,4 @@
 ;<?php exit(); ?>
-test = "Jooooos"
+users_searchUser = "User suchen"
+users_addUser = "User hinzufügen"
+users_search = "Suchen"
