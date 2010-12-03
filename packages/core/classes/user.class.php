@@ -602,4 +602,61 @@ class user {
     		return true;
     	return false;
     }
+    public static function search($request, $field = 'username'){
+    	//We absolutly need to stop buffering every entry! This would be the perfect overkill
+    	$return = array();
+    	$match = array();
+    	$searchResults = package::$db->Execute("SELECT `ID`, `".$field."` FROM `lttx_users` WHERE `".$field."` LIKE ?", array('%' . $request . '%'));
+    	while(!$searchResults->EOF){
+    		if($searchResults->fields[1] == $request){
+    			$user = new user($searchResults->fields[0]);
+    			$match[] = $user;
+    		} else {
+    			$user= new user($searchResults->fields[0]);
+    			$return[] = $user;
+    		}
+    		$user->setLocalBufferPolicy(false);
+    		$searchResults->moveNext();
+    	}
+    	$return = array_merge($match, $return);
+    	return $return;
+    }
+    public static function addField($name, $type, $extra = '', $optional = true, $display = false, $editable = false, $package = ''){
+    	if(self::getField($name) != false){
+    		throw new lttxFatalError('Userfield '.$name.' already exists! We will not do any changes.');
+    	}
+    	$result = package::$db->Execute("INSERT INTO `lttx_userFields` (`key`, `type`, `extra`, `optional`, `display`, `editable`, `package`) VALUES (?, ?, ?, ?, ?, ?, ?)", array($name, $type, $extra, (bool)$optional, (bool)$display, (bool)$editable, $package));
+    	if($result && package::$db->Insert_ID())
+    		return true;
+    	throw new lttxFatalError('Unexpected error while adding userfield '.$name.'! We will not do any changes.');
+    }
+    public static function getAllFields(){
+    	
+    }
+	public static function getField($name){
+    	$result = package::$db->Execute("SElECT `ID`, `key`, `type`, `extra`, `optional`, `display`, `editable` FROM `lttx_userFields` WHERE `key` = ?", array($name));
+    	if(!$result || !$result->fields)
+    		return false;
+    	return $result->fields;
+    }
+    public static function removeField($name, $force = false){
+    	$sql = 'DELETE FROM `lttx_userFields` WHERE `key` = ?';
+    	if(!$force){
+    		$sql .= " AND `package` = ''";
+    	}
+    	$result = package::$db->Execute($sql);
+    	if(!$result) return false;
+    	if(package::$db->Affected_Rows() > 0)
+    		return true;
+    	return false;
+    }
+    public static function getFieldPlugin($type){
+    	
+    }
+    public static function validateField(){
+    	
+    }
+    public static function editField(){
+    	
+    }
 }
