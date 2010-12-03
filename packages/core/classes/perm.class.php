@@ -111,6 +111,12 @@ class perm {
      * @return int
      */
     private function  _getPerm($package, $function, $class = false) {
+    	if(is_object($package)){
+	    	if(get_parent_class($package) != 'package')
+	            return false;
+	        else
+	        	$package = $package->getPackageName();
+    	}
         $perm = $this->_getUserPerm($package, $function, $class);
         foreach($this->_groups as $group) {
             $perm = $this->_mergePerm($perm, $this->_getGroupPerm($package, $function, $group, $class));
@@ -167,21 +173,29 @@ class perm {
      * @return int
      */
     private function _getPermissionDummy($package, $function, $type, $ID, $class = false) {
-        if(get_parent_class($package) != 'package')
-            return false;
-        $packageName = $package->getPackageName();
-        if($class === false)
-            $class = '';
-        $result = package::$db->Execute("
-            SELECT `permissionLevel`
-            FROM `lttx_permissions`
-            WHERE `associateType` = ?
-            AND `associateID` = ?
-            AND `package` = ?
-            AND `function` = ?
-            AND `class` = ?",
-                array($type, $ID, $packageName, $function, $class)
-        );
+        $packageName = $package;
+        if($class === false){
+	       $result = package::$db->Execute("
+	            SELECT `permissionLevel`
+	            FROM `lttx_permissions`
+	            WHERE `associateType` = ?
+	            AND `associateID` = ?
+	            AND `package` = ?
+	            AND `function` = ?",
+	                array($type, $ID, $packageName, $function)
+        	);
+        }else{
+        	$result = package::$db->Execute("
+	            SELECT `permissionLevel`
+	            FROM `lttx_permissions`
+	            WHERE `associateType` = ?
+	            AND `associateID` = ?
+	            AND `package` = ?
+	            AND `function` = ?
+	            AND `class` = ?",
+	                array($type, $ID, $packageName, $function, $class)
+	        );
+        }
         if(!$result)
         	return 0;
         if($result->NumRows() <= 0)
