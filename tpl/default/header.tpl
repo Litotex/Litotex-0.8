@@ -2,6 +2,8 @@
   "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+{generateTplModification position=left}
+{generateTplModification position=right}
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>{$TITLE}</title>
 {foreach from=$CSS_FILES item=CSS_FILE}

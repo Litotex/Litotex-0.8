@@ -11,6 +11,8 @@ class package_login extends package {
      * @var string
      */
     protected $_packageName = 'login';
+    
+    protected $_theme = 'main.tpl';
 
     /**
      * Avaibilbe actions in this package
@@ -18,8 +20,8 @@ class package_login extends package {
      */
     protected $_availableActions = array('main','loginsubmit','logout','forget','forget_submit');
 
-	
-	 public static $dependency = array('mail');
+    public static $dependency = array('mail');
+
     /**
      * Register all hooks of this package
      * @return bool

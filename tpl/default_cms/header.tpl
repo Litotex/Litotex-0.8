@@ -2,6 +2,9 @@
   "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+{generateTplModification position=left}
+{generateTplModification position=right}
+{generateTplModification position=content}
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>{$TITLE}</title>
 {foreach from=$CSS_FILES item=CSS_FILE}
@@ -23,7 +26,7 @@
 			{displayTplModification position=left}
 		</div>
 		<div id="content">
-		{php} package::$packages->displayTplModification('content') {/php}
+			{displayTplModification position=content}
 		</div>
         <div id="rightcolumn">
 		  {displayTplModification position=right}
