@@ -20,15 +20,16 @@
  * @param boolean include whitespace in the character count
  * @return integer
  */
-function smarty_compiler_displayTplModification($params, &$smarty)
+function smarty_compiler_generateTplModification($params, &$smarty)
 {
-        $params = $smarty->_parse_attrs($params);
+	$params = $smarty->_parse_attrs($params);
 	$params['position'] = str_replace("'", '', $params['position']);
     if (empty($params['position'])) {
         $smarty->trigger_error("displayTplModification: position parameter missing.");
         return;
     }
-    return 'global $out' . $params['position'] . '; echo $out' . $params['position'] . ';';
+    $code = '<?php ob_start(); package::$packages->displayTplModification(\'' . $params['position'] . '\'); global $out' . $params['position'] . '; $out' . $params['position'] . ' = ob_get_contents(); ob_end_clean(); ?>';
+    package::$tpl->addAditionalSmartyHeader($code);
 }
 
 /* vim: set expandtab: */
