@@ -106,8 +106,14 @@ try{
 	if(isset($_GET['package'])) {
 		$package = $_GET['package'];
 		$package = $packageManager->loadPackage($package, true);
-		if(!$package)
-		$packageManager->loadPackage('404', true);
+		if(!$package){
+			$error = $packageManager->loadPackage('errorPage', true);
+			if(!$error){
+				header('HTTP/ 500');
+				die('<h1>Internal Server Error</h1><p>Whoops something went wrong!</p>');
+			}
+			$error->__action_404();
+		}
 	}else {
 		$package = $packageManager->loadPackage(defaultPackage, true);
 	}
