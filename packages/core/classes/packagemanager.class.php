@@ -145,7 +145,9 @@ class packages{
 				return false;
 			}
 		}
-		$this->_orderTplModificationCache();
+		if(!$this->_orderTplModificationCache()){
+			throw new lttxFatalError("Could not fetch tplMod settings, this might be a serious database issue!");
+		}
 		package::$db->Execute("DELETE FROM `lttx_tplModificationSort` WHERE `packageDir` = ?", array($this->_packagesDir));
 		return $this->_writeTplModificationCache();
 	}
@@ -294,7 +296,7 @@ class packages{
 		if(!method_exists($class, '__tpl_'.$function))
 		return false;
 		package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(2, $packageName, $class, $function, $this->_packagesDir));
-		$this->_tplModificationCache[$class.':'.$function] = array($class, $function, $file, $packageName);
+		$this->_tplModificationCache[$class.':'.$function] = array($class, $function, $file, $packageName, false);
 		return true;
 	}
 	/**
