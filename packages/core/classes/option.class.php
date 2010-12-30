@@ -45,7 +45,7 @@ class option{
         $this->_package = $package;
         $cache = package::$db->Execute("SELECT `key`, `value`, `default` FROM `lttx_options` WHERE `package` = ?", array($package));
         if(!$cache){
-            throw new Exception('Options of ' . $package . ' could not be found');
+            throw new lttxFatalError('Options of ' . $package . ' could not be found');
             return;
         }
         while(!$cache->EOF){
