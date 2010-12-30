@@ -16,7 +16,7 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 if(!defined('LITO_ROOT'))
-	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/');
+	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/LitotexUpdateServer/Litotex8/');
 if(!defined('LITO_PLUGIN_DIRNAME'))
 	define('LITO_PLUGIN_DIRNAME', 'plugins/');
 if(!defined('LITO_PLUGIN_ROOT'))
@@ -49,5 +49,7 @@ if(!defined('PACKAGE_CACHE'))
 	define('PACKAGE_CACHE', LITO_ROOT . 'packages/core/cache/dependency_cache.php');
 if(!defined('TPLMOD_CACHE'))
 	define('TPLMOD_CACHE', LITO_ROOT . 'packages/core/cache/tpl_modification_cache.php');
-if(!defined('DB_PREFX'))
-	define('DB_PREFX', 'lttx1_');
+if(!defined('DB_PREFIX'))
+	define('DB_PREFIX', 'lttx1_');
+if(!defined('PACKAGE_PREFIX'))
+	define('PACKAGE_PREFIX', '');

@@ -16,7 +16,7 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 if(!defined('LITO_ROOT'))
-	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/acp/');
+	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/LitotexUpdateServer/Litotex8/acp/');
 if(!defined('LITO_URL'))
 	define('LITO_URL', 'http://localhost/Litotex8/acp/');
 if(!defined('DATABASE_CONFIG_FILE'))
@@ -27,3 +27,5 @@ if(!defined('PACKAGE_CACHE'))
 	define('PACKAGE_CACHE', LITO_ROOT . '../packages/core/cache/acp_dependency_cache.php');
 if(!defined('TPLMOD_CACHE'))
 	define('TPLMOD_CACHE', LITO_ROOT . '../packages/core/cache/acp_tpl_modification_cache.php');
+if(!defined('PACKAGE_PREFIX'))
+	define('PACKAGE_PREFIX', 'acp');
