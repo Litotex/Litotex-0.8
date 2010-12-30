@@ -161,12 +161,10 @@ class packages{
 		fwrite($file, $newfile, 1000000);
 		fclose($file);
 		//And to database...
-		foreach($this->_tplModificationCache as $position => $list){
+		foreach($this->_tplModificationCache as $position => $item){
 			$n = 0;
-			foreach($list as $item){
-				package::$db->Execute("INSERT INTO `lttx_tplModificationSort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n, $this->_packagesDir));
-				$n++;
-			}
+			package::$db->Execute("INSERT INTO `lttx_tplModificationSort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n, $this->_packagesDir));
+			$n++;
 		}
 		return true;
 	}
@@ -294,7 +292,7 @@ class packages{
 		if(!method_exists($class, '__tpl_'.$function))
 		return false;
 		package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(2, $packageName, $class, $function, $this->_packagesDir));
-		$this->_tplModificationCache[$class.':'.$function] = array($class, $function, $file, $packageName);
+		$this->_tplModificationCache[$class.':'.$function] = array($class, $function, $file, $packageName, false);
 		return true;
 	}
 	/**
