@@ -534,7 +534,165 @@ class packages{
 	 * @TODO: Almost everything
 	 */
 	public function updateRemotePackageList(){
+		$data = file_get_contents('http://localhost/LitotexUpdateServer/Litotex8/index.php?package=projects&action=getList&platform=0.8.x'); //TODO: Fallback to CURL? TODO: Static? Fail!
+		//Check if we have valid XML (should be if the server is up and running!)
+		try{
+			@$xmlData = new SimpleXMLElement($data);
+		}catch (Exception $e){
+			throw new lttxError('E_couldNotRetrievePackageList');
+		}
+		$systemData = $xmlData->attributes();
+		if($systemData['responsetype'] != 'packageList'){
+			throw new lttxError('E_wrongListRetrieved');
+		}
+		//Every check passed :)
+		//after this we can delete the old database tables...
+		package::$db->Execute("TRUNCATE TABLE `lttx_packageList`");
+		$dataSection = $xmlData->data;
+		foreach ($dataSection->children() as $package){
+			$packageAttributes = $package->attributes();
+			$installed = false;
+			$name = (string)$packageAttributes['name'];
+			$description = (string)$packageAttributes['description'];
+			$author = (string)$package->author['name'];
+			$authorMail = (string)$package->author['mail'];
+			$version = (string)$packageAttributes['version'];
+			$update = false;
+			$critupdate = false;
+			$changelog = array();
+			$signed = false;
+			$signedOlder = false;
+			$fullSigned = false;
+			$fullSignedOlder = false;
+			$signInfo = array();
+			$releaseDate = false;
+			$dependency = array();
+			//Already installed? & Updates available
+			if(self::exists($packageAttributes['name'])){
+				$installed = true;
+				//Check if updates are available (might be as the software is installed thought)
+				$compare = self::compareVersionNumbers(self::getVersionNumber($packageAttributes['name']), $packageAttributes['version']);
+				if($compare == 1){
+					$update = true;
+				}
+			}
+			//Changelog & Critupdates & Releasedate
+			foreach($package->changelog as $changelogElement){
+				$changelogAttributes = $changelogElement->attributes();
+				if($version == $changelogAttributes['version']){
+					$releaseDate = (string)$changelogAttributes['date'];
+				}
+				$new = self::compareVersionNumbers(self::getVersionNumber($name), $changelogAttributes['version']);
+				$changelog[] = array('text' => (string)$changelogAttributes['text'], 'date' => (string)$changelogAttributes['date'], 'crit' => (bool)$changelogAttributes['crit'], 'new' => $new, 'version' => (string)$changelogAttributes['version']);
+				if($new == 1 && $changelogAttributes['crit'] == 1){
+					$critupdate = true;
+				}
+			}
+			//Signed
+			foreach($package->signed as $signElement){
+				if($version == $signElement['version']){
+					$signed = true;
+					$signedOlder = true;
+					if($signElement['completeReview']){
+						$fullSigned = true;
+						$fullSignedOlder = true;
+					}
+				}
+				$signedOlder = true;
+				if($signElement['completeReview']){
+					$fullSignedOlder = true;
+				}
+				$signInfo[] = array('version' => (string)$signElement['version'], 'completeReview' => (string)$signElement['completeReview'], 'comment' => (string)$signElement['comment']);
+			}
+			//Dependency
+			foreach($package->dependency as $dependencyElement){
+				$dependencyAttributes = $dependencyElement->attributes();
+				$installedDep = (int)self::exists($dependencyAttributes['name']);
+				if($installedDep){
+					$up2date = self::compareVersionNumbers(self::getVersionNumber($dependencyAttributes['name']), $dependencyAttributes['minVersion']);
+					if($up2date == 0 || $up2date == 1)
+						$installedDep = 2;
+				}
+				$dependency[] = array('name' => (string)$dependencyAttributes['name'], 'minVersion' => (string)$dependencyAttributes['minVersion'], 'installed' => $installedDep);
+			}
+			//Now we have to write all this to the database :)
+			package::$db->Execute("INSERT INTO  `lttx_packageList` (`ID`, `name`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`)
+				VALUES (NULL ,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?);",
+				array($name, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency)));
+			echo mysql_error();
+		}
 	}
+	
+	public static function getVersionNumber($package){
+		if(!self::exists($package))
+			return false;
+		$prop = get_class_vars('package_' . $package);
+		return $prop['version'];
+	}
+	
+	//Special thanks to sinus :)
+	//http://freebg.de/wbb/index.php?page=Thread&postID=6842#post6842
+	/**
+	 * Compares 2 Version numbers
+	 * @param string $local_version
+	 * @param string $remote_version
+	 * 0 = error
+	 * 1= $local_version < $remote_version
+	 * 2= $local_version = $remote_version
+	 * 3= $local_version > $remote_version
+	 */
+	public static function compareVersionNumbers($local_version, $remote_version){
+        // Variablen definieren
+        $iReturn = 0;
+        $aNewExpL = array();
+        $aNewExpR = array();
+
+        // Variablen prüfen
+        if(!$local_version || !$remote_version) 
+            return $iReturn;
+
+        // Daten verarbeiten
+        $aExpL = explode( ".", $local_version );
+        $aExpR = explode( ".", $remote_version );
+
+        // Versionsnummer auffüllen
+        for( $x=0; $x!=3; $x++ )
+        {
+            if( !isset( $aExpL[ $x ] ) ) $aNewExpL[] = 0;
+            if( !isset( $aExpR[ $x ] ) ) $aNewExpR[] = 0;
+        }
+
+        // Zusammenfügen
+        $aNewExpL = array_merge( $aNewExpL, $aExpL );
+        $aNewExpR = array_merge( $aNewExpR, $aExpR );
+
+        // Versionsvergleich
+        if( implode( ".", $aNewExpL ) != implode( ".", $aNewExpR ) )
+        {
+            for( $x=0; $x!=3; $x++)
+            {
+                if( $aNewExpL[ $x ] != $aNewExpR[ $x ] )
+                {
+                    if( $aNewExpL[ $x ] > $aNewExpR[ $x ] )
+                    {
+                        $iReturn = 3;
+                        break(1);
+                    }
+                    else
+                    {
+                        $iReturn = 1;
+                        break(1);
+                    }
+                }
+            }
+        }
+        else
+            $iReturn = 2;
+
+        // Ergebnis zurückgeben
+        return $iReturn;
+    }
+	
 	/**
 	 * @TODO: Almost everything
 	 */
