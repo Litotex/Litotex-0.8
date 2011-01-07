@@ -548,20 +548,40 @@ class user {
         unset(self::$_readCache[$this->_currentID]);
         return $this->_saveWriteBuffer();
     }
+
+    /**
+     * This will get all user groups in an array
+     * @return  mixed
+     */
     public function getUserGroups() {
         if(!$this->_initialized || !$this->isUsersInstance()){
             return userGroup::getDefault();
         }
         return userGroup::getUsersGroups($this);
     }
+
+    /**
+     * This will logout the currently logged in user by deleting the session
+     */
     public function logout(){
     	package::$session->destroy();
     }
+
+    /**
+     * This will update the password and generate a new salt
+     * @param   string  $password
+     * @return  bool
+     */
     public function setPassword($password){
     	$salted = $this->_saltString($password);
     	package::$db->Execute("UPDATE `lttx_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?", array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
     	return true;
     }
+
+    /**
+     * This will set legitimation for acp access
+     * @return  bool
+     */
     public function setAcpLogin(){
     	if(!$this->_initialized)
     		return false;
@@ -569,22 +589,41 @@ class user {
     	$this->_acpLegitTime = time();
     	return true;
     }
-	public function revokeAcpLogin(){
+
+    /***
+     * This will revoke the acp access legitimation
+     */
+    public function revokeAcpLogin(){
     	if(!$this->_initialized)
     		return false;
     	$this->_acpLegit = false;
     	$this->_acpLegitTime = 0;
     	return true;
     }
+
+    /**
+     * This will check if the user has legitimation for acp access
+     * @return  bool
+     */
     public function isAcpLogin(){
     	return $this->_acpLegit;
     }
+
+    /**
+     * This will check if the acp legitimation is expired
+     * @return  bool
+     */
     public function checkAcpLoginExpired(){
     	if(!$this->_acpLegit){
     		return false;
     	}
     	return (time() > ($this->_acpLegitTime + self::$_acpLegitExpire))?false:true;
     }
+
+    /**
+     * This will make the acp legitimation new
+     * @return  bool
+     */
     public function acpReLegit(){
 	    if(!$this->_acpLegit){
 	    	return false;
@@ -592,9 +631,21 @@ class user {
     	$this->_acpLegitTime = time();
     	return true;
     }
+
+    /**
+     * This will check if the instance is initialized successfully
+     * @return  bool
+     */
     public function initialized(){
     	return (bool)$this->_initialized;
     }
+
+    /**
+     * This will compare two user objects (id's)
+     * @param   user    $u1
+     * @param   user    $u2
+     * @return  bool
+     */
     public static function compare(user $u1, user $u2){
     	if(!$u1->initialized() || !$u2->initialized())
     		return false;
@@ -602,6 +653,13 @@ class user {
     		return true;
     	return false;
     }
+
+    /**
+     * This will seach for all user id's which profile fields match to the given value
+     * @param   string  $request
+     * @param   string  $field
+     * @return  array
+     */
     public static function search($request, $field = 'username'){
     	//We absolutly need to stop buffering every entry! This would be the perfect overkill
     	$return = array();
@@ -621,6 +679,18 @@ class user {
     	$return = array_merge($match, $return);
     	return $return;
     }
+
+    /**
+     * This will add a new field to the users profile
+     * @param   string  $name
+     * @param   string  $type
+     * @param   string  $extra
+     * @param   bool    $optional
+     * @param   bool    $display
+     * @param   bool    $editable
+     * @param   string  $package
+     * @return  bool
+     */
     public static function addField($name, $type, $extra = '', $optional = true, $display = false, $editable = false, $package = ''){
     	if(self::getField($name) != false){
     		throw new lttxFatalError('Userfield '.$name.' already exists! We will not do any changes.');
@@ -630,15 +700,33 @@ class user {
     		return true;
     	throw new lttxFatalError('Unexpected error while adding userfield '.$name.'! We will not do any changes.');
     }
+
+    /**
+     * This will get all user fields in an array
+     * @return  array
+     */
     public static function getAllFields(){
     	
     }
-	public static function getField($name){
+
+    /**
+     * This will get the value of an extra user profile field
+     * @param   string  $name
+     * @return  mixed
+     */
+    public static function getField($name){
     	$result = package::$db->Execute("SElECT `ID`, `key`, `type`, `extra`, `optional`, `display`, `editable` FROM `lttx_userFields` WHERE `key` = ?", array($name));
     	if(!$result || !$result->fields)
     		return false;
     	return $result->fields;
     }
+
+    /**
+     * This will remove an extra fiield from users profile
+     * @param   string  $name
+     * @param   bool    $force
+     * @return  bool
+     */
     public static function removeField($name, $force = false){
     	$sql = 'DELETE FROM `lttx_userFields` WHERE `key` = ?';
     	if(!$force){
@@ -650,6 +738,7 @@ class user {
     		return true;
     	return false;
     }
+    
     public static function getFieldPlugin($type){
     	
     }
