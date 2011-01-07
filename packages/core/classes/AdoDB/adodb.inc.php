@@ -941,7 +941,7 @@
 	 */
 	function Execute($sql,$inputarr=false) 
 	{
-		$sql = preg_replace('/`lttx_(.*?)`/', '`' . DB_PREFX . "$1`", $sql);
+		$sql = preg_replace('/`lttx_(.*?)`/', '`' . DB_PREFIX . "$1`", $sql);
 		if ($this->fnExecute) {
 			$fn = $this->fnExecute;
 			$ret = $fn($this,$sql,$inputarr);

@@ -15,6 +15,11 @@
 ; * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
 
 host = "localhost"
+<<<<<<< HEAD:packages/core/config/database.conf.php
 user = "root"
 password = ""
+=======
+user = "litotex"
+password = "litotex"
+>>>>>>> 4ca5c34b16e03270b03f31089e3619813a663501:packages/core/config/database.conf.php.dist
 database = "litotex"

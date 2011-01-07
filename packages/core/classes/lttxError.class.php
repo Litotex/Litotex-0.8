@@ -34,7 +34,7 @@ class lttxFatalError extends Exception{
 	public function __construct  ($message = '', $package = false){
 		package::loadLang(package::$tpl);
 		$this->message = package::getLanguageVar('E_fatalErrorOccured');
-		$this->message .= '<br /><b>'.$message.'</b>';
+		$this->message .= '<br /><b>'.nl2br($message).'</b>';
 		$this->_log($message, $package);
 	}
 	private function _log($message, $package){

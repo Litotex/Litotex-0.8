@@ -49,5 +49,7 @@ if(!defined('PACKAGE_CACHE'))
 	define('PACKAGE_CACHE', LITO_ROOT . 'packages/core/cache/dependency_cache.php');
 if(!defined('TPLMOD_CACHE'))
 	define('TPLMOD_CACHE', LITO_ROOT . 'packages/core/cache/tpl_modification_cache.php');
-if(!defined('DB_PREFX'))
-	define('DB_PREFX', 'lttx1_');
+if(!defined('DB_PREFIX'))
+	define('DB_PREFIX', 'lttx1_');
+if(!defined('PACKAGE_PREFIX'))
+	define('PACKAGE_PREFIX', '');
