@@ -37,6 +37,7 @@ class session{
                 $this->addHistory(0);
         return;
     }
+
     public function  __destruct() {
         if($this->user)
                 $this->user->flushCache();
@@ -46,6 +47,11 @@ class session{
     public function  __toString() {
         return $this->_sessionKey;
     }
+
+    /**
+     * This will check if the session is active
+     * @return  bool
+     */
     public function sessionActive(){
         if(!$this->_initialized)
                 return false;
@@ -55,6 +61,11 @@ class session{
                 return false;
         return true;
     }
+
+    /**
+     * This will get the IP and if available all other client locations through apache
+     * @return  string
+     */
     public static function getIPAdress(){
         $IP = '';
         $realIP = $_SERVER['REMOTE_ADDR'];
@@ -67,9 +78,19 @@ class session{
         $IP = $realIP . ':' . $XForward;
         return $IP;
     }
+
+    /**
+     * This will add an entry to the session log with status
+     * @param   string  $msg
+     */
     public function addHistory($msg){
         $result = package::$db->Execute("INSERT INTO `lttx_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)", array(hash('sha512', $this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
     }
+
+    /**
+     * This will destroy all session information
+     * @return  bool
+     */
     public function destroy(){
         $this->user = false;
         $this->_lastIP = '';
@@ -78,6 +99,12 @@ class session{
         $this->_startTime = 0;
         return true;
     }
+
+    /**
+     * This will refresh the ip data in session object and add a new entry
+     * to session log
+     * @return  bool
+     */
     public function refresh(){
         if($this->_lastIP != self::getIPAdress()){
             $this->addHistory(2);
@@ -86,6 +113,12 @@ class session{
         $this->_startTime = time();
         return true;
     }
+
+    /**
+     * This will set a user class to the session object
+     * @param   object  $userClass
+     * @return  bool
+     */
     public function setUserObject($userClass){
         if(!is_a($userClass, 'user'))
                 return false;
@@ -99,6 +132,10 @@ class session{
         $this->addHistory(3);
         return true;
     }
+
+    /**
+     * This will refresh the lastActive time in users profile
+     */
     public function __wakeup(){
     	if(!$this->sessionActive())
     		return;
