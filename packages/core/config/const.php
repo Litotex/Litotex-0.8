@@ -16,13 +16,13 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 if(!defined('LITO_ROOT'))
-	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/');
+	define('LITO_ROOT', 'C:/Users/Martin/Daten/htdocs/litotex/080/');
 if(!defined('LITO_PLUGIN_DIRNAME'))
 	define('LITO_PLUGIN_DIRNAME', 'plugins/');
 if(!defined('LITO_PLUGIN_ROOT'))
 	define('LITO_PLUGIN_ROOT', LITO_ROOT . LITO_PLUGIN_DIRNAME);
 if(!defined('LITO_URL'))
-	define('LITO_URL', 'http://localhost/Litotex8/');
+	define('LITO_URL', 'http://localhost/litotex/080/');
 if(!defined('DATABASE_CONFIG_FILE'))
 	define('DATABASE_CONFIG_FILE', LITO_ROOT . 'packages/core/config/database.conf.php');
 if(!defined('MODULES_DIRECTORY'))
