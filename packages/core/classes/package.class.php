@@ -118,6 +118,11 @@ abstract class package {
      */
     protected $_defaultTpl = 'default';
     /**
+     * This var contains the version of the actual package (Will be used to check for updates, too)
+     * @var string
+     */
+    public static $version = '0.0.0';
+    /**
      * This function registers the class into the package manager and loads the casted action
      * @return void
      */
