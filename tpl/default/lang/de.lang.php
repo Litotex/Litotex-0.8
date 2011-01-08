@@ -7,3 +7,7 @@ E_noPermission = "Sie haben nicht genügend berechtigungen diese Seite zu betrac
 E_couldNotRetrievePackageList = "Es konnte keine aktuele Paketliste vom Litotex Update Server abgerufen werden. Möglicherweise ist der Server derzeit nicht erreichbar. Sollte der Fehler nach einiger Zeit immer noch auftreten wenden sie sich für hilfe bitte an das Forum unter <a href="http://www.freebg.de">Freebg.de</a>."
 E_wrongListRetrieved = "Die empfangene Datei enthält keine Paketliste."
 E_installerMySQLFailure = "Es ist ein MySQL Fehler beim installieren aufgetreten: '%s'"
+E_backupNotWriteable = "Der Backup Ordner ist nicht beschreibbar."
+E_noBackupDir = "Der backup Ordner exestiert nicht."
+E_packageDoesNotExist = "Das Paket %s exestiert nicht."
+E_backupOverride = "Das Backup würde ein anderes Backup überschreiben, dies kann geschehen wenn man im Abstand von weniger als einer Sekunde ein Backup des selben Paketes durchführt, bitte haben sie einen Moment Geduld und versuchen sie es dann erneut."

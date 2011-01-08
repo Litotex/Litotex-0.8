@@ -328,7 +328,6 @@ class packages{
 	 * @param bool Should a template be showed?
 	 * @param bool Should the package be initlaized at all? If not only include it...
 	 * @return bool on failure | instance of class | true if not initialized
-	 * @FIXME: use _getPackageDependencies
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true, $loadDep = true){
 		if(!in_array($packageName, $this->_loadedLang) && is_a(package::$tpl, 'Smarty')){
@@ -354,7 +353,10 @@ class packages{
 		}
 	}
 	/**
-	 * @FIXME: Almost everything
+	 * Gets all dependencies of a package
+	 * @param string $package Name of package
+	 * @throws lttxFatalError
+	 * @throws lttxError	 
 	 */
 	private function _getPackageDependencies($package){
 		$dep = array();
@@ -433,7 +435,6 @@ class packages{
 	}
 	/**
 	 * This will check wheather or not alle packages needed by a specific package are available
-	 * @TODO: Version numbers?!
 	 * @return bool
 	 */
 	private function _checkDependency(){
@@ -738,5 +739,52 @@ class packages{
 			$return = false;
 		}
 		return $return;
+	}
+	public static function createBackup($package){
+		if(!self::exists($package))
+			throw new lttxError('E_packageDoesNotExist', $package);
+		if(!is_dir(LITO_ROOT . 'backup'))
+			throw new lttxError('E_noBackupDir');
+		if(!is_writeable(LITO_ROOT . 'backup'))
+			throw new lttxError('E_backupNotWriteable');
+		$saveDirName = LITO_ROOT . 'backup/' . $package . date('c', time()) . '/';
+		if(is_dir($saveDirName))
+			throw new lttxError('E_backupOverride');
+		mkdir($saveDirName);
+		//Here we go, everything should work
+		mkdir($saveDirName . 'package');
+		mkdir($saveDirName . 'template');
+		$tplDir = opendir(TEMPLATE_DIRECTORY);
+		while($file = readdir($tplDir)){
+			if($file == '.' || $file == '..')
+				continue;
+			if(!is_dir(TEMPLATE_DIRECTORY . $file))
+				continue;
+			if(is_dir(TEMPLATE_DIRECTORY . $file . '/' . $package)){
+				self::recursiveCopy(TEMPLATE_DIRECTORY . $file . '/' . $package, $saveDirName . 'template/' . $file);
+			}
+		}
+		self::recursiveCopy(MODULES_DIRECTORY . $package, $saveDirName . 'package/' . $package);
+		return true;
+	}
+	public static final function recursiveCopy($source, $destination){
+		if(!file_exists($source))
+			return false;
+		$source = preg_replace("/\/$/", '', $source);
+		$destination = preg_replace("/\/$/", '', $destination);
+		if(!is_dir(($source))){
+			if(file_exists($destination))
+				unlink($destination);
+			copy($source, $destination);
+			return true;
+		} else if(!is_dir($destination)) {
+			mkdir($destination);
+		}
+		$dir = opendir($source);
+		while($file = readdir($dir)){
+			if($file == '..' || $file == '.')
+				continue;
+			self::recursiveCopy($source . '/' . $file, $destination . '/' . $file);
+		}
 	}
 }
