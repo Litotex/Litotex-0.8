@@ -1,14 +1,30 @@
 <?php
 class lttxError extends Exception{
-	public function __construct  ($messageCode = ''){
+	public function __construct  ($messageCode){
+		$args = func_get_args();
+		$messageCode = $args[0];
 		package::loadLang(package::$tpl);
 		$this->message = package::getLanguageVar($messageCode);
+		foreach($args as $i => $arg){
+			if($i == 0)
+				continue;
+			$argstr = ',$args['.$i.']';
+		}
+		eval("\$this->message = sprintf(\$this->message$argstr);");
 	}
 }
 class lttxInfo extends Exception{
-	public function __construct  ($messageCode = ''){
+	public function __construct  ($messageCode){
+		$args = func_get_args();
+		$messageCode = $args[0];
 		package::loadLang(package::$tpl);
 		$this->message = package::getLanguageVar($messageCode);
+		foreach($args as $i => $arg){
+			if($i == 0)
+				continue;
+			$argstr = ',$args['.$i.']';
+		}
+		eval("\$this->message = sprintf(\$this->message$argstr);");
 	}
 }
 
