@@ -761,11 +761,22 @@ class packages{
 			if(!is_dir(TEMPLATE_DIRECTORY . $file))
 				continue;
 			if(is_dir(TEMPLATE_DIRECTORY . $file . '/' . $package)){
-				self::recursiveCopy(TEMPLATE_DIRECTORY . $file . '/' . $package, $saveDirName . 'template/' . $file);
+				mkdir($saveDirName . 'template/' . $file . '/');
+				self::recursiveCopy(TEMPLATE_DIRECTORY . $file . '/' . $package, $saveDirName . 'template/' . $file . '/' . $package);
 			}
 		}
 		self::recursiveCopy(MODULES_DIRECTORY . $package, $saveDirName . 'package/' . $package);
 		return $saveDirName;
+	}
+	public static function restoreBackup($package, $path){
+		if(!is_dir($path))
+			throw new lttxError('E_backupPathDoesNotExist');
+		if(!is_dir($path . '/package'))
+			throw new lttxError('E_backupNoPackageDir');
+		if(!is_dir($path . '/template'))
+			throw new lttxError('E_backupNoTemplateDir');
+		self::recursiveCopy($path . '/package/' . $package, MODULES_DIRECTORY . $package);
+		self::recursiveCopy($path . '/template/', TEMPLATE_DIRECTORY);
 	}
 	public static final function recursiveCopy($source, $destination){
 		if(!file_exists($source))

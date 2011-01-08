@@ -32,7 +32,7 @@ abstract class installer{
 		$this->_patchDatabase(true);
 		$this->_freeInstall();
 	}
-	private final function _patchDatabase($install, $noThrow = false){
+	private final function _patchDatabase($install){
 		if($install){
 			if(!file_exists($this->_location . '/database/install.sql'))
 				return true;
@@ -52,7 +52,7 @@ abstract class installer{
 				if($errorMsg){
 					try{
 						if($install)
-							$this->_patchDatabase(false, true);
+							$this->_patchDatabase(false);
 					} catch (Exception $e) {}
 					throw new lttxError('E_installerMySQLFailure', $errorMsg);
 				}
