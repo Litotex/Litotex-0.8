@@ -24,29 +24,9 @@ abstract class installer{
 		return true;
 		}
 	}
-	private final function _recursiveCopy($source, $destination){
-		if(!file_exists($source))
-			return false;
-		$source = preg_replace("/\/$/", '', $source);
-		$destination = preg_replace("/\/$/", '', $destination);
-		if(!is_dir(($source))){
-			if(file_exists($destination))
-				unlink($destination);
-			copy($source, $destination);
-			return true;
-		} else if(!is_dir($destination)) {
-			mkdir($destination);
-		}
-		$dir = opendir($source);
-		while($file = readdir($dir)){
-			if($file == '..' || $file == '.')
-				continue;
-			$this->_recursiveCopy($source . '/' . $file, $destination . '/' . $file);
-		}
-	}
 	private final function _install(){
-		$this->_recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . $this->_packageName);
-		$this->_recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
+		packages::recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . $this->_packageName);
+		packages::recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
 		$this->_patchDatabase(true);
 		$this->_freeInstall();
 	}
