@@ -5,6 +5,7 @@ class lttxError extends Exception{
 		$messageCode = $args[0];
 		package::loadLang(package::$tpl);
 		$this->message = package::getLanguageVar($messageCode);
+		$argstr = '';
 		foreach($args as $i => $arg){
 			if($i == 0)
 				continue;
@@ -19,6 +20,7 @@ class lttxInfo extends Exception{
 		$messageCode = $args[0];
 		package::loadLang(package::$tpl);
 		$this->message = package::getLanguageVar($messageCode);
+		$argstr = '';
 		foreach($args as $i => $arg){
 			if($i == 0)
 				continue;
