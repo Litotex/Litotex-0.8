@@ -765,7 +765,7 @@ class packages{
 			}
 		}
 		self::recursiveCopy(MODULES_DIRECTORY . $package, $saveDirName . 'package/' . $package);
-		return true;
+		return $saveDirName;
 	}
 	public static final function recursiveCopy($source, $destination){
 		if(!file_exists($source))

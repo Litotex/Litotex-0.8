@@ -3,6 +3,7 @@ abstract class installer{
 	private $_location = false;
 	private $_initialized = false;
 	private $_packageName = false;
+	private $_backup = false;
 	public final function __construct($location, $packageName){
 		$this->_location = $location;
 		$this->_packageName = $packageName;
@@ -25,6 +26,7 @@ abstract class installer{
 		}
 	}
 	private final function _install(){
+		$this->_backup = packages::createBackup($this->_packageName);
 		packages::recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . $this->_packageName);
 		packages::recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
 		$this->_patchDatabase(true);
