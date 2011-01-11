@@ -769,6 +769,8 @@ class packages{
 		return $saveDirName;
 	}
 	public static function restoreBackup($package, $path){
+		if(!$path)
+			return false;
 		if(!is_dir($path))
 			throw new lttxError('E_backupPathDoesNotExist');
 		if(!is_dir($path . '/package'))

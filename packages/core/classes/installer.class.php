@@ -4,9 +4,13 @@ abstract class installer{
 	private $_initialized = false;
 	private $_packageName = false;
 	private $_backup = false;
+	private $_versionOld = false;
+	private $_versionNew = false;
 	public final function __construct($location, $packageName){
 		$this->_location = $location;
 		$this->_packageName = $packageName;
+		$this->_versionOld = packages::getVersionNumber($this->_packageName);
+		$this->_versionNew = $this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php');
 		$this->_checkData();
 		$this->_install();
 	}
@@ -27,7 +31,7 @@ abstract class installer{
 	}
 	private final function _install(){
 		$this->_backup = packages::createBackup($this->_packageName);
-		packages::recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . $this->_packageName);
+		packages::recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . 'default/' . $this->_packageName);
 		packages::recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
 		$this->_patchDatabase(true);
 		$this->_freeInstall();
@@ -46,13 +50,15 @@ abstract class installer{
 		if(!isset($data->query))
 			return true;
 		foreach($data->query as $query){
-			if(packages::compareVersionNumbers(packages::getVersionNumber($this->_packageName), $query->attributes()->version) == 1 || !$install){
-				package::$db->Execute($data->query);
+			if(packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 || packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 2 && $install){
+				package::$db->Execute($query);
 				$errorMsg = package::$db->ErrorMsg();
 				if($errorMsg){
 					try{
-						if($install)
+						if($install){
+							$this->rollback();
 							$this->_patchDatabase(false);
+						}
 					} catch (Exception $e) {}
 					throw new lttxError('E_installerMySQLFailure', $errorMsg);
 				}
@@ -60,7 +66,16 @@ abstract class installer{
 		}
 	}
 	private final function _getVersionNumber($modulName, $file){
+		if(!file_exists($file))
+			return false;
+		if(class_exists('package_' . $modulName . 'INSTALLER')){
+			$vars = get_class_vars('package_'.$modulName.'INSTALLER');
+			return (isset($vars['version']))?$vars['version']:false;
+		}
 		return eval(preg_replace('/<\?php|\?>|/', '', str_replace('class package_'.$modulName, 'class package_' . $modulName . 'INSTALLER', file_get_contents($file))) . " \$vars = get_class_vars('package_".$modulName."INSTALLER'); return (isset(\$vars['version']))?\$vars['version']:false;");
+	}
+	private final function rollback(){
+		packages::restoreBackup($this->_packageName, $this->_backup);
 	}
 	protected abstract function _freeInstall();
 }
