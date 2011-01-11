@@ -8,3 +8,4 @@ acp/packages/acp_config/cache/config.cache.php
 acp/tpl_c/%%*
 acp/const.php
 backup/*
+files/cache/*

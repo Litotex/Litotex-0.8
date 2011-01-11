@@ -524,7 +524,13 @@ class packages{
 	/**
 	 * @TODO: Almost everything
 	 */
-	public function updatePackage(){
+	public function updatePackage($location, $packageName){
+		include_once('installer.class.php');
+		if(!file_exists($location . '/installer.php'))
+		return false;
+		include_once($location . '/installer.php');
+		$className = "installer_" . $packageName;
+		$installer = new $className($location, $packageName);
 	}
 	/**
 	 * @TODO: Almost everything
@@ -697,7 +703,30 @@ class packages{
 	/**
 	 * @TODO: Almost everything
 	 */
-	public function copyRemotePackage(){
+	public function copyRemotePackage($package, $platform){
+		require_once(LITO_ROOT . 'packages/core/classes/pclzip.class.php');
+		$remote = file_get_contents('http://localhost/LitotexUpdateServer/Litotex8/index.php?package=projects&action=fetch&packageName=' . urldecode($package) . '&platform=' . urlencode($platform));
+		if(!$remote)
+			throw new lttxError('E_couldNotFetchPackage', $package);
+		try{
+			@$xml = new SimpleXMLElement($remote);
+		} catch(Exception $e){}
+		if(!isset($xml) || !$xml)
+			throw new lttxError('E_couldNotFetchPackage', $package);
+		$systemData = $xml->attributes();
+		if($systemData['responsetype'] != 'packageFetch'){
+			throw new lttxError('E_wrongFetchRetrieved');
+		}
+		$package = $xml->package->attributes();
+		$handler = fopen($package['file'], 'r');
+		$cache = fopen(LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip', 'w');
+		while(!feof($handler)){
+			fwrite($cache, fread($handler, 10000000));
+		}
+		fclose($handler);
+		fclose($cache);
+		$zip = new PclZip(LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip');
+		$zip->extract($p_path = LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache');
 	}
 	/**
 	 * @TODO: Almost everything
