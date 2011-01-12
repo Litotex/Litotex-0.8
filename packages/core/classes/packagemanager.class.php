@@ -623,10 +623,9 @@ class packages{
 				$dependency[] = array('name' => (string)$dependencyAttributes['name'], 'minVersion' => (string)$dependencyAttributes['minVersion'], 'installed' => $installedDep);
 			}
 			//Now we have to write all this to the database :)
-			package::$db->Execute("INSERT INTO  `lttx_packageList` (`ID`, `name`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`)
+			package::$db->Execute("INSERT INTO  `lttx_packageList` (`ID`, `name`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
 				VALUES (NULL ,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?);",
-				array($name, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency)));
-			echo mysql_error();
+				array($name, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
 		}
 	}
 	
