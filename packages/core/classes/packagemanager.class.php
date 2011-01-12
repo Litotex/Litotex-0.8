@@ -85,8 +85,11 @@ class packages{
 	 * This will load hook and package cache and save the modulmanager class in packages parent class
 	 * @return void
 	 */
-	public function __construct(){
-		package::setPackageManagerClass($this);
+	public function __construct($prefix = false, $setPM = true){
+		if($prefix)
+			$this->setPackagePrefix($prefix);
+		if($setPM)
+			package::setPackageManagerClass($this);
 		if($this->_loadHookCache() === false){
 			$this->generateHookCache();
 		}
