@@ -524,6 +524,8 @@ abstract class package {
         	}else{
         		$tpl->assign('JS_URL', self::getJsUrl($package, 'default'));
         	}
+                $tpl->assign('PACKAGE_DIR', MODULES_DIRECTORY . $package . '/');
+                $tpl->assign('TPL_DIR', self::getTplDir($package = $package) . '/');
         }
         return true;
     }
