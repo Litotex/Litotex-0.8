@@ -101,10 +101,6 @@ class packages{
 		}
 		return;
 	}
-	public function setPackagePrefix($prefix){
-		$this->_packagePrefix = $prefix;
-		return true;
-	}
 	/**
 	 * This will automaticly check the tplMod cache expire and load it if it is still working
 	 * if so it will load it automaticly
@@ -549,7 +545,7 @@ class packages{
 	/**
 	 * @TODO: Almost everything
 	 */
-	public function updateRemotePackageList(){
+	public function updateRemotePackageList($prefixRegister){
 		$data = file_get_contents('http://localhost/LitotexUpdateServer/Litotex8/index.php?package=projects&action=getList&platform=0.8.x'); //TODO: Fallback to CURL? TODO: Static? Fail!
 		//Check if we have valid XML (should be if the server is up and running!)
 		try{
