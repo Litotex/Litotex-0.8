@@ -14,7 +14,8 @@ class package_acp_permissions extends acpPackage{
 		
 		//Variable over Get or Post(formular)
 		$_POST = array_merge($_POST, $_GET);
-		
+		if(!isset($_POST['associateType']) || !isset($_POST['associateID']))
+                    throw new lttxError('permissions_no_user_or_group');
 		$iAssociateType = (int)$_POST['associateType'];
 		$iAssociateID 	= (int)$_POST['associateID'];
 
