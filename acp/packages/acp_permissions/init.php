@@ -22,17 +22,31 @@ class package_acp_permissions extends acpPackage{
 			!empty($iAssociateType)&&
 			!empty($iAssociateID)
 		){
+			try  {
+
+				if($iAssociateType == 1){
+					$oAssociate = new user($iAssociateID);
+				} else {
+					$oAssociate = new userGroup($iAssociateID);
+				}
+
+			} catch (Exception $e) {
+				throw new lttxError('permissions_no_user_or_group');
+			}
+
+
+
 			self::$tpl->assign('iAssociateType', $iAssociateType);
 			self::$tpl->assign('iAssociateID', $iAssociateID);
-			
+
 			$oPermission = new permission($iAssociateType, $iAssociateID);
-			
+
 			self::$tpl->assign('oPermission', $oPermission);
-			
+
 		}
-		
-		
-	
+
+
+
 		return true;
 	}
 	
