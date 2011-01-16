@@ -9,7 +9,7 @@ abstract class installer{
 	public final function __construct($location, $packageName){
 		$this->_location = $location;
 		$this->_packageName = $packageName;
-		$this->_versionOld = packages::getVersionNumber($this->_packageName);
+		$this->_versionOld = package::$packages->getVersionNumber($this->_packageName);
 		$this->_versionNew = $this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php');
 		$this->_checkData();
 		$this->_install();
@@ -30,7 +30,7 @@ abstract class installer{
 		}
 	}
 	private final function _install(){
-		$this->_backup = packages::createBackup($this->_packageName);
+		$this->_backup = package::$packages->createBackup($this->_packageName);
 		packages::recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . 'default/' . $this->_packageName);
 		packages::recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
 		$this->_patchDatabase(true);
@@ -75,7 +75,7 @@ abstract class installer{
 		return eval(preg_replace('/<\?php|\?>|/', '', str_replace('class package_'.$modulName, 'class package_' . $modulName . 'INSTALLER', file_get_contents($file))) . " \$vars = get_class_vars('package_".$modulName."INSTALLER'); return (isset(\$vars['version']))?\$vars['version']:false;");
 	}
 	private final function rollback(){
-		packages::restoreBackup($this->_packageName, $this->_backup);
+		package::$packages->restoreBackup($this->_packageName, $this->_backup);
 	}
 	protected abstract function _freeInstall();
 }
