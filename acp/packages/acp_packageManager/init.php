@@ -42,4 +42,9 @@ class package_acp_packageManager extends acpPackage {
     	$this->_frontendPackages->updateRemotePackageList(array('' => $this->_frontendPackages, 'acp' => self::$packages));
     	header("location: index.php?package=acp_packageManager&action=listUpdates");
     }
+    public function __action_processUpdates(){
+    	if(!isset($_POST['update']))
+            header("Location: index.php?package=acp_packageManager&action=listUpdates");
+        var_dump($_POST['update']);
+    }
 }

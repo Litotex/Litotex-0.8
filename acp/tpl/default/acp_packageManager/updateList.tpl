@@ -15,7 +15,7 @@
 {/if}
 {/foreach}
 {literal}
-<input type="checkbox" id="checkctrl" onchange="if(this.checked){checkboxes_checkAll(document.getElementsByName('update'));}else{checkboxes_uncheckAll(document.getElementsByName('update'));}" />
+<input type="checkbox" id="checkctrl" onchange="if(this.checked){checkboxes_checkAll(document.getElementsByName('update[]'));}else{checkboxes_uncheckAll(document.getElementsByName('update[]'));}" />
 {/literal}
 {#acp_packageManager_markAll#}
 <input type="submit" value="{#acp_packageManager_processUpdate#}" />

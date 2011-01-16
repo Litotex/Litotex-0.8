@@ -1,4 +1,4 @@
-<h4><input type="checkbox" name="update" value="{$update.ID}" onchange="checkbox_checkItems(document.getElementsByName('update'), $('#checkctrl'))" />{$update.name}</h4>
+<h4><input type="checkbox" name="update[]" value="{$update.ID}" onchange="checkbox_checkItems(document.getElementsByName('update[]'), $('#checkctrl'))" />{$update.name}</h4>
 <a href="#" onclick="if ($('#changelog{$update.ID}').is(':visible')) $('#changelog{$update.ID}').hide('slow'); else $('#changelog{$update.ID}').show('slow');">{#acp_packageManager_changelog#} &nbsp;&nbsp;&nbsp;҈</a>
 <div style="display: none;" id="changelog{$update.ID}">
 <ul>
