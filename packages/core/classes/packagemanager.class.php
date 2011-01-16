@@ -87,7 +87,7 @@ class packages{
 	 */
 	public function __construct($prefix = false, $setPM = true){
 		if($prefix)
-			$this->setPackagePrefix($prefix);
+			$this->_packagePrefix = $prefix;
 		if($setPM)
 			package::setPackageManagerClass($this);
 		if($this->_loadHookCache() === false){
