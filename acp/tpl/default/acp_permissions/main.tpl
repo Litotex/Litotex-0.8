@@ -19,12 +19,6 @@
 			<col class="col_access_denied"/>
 			<col class="col_access_denied_complete"/>
 		</colgroup>
-		<tr class="tr_header">
-			<th>{#permissions_packet#} / {#permissions_function#}</th>
-			<th>{#permissions_access_allowed#}</th>
-			<th>{#permissions_access_denied#}</th>
-			<th>{#permissions_access_denied_complete#}</th>
-		</tr>
 	</table>
 	{foreach from=$aPermissionArray item=aPermissions key=sPackageName}
 		<h2>{$sPackageName}</h2>
@@ -35,6 +29,12 @@
 				<col class="col_access_denied"/>
 				<col class="col_access_denied_complete"/>
 			</colgroup>
+			<tr class="tr_header">
+				<th>{#permissions_function#}</th>
+				<th>{#permissions_access_allowed#}</th>
+				<th>{#permissions_access_denied#}</th>
+				<th>{#permissions_access_denied_complete#}</th>
+			</tr>
 		{foreach from=$aPermissions item=aPermission}
 			<tr class="tr_permissions">
 				<td>
