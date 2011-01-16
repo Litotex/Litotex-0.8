@@ -69,7 +69,7 @@ class packages{
 	 * @var string
 	 */
 	private $_packagesDir = MODULES_DIRECTORY;
-	
+	private $_tplDir = TEMPLATE_DIRECTORY;
 	private $_packagePrefix = PACKAGE_PREFIX;
 	/**
 	 * List of all loaded packages
@@ -580,10 +580,10 @@ class packages{
 			$releaseDate = false;
 			$dependency = array();
 			//Already installed? & Updates available
-			if(self::exists($packageAttributes['name'])){
+			if($this->exists($packageAttributes['name'])){
 				$installed = true;
 				//Check if updates are available (might be as the software is installed thought)
-				$compare = self::compareVersionNumbers(self::getVersionNumber($packageAttributes['name']), $packageAttributes['version']);
+				$compare = self::compareVersionNumbers($this->getVersionNumber($packageAttributes['name']), $packageAttributes['version']);
 				if($compare == 1){
 					$update = true;
 				}
@@ -594,7 +594,7 @@ class packages{
 				if($version == $changelogAttributes['version']){
 					$releaseDate = (string)$changelogAttributes['date'];
 				}
-				$new = self::compareVersionNumbers(self::getVersionNumber($name), $changelogAttributes['version']);
+				$new = self::compareVersionNumbers($this->getVersionNumber($name), $changelogAttributes['version']);
 				$changelog[] = array('text' => (string)$changelogAttributes['text'], 'date' => (string)$changelogAttributes['date'], 'crit' => (bool)$changelogAttributes['crit'], 'new' => $new, 'version' => (string)$changelogAttributes['version']);
 				if($new == 1 && $changelogAttributes['crit'] == 1){
 					$critupdate = true;
@@ -619,9 +619,9 @@ class packages{
 			//Dependency
 			foreach($package->dependency as $dependencyElement){
 				$dependencyAttributes = $dependencyElement->attributes();
-				$installedDep = (int)self::exists($dependencyAttributes['name']);
+				$installedDep = (int)$this->exists($dependencyAttributes['name']);
 				if($installedDep){
-					$up2date = self::compareVersionNumbers(self::getVersionNumber($dependencyAttributes['name']), $dependencyAttributes['minVersion']);
+					$up2date = $this->compareVersionNumbers(self::getVersionNumber($dependencyAttributes['name']), $dependencyAttributes['minVersion']);
 					if($up2date == 0 || $up2date == 1)
 						$installedDep = 2;
 				}
@@ -634,8 +634,8 @@ class packages{
 		}
 	}
 	
-	public static function getVersionNumber($package){
-		if(!self::exists($package))
+	public function getVersionNumber($package){
+		if(!$this->exists($package))
 			return false;
 		$prop = get_class_vars('package_' . $package);
 		return $prop['version'];
@@ -742,8 +742,8 @@ class packages{
 	 * @param string $package packagename
 	 * @return bool
 	 */
-	public static function exists($package){
-		if(file_exists(MODULES_DIRECTORY . '/' . $package . '/init.php'))
+	public function exists($package){
+		if(file_exists($this->_packagesDir . '/' . $package . '/init.php'))
 		return true;
 		return false;
 	}
@@ -773,8 +773,8 @@ class packages{
 		}
 		return $return;
 	}
-	public static function createBackup($package){
-		if(!self::exists($package))
+	public function createBackup($package){
+		if(!$this->exists($package))
 			throw new lttxError('E_packageDoesNotExist', $package);
 		if(!is_dir(LITO_ROOT . 'backup'))
 			throw new lttxError('E_noBackupDir');
@@ -787,21 +787,21 @@ class packages{
 		//Here we go, everything should work
 		mkdir($saveDirName . 'package');
 		mkdir($saveDirName . 'template');
-		$tplDir = opendir(TEMPLATE_DIRECTORY);
+		$tplDir = opendir($this->_tplDir);
 		while($file = readdir($tplDir)){
 			if($file == '.' || $file == '..')
 				continue;
-			if(!is_dir(TEMPLATE_DIRECTORY . $file))
+			if(!is_dir($this->_tplDir . $file))
 				continue;
-			if(is_dir(TEMPLATE_DIRECTORY . $file . '/' . $package)){
+			if(is_dir($this->_tplDir . $file . '/' . $package)){
 				mkdir($saveDirName . 'template/' . $file . '/');
-				self::recursiveCopy(TEMPLATE_DIRECTORY . $file . '/' . $package, $saveDirName . 'template/' . $file . '/' . $package);
+				self::recursiveCopy($this->_tplDir . $file . '/' . $package, $saveDirName . 'template/' . $file . '/' . $package);
 			}
 		}
-		self::recursiveCopy(MODULES_DIRECTORY . $package, $saveDirName . 'package/' . $package);
+		self::recursiveCopy($this->_packagesDir . $package, $saveDirName . 'package/' . $package);
 		return $saveDirName;
 	}
-	public static function restoreBackup($package, $path){
+	public function restoreBackup($package, $path){
 		if(!$path)
 			return false;
 		if(!is_dir($path))
@@ -810,8 +810,8 @@ class packages{
 			throw new lttxError('E_backupNoPackageDir');
 		if(!is_dir($path . '/template'))
 			throw new lttxError('E_backupNoTemplateDir');
-		self::recursiveCopy($path . '/package/' . $package, MODULES_DIRECTORY . $package);
-		self::recursiveCopy($path . '/template/', TEMPLATE_DIRECTORY);
+		self::recursiveCopy($path . '/package/' . $package, $this->_packagesDir . $package);
+		self::recursiveCopy($path . '/template/', $this->_tplDir);
 	}
 	public static final function recursiveCopy($source, $destination){
 		if(!file_exists($source))

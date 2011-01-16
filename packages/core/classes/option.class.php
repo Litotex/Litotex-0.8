@@ -40,7 +40,7 @@ class option{
     		$this->_package = $package;
     		return;
     	}
-        if(!packages::exists($package))
+        if(!package::$packages->exists($package))
             return false;
         $this->_package = $package;
         $cache = package::$db->Execute("SELECT `key`, `value`, `default` FROM `lttx_options` WHERE `package` = ?", array($package));
