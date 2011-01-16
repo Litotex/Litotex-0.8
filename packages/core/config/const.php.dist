@@ -15,8 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
+$frontendRoot = 'C:/Users/Martin/Daten/htdocs/litotex/080/';
 if(!defined('LITO_ROOT'))
-	define('LITO_ROOT', 'C:/Users/Martin/Daten/htdocs/litotex/080/');
+	define('LITO_ROOT', $frontendRoot);
 if(!defined('LITO_PLUGIN_DIRNAME'))
 	define('LITO_PLUGIN_DIRNAME', 'plugins/');
 if(!defined('LITO_PLUGIN_ROOT'))
@@ -53,3 +54,11 @@ if(!defined('DB_PREFIX'))
 	define('DB_PREFIX', 'lttx1_');
 if(!defined('PACKAGE_PREFIX'))
 	define('PACKAGE_PREFIX', '');
+if(!defined('LITO_FRONTEND_ROOT'))
+	define('LITO_FRONTEND_ROOT', $frontendRoot);
+if(!defined('MODULES_FRONTEND_DIRECTORY'))
+	define('MODULES_FRONTEND_DIRECTORY', LITO_FRONTEND_ROOT . 'packages/');
+if(!defined('TEMPLATE_FRONTEND_DIRECTORY'))
+	define('TEMPLATE_FRONTEND_DIRECTORY', LITO_FRONTEND_ROOT . TPL_DIR);
+if(!defined('TEMPLATE_FRONTEND_COMPILATION'))
+	define('TEMPLATE_FRONTEND_COMPILATION', LITO_FRONTEND_ROOT . 'tpl_c');
