@@ -85,11 +85,15 @@ class packages{
 	 * This will load hook and package cache and save the modulmanager class in packages parent class
 	 * @return void
 	 */
-	public function __construct($prefix = false, $setPM = true){
+	public function __construct($prefix = false, $setPM = true, $packagesDir = false, $tplDir = false){
 		if($prefix)
-			$this->setPackagePrefix($prefix);
-		if($setPM)
-			package::setPackageManagerClass($this);
+			$this->_packagePrefix = $prefix;
+		$oldPM = package::$packages;
+                package::setPackageManagerClass($this);
+                if($packagesDir)
+                        $this->_packagesDir = $packagesDir;
+                if($tplDir)
+                        $this->_tplDir = $tplDir;
 		if($this->_loadHookCache() === false){
 			$this->generateHookCache();
 		}
@@ -99,6 +103,8 @@ class packages{
 		if($this->_loadTplModificationCache() === false){
 			$this->generateTplModificationCache();
 		}
+                if(!$setPM)
+                    package::setPackageManagerClass($oldPM);
 		return;
 	}
 	/**
@@ -345,7 +351,7 @@ class packages{
 				$this->_loadedLang[] = $packageName;
 				package::loadLang(package::$tpl, $packageName);
 			}
-			include_once($this->_packagesDir . '/' . $this->_dependencyCache[$packageName][0] . '/init.php');
+			include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
 			if($loadDep)
 				$dep = $this->_getPackageDependencies($packageName);
 			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
