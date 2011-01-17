@@ -94,6 +94,8 @@ class permission {
 						*
 					FROM 
 						`lttx_permissionsAvailable`
+					ORDER BY
+						`package`, `function`
 					";
 					
 			$aSql = array();

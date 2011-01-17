@@ -1,0 +1,40 @@
+.permissions h1 {
+	font-size: 16px;
+}
+
+.permissions h2 {
+	font-size: 14px;
+	background-color:#333333;
+	color:#FFF;
+	padding:3px;
+}
+
+.permissions table {
+	width:800px;
+	border: 1px solid #000;
+}
+
+.permissions th {
+	text-align:left;
+}
+
+.permissions  table .tr_header {
+
+}
+
+.permissions table .tr_permissions:hover {
+	background-color: yellow;
+}
+
+.permissions .col_function {
+	width:auto;
+}
+.permissions .col_access_allowed {
+	width:80px;
+}
+.permissions .col_access_denied {
+	width:80px;
+}
+.permissions .col_access_denied_complete {
+	width:80px;
+}
