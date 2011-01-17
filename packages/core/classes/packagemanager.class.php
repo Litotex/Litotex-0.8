@@ -86,7 +86,7 @@ class packages{
 	 * @return void
 	 */
 	public function __construct($prefix = false, $setPM = true, $packagesDir = false, $tplDir = false){
-		if($prefix)
+		if($prefix !== false)
 			$this->_packagePrefix = $prefix;
 		$oldPM = package::$packages;
                 package::setPackageManagerClass($this);
@@ -601,7 +601,7 @@ class packages{
 					$releaseDate = (string)$changelogAttributes['date'];
 				}
 				$new = self::compareVersionNumbers($this->getVersionNumber($name), $changelogAttributes['version']);
-				$changelog[] = array('text' => (string)$changelogAttributes['text'], 'date' => (string)$changelogAttributes['date'], 'crit' => (bool)$changelogAttributes['crit'], 'new' => $new, 'version' => (string)$changelogAttributes['version']);
+				$changelog[] = array('text' => (string)$changelogAttributes['text'], 'date' => (string)$changelogAttributes['date'], 'crit' => $changelogAttributes['crit'] == 1, 'new' => $new, 'version' => (string)$changelogAttributes['version']);
 				if($new == 1 && $changelogAttributes['crit'] == 1){
 					$critupdate = true;
 				}

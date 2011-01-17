@@ -1,4 +1,4 @@
-;<?php exit(); ?>
+#<?php exit()# ?>
 permissions_title_group = "Gruppenrechte verwalten"
 permissions_title_user = "Benutzerrechte verwalten"
 permissions_error_no_user = "Kein Benutzer oder Gruppe gefunden"

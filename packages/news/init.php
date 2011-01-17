@@ -86,7 +86,7 @@ class package_news extends package {
     }
     public static function  __hook_showNewsBlock($n) {
         $news = self::getNews(false, 1, $n);
-        self::loadLang($tpl, 'news');
+        self::loadLang(self::$tpl, 'news');
         self::$tpl->assign('news', $news);
         self::$tpl->display(self::getTplDir('news') . 'newsblock.tpl');
         return true;

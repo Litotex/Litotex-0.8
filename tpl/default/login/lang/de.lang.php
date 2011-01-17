@@ -1,4 +1,4 @@
-;<?php exit(); ?>
+#<?php exit()# ?>
 login_noUsername = "Bitte geben sie ihren Usernamen an."
 login_noPassword = "Bitte geben sie ihr Passwort an."
 login_incorrect = "Das eingegebene Passwort konnte dem Benutzer nicht zugeordnet werden."
@@ -13,7 +13,7 @@ LN_LOGIN_FORGET_NOTE1="Kennwort vergessen ?"
 LN_LOGIN_FORGET_NOTE2="Emaileingabe"
 LN_LOGIN_EMAIL="Deine Emailadresse"
 LN_LOGIN_MAIL_SENDEN="Kennwort senden"
-LN_LOGIN_FORGET_NOTE3="Falsches Formal der Emailadresse";
+LN_LOGIN_FORGET_NOTE3="Falsches Formal der Emailadresse"#
 LN_LOGIN_FORGET_ERROR="Fehlerhafte Emailadresse.<br>ErrorCode: 0x6373"
 LN_LOGIN_FORGET_ERROR_1="Emailadresse nicht gefunden"
 LN_LOGIN_MAIL_SUBJECT="Kennwort vergessen"

@@ -4,7 +4,10 @@ class lttxError extends Exception{
 		$args = func_get_args();
 		$messageCode = $args[0];
 		package::loadLang(package::$tpl);
-		$this->message = package::getLanguageVar($messageCode);
+                if(package::getLanguageVar($messageCode) != '')
+                    $this->message = package::getLanguageVar($messageCode);
+                else
+                    $this->message = $messageCode;
 		$argstr = '';
 		foreach($args as $i => $arg){
 			if($i == 0)

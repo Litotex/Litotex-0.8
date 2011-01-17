@@ -1,2 +1,2 @@
-;<?php exit(); ?>
+#<?php exit()# ?>
 E_error = "Fehler"

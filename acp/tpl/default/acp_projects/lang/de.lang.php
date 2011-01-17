@@ -1,4 +1,4 @@
-;<?php exit(); ?>
+#<?php exit()# ?>
 versionNumberIsInvalid = "Fehlerhafte Vesionsnummer!"
 noProjectIdGiven = "Keine Projekt ID gegeben"
 noReleaseIdGiven = "Keine Release ID gegeben"
@@ -19,7 +19,7 @@ projectLastRelease = "Letztes Release"
 
 createProject = "Projekt anlegen"
 
-deleteSureText = "Wirklich l&ouml;schen?"
+deleteSureText = "Wirklich l&ouml#schen?"
 yes = "Ja"
 no = "Nein"
 
@@ -33,5 +33,5 @@ releaseUploader = "Hochgeladen von"
 
 actions = "Aktionen"
 edit = "Bearbeiten"
-delete = "L&ouml;schen"
+delete = "L&ouml#schen"
 save = "Speichern"
