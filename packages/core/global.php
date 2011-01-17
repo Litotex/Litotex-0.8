@@ -31,6 +31,7 @@ require_once('classes/date.class.php');
 require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
+require_once('classes/perm.class.php');
 require_once 'classes/option.class.php';
 try{
 	try{
@@ -102,9 +103,9 @@ try{
 	$packageManager->callHook('loadCore', array());
 
 	if(!package::$user)
-	$perm = new perm(new user(0));
+	$perm = new userPerm(new user(0));
 	else
-	$perm = new perm(package::$user);
+	$perm = new userPerm(package::$user);
 	package::setPermClass($perm);
 	if(isset($_GET['package'])) {
 		$package = $_GET['package'];

@@ -16,7 +16,6 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 require_once("userGroup.class.php");
-require_once("perm.class.php");
 /**
  * This file is part of Litotex || Open Source Browsergame Engine.
  * Litotex is free software: you can redistribute it and/or modify
