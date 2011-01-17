@@ -86,7 +86,7 @@ class packages{
 	 * @return void
 	 */
 	public function __construct($prefix = false, $setPM = true, $packagesDir = false, $tplDir = false){
-		if($prefix)
+		if($prefix !== false)
 			$this->_packagePrefix = $prefix;
 		$oldPM = package::$packages;
                 package::setPackageManagerClass($this);
