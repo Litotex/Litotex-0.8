@@ -1,11 +1,11 @@
-tpl_c/%%*
+tpl_c/*
 .project
 .buildpath
 packages/core/config/*
 .settings/*
 packages/core/cache/*
 acp/packages/acp_config/cache/config.cache.php
-acp/tpl_c/%%*
+acp/tpl_c/*
 acp/const.php
 backup/*
 files/cache/*

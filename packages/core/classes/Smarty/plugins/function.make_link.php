@@ -1,40 +1,42 @@
 <?php
 /**
  * Smarty plugin for Litotex 0.8
- * @package Smarty
- * @subpackage plugins
  * @author Jonas Schwabe
+ * @package Smarty
+ * @subpackage PluginsFunction
  */
-
 
 /**
- * Smarty count_characters modifier plugin
+ * Smarty {make_link} plugin
  *
- * Type:     modifier<br>
- * Name:     count_characteres<br>
- * Purpose:  count the number of characters in a text
- * @link http://smarty.php.net/manual/en/language.modifier.count.characters.php
- *          count_characters (Smarty online manual)
- * @author   Monte Ohrt <monte at ohrt dot com>
- * @param string
- * @param boolean include whitespace in the character count
- * @return integer
+ * Type:     function<br>
+ * Name:     make_link<br>
+ * Purpose:  generate a link to a specified package
+ * @author Jonas Schwabe
+ * @param array $params parameters
+ * @param object $template template object
+ * @return string|null if the assign parameter is passed, Smarty assigns the
+ *                     result to a template variable
  */
-function smarty_function_make_link($params, &$smarty)
+function smarty_function_make_link($params, $template)
 {
     if (empty($params['package'])) {
-        $smarty->trigger_error("make_link: package parameter missing.");
+        trigger_error("make_link: package parameter missing.");
         return;
     }
     $url = 'index.php';
-    $url .= '?package='.urlencode($params['package']);
+    $url .= '?package=' . urlencode($params['package']);
     unset($params['package']);
-    foreach($params as $key => $value){
-        $url .= '&amp;' . $key . '='.urlencode($value);
+    foreach($params as $key => $value) {
+        $url .= '&amp;' . $key . '=' . urlencode($value);
     }
     return $url;
+/* Entwurf:
+    if (empty($params['package'])) {
+        trigger_error("make_link: package parameter missing.");
+        return;
+    }
+    return 'index.php?' . http_build_query($params);
+*/
 }
-
-/* vim: set expandtab: */
-
 ?>

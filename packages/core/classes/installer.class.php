@@ -6,6 +6,8 @@ abstract class installer{
 	private $_backup = false;
 	private $_versionOld = false;
 	private $_versionNew = false;
+        private $_templateDir = TEMPLATE_DIRECTORY; /*TEMPLATE_DIRECTORY or TEMPLATE_FRONTEND_DIRECTORY*/
+        private $_packageDir = MODULES_DIRECTORY; /*MODULES_DIRECTORY or MODULES_FRONTEND_DIRECTORY*/
 	public final function __construct($location, $packageName){
 		$this->_location = $location;
 		$this->_packageName = $packageName;
@@ -31,8 +33,8 @@ abstract class installer{
 	}
 	private final function _install(){
 		$this->_backup = package::$packages->createBackup($this->_packageName);
-		packages::recursiveCopy($this->_location . '/template', TEMPLATE_DIRECTORY . 'default/' . $this->_packageName);
-		packages::recursiveCopy($this->_location . '/package', MODULES_DIRECTORY . $this->_packageName);
+		packages::recursiveCopy($this->_location . '/template', $this->_templateDir . 'default/' . $this->_packageName);
+		packages::recursiveCopy($this->_location . '/package', $this->_packageDir . $this->_packageName);
 		$this->_patchDatabase(true);
 		$this->_freeInstall();
 	}

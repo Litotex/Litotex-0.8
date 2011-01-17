@@ -1,4 +1,4 @@
-;<?php die(); ?>
+#<?php die()# ?>
 acp_packageManager_pm = "Paketmanager"
 acp_packageManager_actions = "Hier haben sie die Möglichkeit Pakete zu installieren oder zu aktualisieren"
 acp_packageManager_installed = "Installierte Pakete auflisten"
@@ -10,3 +10,4 @@ acp_packageManager_update = "Sonstige Aktualisierungen"
 acp_packageManager_changelog = "Changelog"
 acp_packageManager_markAll = "Alles auswählen"
 acp_packageManager_processUpdate = "Updates durchführen"
+E_updateIDNotFound = "Die ausgewählten Updates wurden nicht gefunden, bitte aktualisieren sie den Paketmanager"

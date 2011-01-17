@@ -1,4 +1,4 @@
-;<?php exit(); ?>
+#<?php exit()# ?>
 E_error = "Fehler"
 E_info="Information"
 E_fatalError = "Schwerer Fehler"

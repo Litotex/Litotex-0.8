@@ -123,8 +123,8 @@ try{
 
 	//$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
 	$packageManager->callHook('endCore', array());
-	package::$tpl->assign('queryCount', package::$db->count);
 }catch (Exception $e){
+        package::$tpl->assign('queryCount', package::$db->count);
 	if(isset($package) && is_a($package, 'package'))
 	$package->setTemplatePolicy(false);
 	if(is_a($e, 'lttxFatalError'))
@@ -134,7 +134,9 @@ try{
 	package::loadLang($tpl);
 	if(is_a($e, 'lttxError') || is_a($e, 'lttxFatalError'))
 	$tpl->display(package::getTplDir('main') . 'CoreError.tpl');
-	if(is_a($e, 'lttxInfo'))
+	else if(is_a($e, 'lttxInfo'))
 	$tpl->display(package::getTplDir('main') . 'CoreInfo.tpl');
+        else
+            throw $e;
 	exit();
 }

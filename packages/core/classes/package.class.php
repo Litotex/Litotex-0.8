@@ -150,6 +150,7 @@ abstract class package {
      */
     public final function displayTpl(){
     	if($this->_tpl) {
+                package::$tpl->assign('queryCount', package::$db->count);
         	if(file_exists(self::getTplDir($this->_packageName) . $this->_theme)){
             	self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
         	}else{
@@ -164,9 +165,7 @@ abstract class package {
      * @return string language var
      */
     public static function getLanguageVar($var){
-    	if(isset(self::$tpl->_config[0]['vars'][$var]))
-    		return self::$tpl->_config[0]['vars'][$var];
-    	return false;
+    		return self::$tpl->getConfigVars($var);
     } 
     /**
      * This functions checks which actions are available ($_availableActions) and casts the best function for $action
@@ -470,14 +469,14 @@ abstract class package {
 		if(!is_a($tpl, 'Smarty'))
 			return false;
     	if(file_exists(self::getLangPath() . self::getLanguage() . '.lang.php')){
-        	$tpl->config_load(self::getLangPath() . self::getLanguage() . '.lang.php');
+        	$tpl->configLoad(self::getLangPath() . self::getLanguage() . '.lang.php');
         } else if(file_exists(self::getLangPath() . 'en' . '.lang.php')){
-        	$tpl->config_load(self::getLangPath() . 'en' . '.lang.php');
+        	$tpl->configLoad(self::getLangPath() . 'en' . '.lang.php');
         }
         if($package && file_exists(self::getLangPath($package) .  self::getLanguage() . '.lang.php')){
-        	$tpl->config_load(self::getLangPath($package) . self::getLanguage() . '.lang.php');
+        	$tpl->configLoad(self::getLangPath($package) . self::getLanguage() . '.lang.php');
         }else if(file_exists(self::getLangPath($package) . 'en' . '.lang.php')){
-        	$tpl->config_load(self::getLangPath($package) . 'en' . '.lang.php');
+        	$tpl->configLoad(self::getLangPath($package) . 'en' . '.lang.php');
         } else {
         	return false;
         }
@@ -487,9 +486,9 @@ abstract class package {
     	if(!is_a($tpl, 'Smarty'))
 			return false;
     	if(file_exists($href . '.' . self::getLanguage() . '.lang.php')){
-        	$tpl->config_load($href . '.' . self::getLanguage() . '.lang.php');
+        	$tpl->configLoad($href . '.' . self::getLanguage() . '.lang.php');
         } else {
-        	$tpl->config_load($href . '.en' . '.lang.php');
+        	$tpl->configLoad($href . '.en' . '.lang.php');
         }
     }
     public static function setTemplateSettings($tpl, $package = false){
