@@ -548,9 +548,7 @@ class packages{
 	 */
 	public function getChangeLog(){
 	}
-	/**
-	 * @TODO: Almost everything
-	 */
+        
 	public function updateRemotePackageList($prefixRegister){
 		$data = file_get_contents('http://localhost/LitotexUpdateServer/Litotex8/index.php?package=projects&action=getList&platform=0.8.x'); //TODO: Fallback to CURL? TODO: Static? Fail!
 		//Check if we have valid XML (should be if the server is up and running!)
@@ -569,6 +567,7 @@ class packages{
 		$dataSection = $xmlData->data;
 		foreach ($dataSection->children() as $package){
 			$packageAttributes = $package->attributes();
+                        $dedPM = (isset($prefixRegister[(string)$packageAttributes['prefix']]))?$prefixRegister[(string)$packageAttributes['prefix']]:$this;
 			$installed = false;
 			$name = (string)$packageAttributes['name'];
 			$description = (string)$packageAttributes['description'];
@@ -585,11 +584,12 @@ class packages{
 			$signInfo = array();
 			$releaseDate = false;
 			$dependency = array();
+                        $prefix = (string)$packageAttributes['prefix'];
 			//Already installed? & Updates available
-			if($this->exists($packageAttributes['name'])){
+			if($dedPM->exists($packageAttributes['name'])){
 				$installed = true;
 				//Check if updates are available (might be as the software is installed thought)
-				$compare = self::compareVersionNumbers($this->getVersionNumber($packageAttributes['name']), $packageAttributes['version']);
+				$compare = self::compareVersionNumbers($dedPM->getVersionNumber($packageAttributes['name']), $packageAttributes['version']);
 				if($compare == 1){
 					$update = true;
 				}
@@ -600,7 +600,7 @@ class packages{
 				if($version == $changelogAttributes['version']){
 					$releaseDate = (string)$changelogAttributes['date'];
 				}
-				$new = self::compareVersionNumbers($this->getVersionNumber($name), $changelogAttributes['version']);
+				$new = self::compareVersionNumbers($dedPM->getVersionNumber($name), $changelogAttributes['version']);
 				$changelog[] = array('text' => (string)$changelogAttributes['text'], 'date' => (string)$changelogAttributes['date'], 'crit' => $changelogAttributes['crit'] == 1, 'new' => $new, 'version' => (string)$changelogAttributes['version']);
 				if($new == 1 && $changelogAttributes['crit'] == 1){
 					$critupdate = true;
@@ -625,18 +625,18 @@ class packages{
 			//Dependency
 			foreach($package->dependency as $dependencyElement){
 				$dependencyAttributes = $dependencyElement->attributes();
-				$installedDep = (int)$this->exists($dependencyAttributes['name']);
+				$installedDep = (int)$dedPM->exists($dependencyAttributes['name']);
 				if($installedDep){
-					$up2date = $this->compareVersionNumbers(self::getVersionNumber($dependencyAttributes['name']), $dependencyAttributes['minVersion']);
+					$up2date = self::compareVersionNumbers($dedPM->getVersionNumber($dependencyAttributes['name']), $dependencyAttributes['minVersion']);
 					if($up2date == 0 || $up2date == 1)
 						$installedDep = 2;
 				}
 				$dependency[] = array('name' => (string)$dependencyAttributes['name'], 'minVersion' => (string)$dependencyAttributes['minVersion'], 'installed' => $installedDep);
 			}
 			//Now we have to write all this to the database :)
-			package::$db->Execute("INSERT INTO  `lttx_packageList` (`ID`, `name`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
-				VALUES (NULL ,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?, ?);",
-				array($name, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
+			package::$db->Execute("INSERT INTO  `lttx_packageList` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
+				VALUES (NULL ,  ?, ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?, ?);",
+				array($name, $prefix, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
 		}
 	}
 	
