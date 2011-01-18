@@ -17,6 +17,12 @@ class lttxError extends Exception{
 		eval("\$this->message = sprintf(\$this->message$argstr);");
 	}
 }
+class lttxDBError extends lttxError{
+	public function __construct  (){
+		$sError = package::$db->ErrorMsg();
+		parent::__construct($sError);
+	}
+}
 class lttxInfo extends Exception{
 	public function __construct  ($messageCode){
 		$args = func_get_args();

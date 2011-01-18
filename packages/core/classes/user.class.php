@@ -130,10 +130,10 @@ class user {
      * @return void
      */
     public function __construct($userID) {
-    	if($userID == 0)
-    		return;
+    	//if($userID == 0)
+    	//	return;
         $userID = intval($userID);
-        if(!self::userExists($userID))
+        if(!self::userExists($userID) && $userID > 0)
             throw new lttxFatalError('User ' . $userID . ' was not found');
         $this->_currentID = $userID;
         $this->_initialized = true;
@@ -159,23 +159,96 @@ class user {
             return false;
         return $this->getData('username');
     }
+    
     /**
-     * This will check the login information and return an instance of the user class on success
-     * @param string $username username
-     * @param string $password unhashed password
-     * @return bool on failure | user
+     * Update / Insert User with an Array of Data
+     * @param $aData
      */
-    static public function login($username, $password) {
-        $user = self::getUserByName($username);
-        if(!$user)
-            return false;
-        if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
-            $user->setUsersInstance();
-            package::$session->setUserObject($user);
-            return $user;
-        }
-        return false;
+    public function update($aData){
+    	
+    	$iUserId = (int)$this->getData('ID');
+
+    	// check for PW
+    	if(
+    		isset($aData['password']) &&
+    		!empty($aData['password'])
+    	){
+    		$aPasswordSalted 		= self::_saltString($aData['password']);
+    		$aData['password'] 		= hash('sha512', $aPasswordSalted[1]);
+    		$aData['dynamicSalt'] 	= $aPasswordSalted[0];
+    	} else if(
+    		isset($aData['password']) &&
+    		empty($aData['password'])
+    	){
+    		unset($aData['password']);
+    	}
+    	
+    	$sSql = "";
+    	$aSql = "";
+    	
+    	$sSqlSetPart = "";
+
+    	// write SET Part
+    	foreach((array)$aData as $sField => $mValue){    	
+    			
+    		$sSqlSetPart .= "`".$sField."` = ?, ";
+    		$aSql[] = $mValue;
+    		
+    	}
+
+    	// remove last "," 
+    	$sSqlSetPart = rtrim($sSqlSetPart, ', ');
+    	
+    	$bSuccess = true;
+    	
+    	if(
+    		$iUserId > 0  && 
+    		self::userExists($iUserId)
+    	){
+ 
+    		$sSql = " UPDATE
+    						`lttx_users`
+    					SET
+    						".$sSqlSetPart."
+    					WHERE
+    						`ID` = ?
+    				";
+    		$aSql[] = $iUserId;
+    		// Update
+    		$bSuccess = package::$db->Execute($sSql, $aSql);
+    		
+    		// Write Buffer new
+    		$this->_createFullBuffer();
+    		
+    	} else if($iUserId == 0){
+    		    		
+    		$sSql = " INSERT INTO 
+    						`lttx_users`
+    					SET
+    					".$sSqlSetPart;
+    		// Insert
+
+    		$bSuccess = package::$db->Execute($sSql, $aSql);
+    		// get ID
+    		$iUserId = package::$db->Insert_ID();
+
+    		// set New ID
+    		$this->_currentID = $iUserId;
+    		// Write Buffer new
+    		$this->_createFullBuffer();
+    		
+    	} else {
+    		throw new lttxError('E_unknownUser');
+    	}
+
+   	 	if($bSuccess === false){
+   	 		$sDBError = package::$db->ErrorMsg();
+    		throw new lttxError($sDBError);
+    	}
+    	
+    	return true;
     }
+
     /**
      * This function will create a new user and return an instance of the created user immediatelly
      * @param string $username username
@@ -183,7 +256,7 @@ class user {
      * @param array $data array of data that should be written to the database
      * @return int on failure [-1 username exists -2 email exists -3 unknown error] | user
      */
-    static public function register($username, $password, $email, $data) {
+    public function register($username, $password, $email, $data) {
         $passwordSalted = self::_saltString($password);
         if(self::userExists($username))
             return -1;
@@ -217,6 +290,24 @@ class user {
         if(package::$db->Affected_Rows() <= 0)
             return -3;
         return new user(package::$db->Insert_Id());
+    }
+    
+    /**
+     * This will check the login information and return an instance of the user class on success
+     * @param string $username username
+     * @param string $password unhashed password
+     * @return bool on failure | user
+     */
+    static public function login($username, $password) {
+        $user = self::getUserByName($username);
+        if(!$user)
+            return false;
+        if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
+            $user->setUsersInstance();
+            package::$session->setUserObject($user);
+            return $user;
+        }
+        return false;
     }
     /**
      * Returns a salted string (static and dynamic salted) which is sh1 hashed afterwards
@@ -377,16 +468,20 @@ class user {
      * @return bool
      */
     private function _createFullBuffer() {
+    	
         if(!$this->_initialized)
             return false;
         if(!$this->_bufferActive)
             return false;
+        if($this->getUserID() == 0)
+            return false;
+            
         $result = package::$db->Execute("
             SELECT *
             FROM `lttx_users`
             WHERE `id` = ?",
                 array($this->_currentID));
-        foreach ($result->fields as $key => $value) {
+        foreach ((array)$result->fields as $key => $value) {
             self::$_readCache[$this->_currentID][$key] = $value;
         }
         $this->_buffered = true;
@@ -453,6 +548,7 @@ class user {
         }
         return false;
     }
+    
     /**
      * Checks if a user exists (uses id or username)
      * @param int (explecit) | string $user userid or name
@@ -480,6 +576,7 @@ class user {
             return true;
         return false;
     }
+    
     /** FIXME
      * This will check if the user is banned
      * @return bool
@@ -488,6 +585,7 @@ class user {
         if(!$this->_initialized)
             return false;
     }
+    
     /** FIXME
      * This will ban a user for a specific amount of time
      * @param str $reason Reason to ban the user (may show up on login)
@@ -498,6 +596,7 @@ class user {
         if(!$this->_initialized)
             return false;
     }
+    
     /**
      * This will return the user's ID
      * @return int | bool on failure
@@ -507,6 +606,7 @@ class user {
             return false;
         return (int)$this->_currentID;
     }
+    
     /**
      * This will return the user's name
      * @return string | bool on failure
@@ -516,6 +616,15 @@ class user {
             return false;
         return $this->getData('username');
     }
+    
+    public function getLastActive(){
+    	 return $this->getData('lastActive');
+    }
+    
+    public function getCreateDate(){
+    	 return $this->getData('registerDate');
+    }
+    
     /**
      * This will check if the current user is owner of this account
      * @return bool
@@ -525,6 +634,7 @@ class user {
             return false;
         return $this->_loggedIn;
     }
+    
     /**
      * This will set the current user as to be the owner of this account
      * @return bool
@@ -535,6 +645,7 @@ class user {
         $this->_loggedIn = true;
         return true;
     }
+    
     /**
      * This will delete the cache and set all modifications to a default set
      * @return bool
@@ -664,6 +775,9 @@ class user {
     	$return = array();
     	$match = array();
     	$searchResults = package::$db->Execute("SELECT `ID`, `".$field."` FROM `lttx_users` WHERE `".$field."` LIKE ?", array('%' . $request . '%'));
+		if($searchResults === false){
+			throw new lttxDBError();
+		}
     	while(!$searchResults->EOF){
     		if($searchResults->fields[1] == $request){
     			$user = new user($searchResults->fields[0]);

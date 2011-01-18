@@ -1,0 +1,23 @@
+
+.acp_users {
+	width: 800px;	
+}
+
+.acp_users form label {
+	width: 150px;
+	display: block;
+	float: left;	
+}
+
+.acp_users #userTabs {
+	width: 100%;	
+}
+
+#successDiv {
+	color: green;
+	padding-bottom:10px;
+}
+#errorDiv {
+	color: red;
+	padding-bottom:10px;
+}
