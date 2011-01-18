@@ -1,17 +1,27 @@
 
 <table>
+	<colgroup>
+		<col style="width:auto;" />
+		<col style="width:100px;" />
+		<col style="width:100px;" />
+		<col style="width:100px;" />
+		<col style="width:200px;" />
+	</colgroup>
 	<tr>
 		<th>
-			Benutzer
+			{#users_user#}
 		</th>
 		<th>
-			dabei seit
+			{#users_created#}
 		</th>
 		<th>
-			letzter Login
+			{#users_last_active#}
 		</th>
 		<th>
-			Aktion
+			{#users_status#}
+		</th>
+		<th>
+			{#users_action#}
 		</th>
 	</tr>
 {foreach item=oUser from=$aUsers}
@@ -24,6 +34,9 @@
 		</td>
 		<td>
 			{$oUser->getCreateDate()}
+		</td>
+		<td>
+			...gebannt...aktiv...
 		</td>
 		<td>
 			{#users_edit#} | {#users_ban#} | {#users_delete#}

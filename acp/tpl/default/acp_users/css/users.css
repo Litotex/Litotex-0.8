@@ -1,4 +1,5 @@
 
+
 .acp_users {
 	width: 800px;	
 }
@@ -13,11 +14,20 @@
 	width: 100%;	
 }
 
-#successDiv {
+.acp_users #successDiv {
 	color: green;
 	padding-bottom:10px;
 }
-#errorDiv {
+.acp_users #errorDiv {
 	color: red;
 	padding-bottom:10px;
 }
+
+.acp_users table {
+	width: 100%;
+}
+
+.acp_users table th {
+	text-align: left;
+}
+
