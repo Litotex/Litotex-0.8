@@ -3,7 +3,7 @@
 <div style="display: none;" id="changelog{$update.ID}">
 <ul>
 {foreach from=$update.changelog item=changelog}
-{if $changelog.new}
+{if $changelog.new < 2}
     <li>{if $changelog.crit}<b>!</b>{/if}{$changelog.date}
         <ul><li>{$changelog.text}</li></ul>
     </li>
