@@ -1,0 +1,247 @@
+@charset "utf-8";
+
+body {
+	font: 12px "Trebuchet MS", Arial, Helvetica, sans-serif;
+	color: #5A554E;
+	background: url(../img/bg_body.png) repeat-x #303740;
+}
+
+#wrapper {
+	margin: auto;
+	width: 750px;
+	background: #FFFFFF;
+	margin-top: 100px;
+	margin-bottom: 40px;
+	padding: 10px 10px 0px 10px;
+}
+
+/* ################################################## */
+/* ###### Header #################################### */
+/* ################################################## */
+
+#header {
+	height: 120px;
+	background: url(../img/header.png) no-repeat;
+}
+
+/* ################################################## */
+/* ###### Navi oben ################################# */
+/* ################################################## */
+
+#navi_oben {
+	height: 60px;
+	background: url(../img/bg_navi_oben.png) repeat-x;
+	padding-left: 15px;
+}
+
+#navi_oben ul {
+	padding-top: 4px;
+}
+
+#navi_oben ul li {
+	display: block;
+	float: left;
+}
+
+#navi_oben ul li a {
+	padding: 7px 15px 7px 15px;
+	margin-right: 5px;
+	text-decoration: none;
+	color: #fefefe;
+}
+
+#navi_oben ul li a:hover {
+	height: 21px;
+	background: url(../img/hg_navi_punkte.png) no-repeat;
+}
+
+.aktiv {
+	height: 21px;
+	background: url(../img/hg_navi_punkte.png) no-repeat;
+}
+
+/* ################################################## */
+/* ###### Subnavi ################################### */
+/* ################################################## */
+
+#subnavi {
+	height: 30px;
+	margin-top: -34px;
+	margin-left: 18px;
+}
+
+#subnavi ul {
+	letter-spacing : 0.2em;
+	padding-top: 9px;
+}
+
+#subnavi ul li {
+	display: block;
+	float: left;
+}
+
+#subnavi ul li a {
+	padding: 7px 15px 7px 15px;
+	margin-right: 5px;
+	text-decoration: none;
+	color: #333333;
+}
+
+#subnavi ul li a:hover {
+	color: #666666;
+}
+
+/* ################################################## */
+/* ###### Main ###################################### */
+/* ################################################## */
+
+#main {
+	padding: 25px;
+}
+
+#links {
+	width: 500px;
+	float: left;
+	border-right: 1px solid #ebe8e1;
+}
+
+.datum {
+	margin: 5px 0 15px 3px;
+}
+
+.inhalt {
+	width: 460px;
+	border-top: 1px solid #ebe8e1;
+	padding: 15px 0 0 0;
+	padding-bottom: 15px;
+}
+
+.info {
+	padding: 20px 0 25px 25px;
+	height: 5px;
+	width: 485px;
+	background: #e5ecdb;
+	margin-left: -22px;
+	margin-bottom: 25px;
+}
+
+.info a {
+	color: #628033;
+}
+
+.info a:hover {
+	color: #779b3d;
+}
+
+.mehr {
+	float: right;
+	padding: 0 25px 0 0;
+}
+
+#rechts {
+	width: 174px;
+	float: left;
+	padding-left: 25px;
+	padding-top: 10px;
+}
+
+.inhalt_rechts {
+	width: 175px;
+	border-top: 1px solid #ebe8e1;
+	padding: 10px 0 25px 0;
+	margin-top: 8px;
+}
+
+/* ################################################## */
+/* ###### Footer #################################### */
+/* ################################################## */
+
+#footer {
+	height: 140px;
+	background: url(../img/hg_footer.png) repeat-x;
+	padding: 10px 10px 0 10px;
+	margin-top: 30px;
+	color: #4d565a;
+}
+
+#footerlinks {
+	width: 490px;
+	float: left;
+	min-height: 110px;
+	max-height: 110px;
+	padding-left: 25px;
+	padding-top: 10px;
+	line-height: 1.5em;
+}
+
+#footerrechts {
+	width: 174px;
+	float: left;
+	border-left: 1px solid #3a342b;
+	min-height: 110px;
+	max-height: 110px;
+	padding-left: 25px;
+	padding-top: 10px;
+	line-height: 1.5em;
+}
+
+/* ################################################## */
+/* ###### Sonstiges ################################# */
+/* ################################################## */
+
+.both {
+	clear: both;
+}
+
+select, textarea, input {
+	font: 12px "Trebuchet MS", Arial, Helvetica, sans-serif;
+	color:#333333;
+	font-weight:normal;
+	background-color:#f1f1f1;
+	border-top:solid 1px #999999;
+	border-left:solid 1px #999999;
+	border-right:solid 1px #e4e4e4;
+	border-bottom:solid 1px #e4e4e4;
+	margin: 10px 0 0 0;
+}
+
+.button {
+	color:#FFFFFF;
+	font-weight:normal;
+	letter-spacing:normal;
+	background-color:#403c33;
+	border-top:solid 1px #999999;
+	border-left:solid 1px #999999;
+	border-right:solid 1px #e4e4e4;
+	border-bottom:solid 1px #e4e4e4;
+	cursor:pointer;
+	float: right;
+	padding: 3px;
+	margin-right: 34px;
+}
+
+/* ################################################## */
+/* ###### Schriften ################################# */
+/* ################################################## */
+
+h1 {
+	font-size: 32px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+p, ol, ul, dl {
+	margin-top: 0;
+	text-align: justify;
+	line-height: 2.2;
+}
+
+
+
+
+
+
+
+

@@ -66,7 +66,7 @@ class package_acp_packageManager extends acpPackage {
     private function _addInstallItem(&$items, $newItem) {
         if(in_array($newItem, $items))
                 return true;
-        $data = self::$db->Execute("SELECT `dependencies` FROM `lttx_packageList` WHERE `ID` = ?", array($newItem));
+        $data = self::$db->Execute("SELECT `dependencies`, `name` FROM `lttx_packageList` WHERE `ID` = ?", array($newItem));
         if (!$data || !isset($data->fields[0]))
             return false;
         $dep = unserialize($data->fields[0]);
@@ -80,6 +80,7 @@ class package_acp_packageManager extends acpPackage {
                     return false;
         }
         $items[] = (int)$newItem;
+        self::$packages->copyRemotePackage($data->fields[1], '0.8.x');
         return true;
     }
 
@@ -96,6 +97,7 @@ class package_acp_packageManager extends acpPackage {
     }
 
     public function __action_displayUpdateQueue(){
+        require_once LITO_FRONTEND_ROOT . 'packages/core/classes/installer.class.php';
         if(!isset($_SESSION['updateQueue'])){
             header("Location: index.php?package=acp_packageManager&action=main");
             exit();
@@ -105,10 +107,15 @@ class package_acp_packageManager extends acpPackage {
             $data = self::$db->Execute("SELECT `ID`, `name`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx_packageList` WHERE `ID` = ?", array($installItem));
             if(!$data || !isset($data->fields[0]))
                     throw new lttxError ('E_updateIDNotFound');
+            require_once(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/installer.php');
+            $installerName = 'installer_' . $data->fields['name'];
+            $installData = new $installerName(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache', $data->fields['name']);
             $data->fields['dependencies'] = unserialize($data->fields['dependencies']);
             $data->fields['changelog'] = unserialize($data->fields['changelog']);
             $data->fields['signInfo'] = unserialize($data->fields['signInfo']);
+            $data->fields['packageFiles'] = $installData->getFileList();
             $installItems[] = $data->fields;
+
         }
         self::$tpl->assign('installQueue', $installItems);
         $this->_theme = 'listQueue.tpl';

@@ -1,0 +1,357 @@
+@charset "utf-8";
+
+body {
+	font: 12px "Trebuchet MS", Arial, Helvetica, sans-serif;
+	background: #e7e7e7;
+}
+
+#hg_body_info {
+	height: 30px;
+	width: 100%;
+	background: url(../img/hg_body_info.png) repeat-x;
+	position: fixed;
+	margin-top: -21px;
+	z-index: 88;
+}
+
+#hg_body_info h1 {
+	font-size: 100%;
+	color: #FFF;
+	margin: 5px 20px 0 10px;
+	float: left;
+}
+
+#hg_body_info a {
+	color: #FFF;
+	text-decoration: none;
+}
+
+#hg_body_info a:hover {
+	color: #eff4f5;
+	text-decoration: underline;
+}
+
+#wrapper {
+	margin: 20px 10px 10px 10px;
+	width: 1000px;
+	background: #FFF;
+}
+
+/* ################################################## */
+/* ###### Header #################################### */
+/* ################################################## */
+
+#header {
+	height: 170px;
+}
+
+#logo {
+	width: 360px;
+	height: 170px;
+	float: left;
+}
+
+#navi_position {
+	width: 320px;
+	height: 110px;
+	float: left;
+	background: url(../img/navi_info.png) no-repeat;
+	margin: 50px 0 0 0;
+	padding: 5px 0 5px 20px;
+}
+
+#navi_position h1 {
+	font-size: 180%;
+}
+
+#navi_position p {
+	font-size: 100%;
+}
+
+/* ################################################## */
+/* ###### Navi main ################################# */
+/* ################################################## */
+
+#navi_main {
+	width: 280px;
+	height: 147px;
+	float: left;
+    position: relative;
+    overflow: hidden;
+}
+
+#navi_main ul {
+	margin: 25px 0 0 0;
+}
+
+#navi_main ul li {
+	float: left;
+	height: 120px;
+	width: 50px;
+	border: 1px solid #d7d7d7;
+}
+
+#navi_main ul li a {
+	height: 120px;
+	width: 50px;
+	text-decoration: none;
+	color: #000000;
+}
+
+#navi_main ul li a:hover {
+}
+
+.navi_main_aktiv {
+	float: left;
+	padding-top: 35px;
+	background: url(../img/hg_navi_main.png) no-repeat;
+}
+
+.navi_main_icon {
+	height: 80px;
+	width: 50px;
+	padding: 10px 0 0 10px;
+}
+
+.navi_main_text {
+	height: 40px;
+	width: 50px;
+	padding: 0 20px 0 20px;
+}
+
+.navi_main_show {
+    float: left;
+    position: relative;
+}
+
+/* ################################################## */
+/* ###### Navi top ################################## */
+/* ################################################## */
+
+/* 1. Ebene */
+
+#navi_top {
+	height: 37px;
+	background: url(../img/hg_navi_top.png) repeat-x;
+	font-size: 120%;
+}
+
+#navi_top ul {
+	float: right;
+	margin: 0 20px 0 0;
+}
+#navi_top ul li {
+	height: 36px;
+	display:inline;
+	float:left;
+	position:relative;
+	border-left: 1px solid #d9d9d9;
+}
+
+#navi_top ul li a {
+	padding: 2px 20px 11px 20px;
+	color: #000000;
+	text-decoration:none;
+	display:block;
+	float:left;
+	height:23px;
+}
+
+#navi_top ul li a:hover {
+	background: url(../img/hg_navi_top_hover.png) repeat-x;
+}
+
+/* 2. Ebene */
+
+#navi_top ul li ul {
+	position:absolute;
+	left:0;
+	top:5px;
+	width:200px;
+	display:none;
+	margin: 30px 0 0 -1px;
+	border: 1px solid #d9d9d9;
+}
+
+#navi_top ul li ul li {
+	position:relative;
+	float:none;
+	display: block;
+	border-left: 0px;
+}
+
+#navi_top ul li ul li a {
+	background-color: #fcfdfb;
+	color: #000000;
+	float: none;
+}
+
+#navi_top ul li ul li a:hover {
+	background: url(../img/hg_navi_top_hover.png) repeat-x;
+}
+
+/* ################################################## */
+/* ###### Main ###################################### */
+/* ################################################## */
+
+#main {
+	margin: 44px 22px 22px 22px;
+}
+
+.icon {
+	position: absolute;
+	margin-top: -15px;
+	margin-left: 15px;
+	height: 32px;
+	width: 32px;
+}
+
+/* Warning */
+
+#warning {
+	height: 125px;
+	width: 955px;
+	margin: 0 0 60px 0;
+}
+
+#warning_header {
+	background: url(../img/hg_warning_header.png) no-repeat;
+	height: 7px;
+	width: 955px;
+}
+
+#warning_main {
+	background: url(../img/hg_warning_main.png) repeat-y;
+	width: 955px;
+}
+
+#warning_footer {
+	background: url(../img/hg_warning_footer.png) no-repeat;
+	height: 9px;
+	width: 955px;
+}
+
+legend {
+	height: 30px;
+	width: 500px;
+	margin: 20px 0 0 0;
+	font-size: 160%;
+}
+
+fieldset {
+	padding: 10px 0 20px 60px;
+}
+
+/* Box */
+
+.box_large {
+	padding-bottom: 30px;
+	background: url(../img/hg_box_large.png) no-repeat;
+}
+
+.box_large_link {
+	height: 30px;
+	cursor: pointer;
+	font-size: 120%;
+	padding: 5px 0 0 60px;
+	color: #FFF;
+}
+
+.box_large_link:hover {
+	color: #e5ecdb;
+}
+
+.box_large_header {
+	background: url(../img/hg_box_large_header.png) no-repeat;
+	height: 14px;
+	width: 955px;
+}
+
+.box_large_main {
+	background: url(../img/hg_box_large_main.png) repeat-y;
+	width: 905px;
+	padding: 25px;
+}
+
+.box_large_footer {
+	background: url(../img/hg_box_large_footer.png) no-repeat;
+	height: 16px;
+	width: 955px;
+}
+
+.box_large_content {
+	display: none;
+}
+
+/* ################################################## */
+/* ###### Footer #################################### */
+/* ################################################## */
+
+#footer {
+	height: 30px;
+	width: 955px;
+	text-align: center;
+}
+
+#footer a {
+	color: #000000;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	color: #999999;
+	text-decoration: underline;
+}
+
+/* ################################################## */
+/* ###### Sonstiges ################################# */
+/* ################################################## */
+
+.both {
+	clear: both;
+}
+
+select, textarea, input {
+	font: 12px "Trebuchet MS", Arial, Helvetica, sans-serif;
+	color:#333333;
+	font-weight:normal;
+	background-color:#f1f1f1;
+	border-top:solid 1px #999999;
+	border-left:solid 1px #999999;
+	border-right:solid 1px #e4e4e4;
+	border-bottom:solid 1px #e4e4e4;
+	margin: 10px 0 0 0;
+}
+
+.button {
+	color:#FFFFFF;
+	font-weight:normal;
+	letter-spacing:normal;
+	background-color:#403c33;
+	border-top:solid 1px #999999;
+	border-left:solid 1px #999999;
+	border-right:solid 1px #e4e4e4;
+	border-bottom:solid 1px #e4e4e4;
+	cursor:pointer;
+	float: right;
+	padding: 3px;
+	margin-right: 34px;
+}
+
+/* ################################################## */
+/* ###### Schriften ################################# */
+/* ################################################## */
+
+h1 {
+	font-size: 32px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+p, ol, ul, dl {
+	margin-top: 0;
+	text-align: justify;
+	line-height: 2.2;
+}

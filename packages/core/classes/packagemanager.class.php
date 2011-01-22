@@ -714,7 +714,7 @@ class packages{
 	 * @TODO: Almost everything
 	 */
 	public function copyRemotePackage($package, $platform){
-		require_once(LITO_ROOT . 'packages/core/classes/pclzip.class.php');
+		require_once(LITO_FRONTEND_ROOT . 'packages/core/classes/pclzip.class.php');
 		$remote = file_get_contents('http://localhost/LitotexUpdateServer/Litotex8/index.php?package=projects&action=fetch&packageName=' . urldecode($package) . '&platform=' . urlencode($platform));
 		if(!$remote)
 			throw new lttxError('E_couldNotFetchPackage', $package);
@@ -728,8 +728,12 @@ class packages{
 			throw new lttxError('E_wrongFetchRetrieved');
 		}
 		$package = $xml->package->attributes();
-		$handler = fopen($package['file'], 'r');
-		$cache = fopen(LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip', 'w');
+		$handler = @fopen($package['file'], 'r');
+                if(!$handler)
+                    throw new lttxError("E_couldNotLoadPackage", $package['name']);
+		$cache = @fopen(LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip', 'w');
+                if(!$cache)
+                    throw new lttxError("E_couldNotOpenCachePackage", LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip');
 		while(!feof($handler)){
 			fwrite($cache, fread($handler, 10000000));
 		}

@@ -79,12 +79,6 @@ try{
 			$smarty->assign('FOOTER', package::getTplDir(false, 'default') . 'footer.tpl');
 		}
 		$smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
-		package::addCssFile('main.css');
-		package::addCssFile('jquery-ui-1.8.4.custom.css');
-		package::addJsFile('jquery.js');
-		package::addJsFile('jquery.validate.min.js');
-		package::addJsFile('jquery-ui-1.8.4.custom.min.js');
-		package::addJsFile('litotex.js');
 		package::setTemplateClass($smarty);
 	}catch (Exception $e){
 		die("Fatal Exception in uncatchable area!<br /><b>You see this message, because a fatal error occured while initializing the system (especially the error handling system which was not usable when it should handle this error).<br />We appologice any inconviniance that might have happened and hope the system is back up running soon. The following data is backtrace information to find out why this error occured.</b><br /><br />" . $e);
@@ -123,7 +117,6 @@ try{
 		$package = $packageManager->loadPackage(defaultPackage, true);
 	}
 
-	//$packageManager->installPackage('/home/jonas/Dokumente/PHP/LinuxDokuSample/Litotex-Sample-Packages/sample1', 'sample1');
 	$packageManager->callHook('endCore', array());
 }catch (Exception $e){
         package::$tpl->assign('queryCount', package::$db->count);

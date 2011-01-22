@@ -1,0 +1,159 @@
+{generateTplModification position=acpNavi}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Litotex ACP v. 0.2.0</title>
+<link href="{$CORE_CSS_URL}formate_reset.css" rel="stylesheet" type="text/css" />
+<link href="{$CORE_CSS_URL}formate.css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 8]>
+<link href="{$CORE_CSS_URL}formate_ie.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+<script type="text/javascript" src='{$CORE_JS_URL}menu.js'></script>
+<script type="text/javascript" src="{$CORE_JS_URL}js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{$CORE_JS_URL}js/navi_main.js"></script>
+<script type="text/javascript" src="{$CORE_JS_URL}js/box_large.js"></script>
+{foreach from=$CSS_FILES item=CSS_FILE}
+<link rel="stylesheet" type="text/css" href="{$CSS_FILE}">
+{/foreach}
+{foreach from=$JS_FILES item=JS_FILE}
+<script type="text/javascript" src="{$JS_FILE}"></script>
+{/foreach}
+</head>
+
+<body>
+<div id="hg_body_info">
+<span><h1>Angemeldet als Sonorc | <a href="#">Abmelden</a> | <a href="#">Zum Updateserver</a> | <a href="#">Zum Spiel</a></h1></span>
+<span style="float: right;"><h1>Zum Dienstag, 27 April, 2011 18:38:5</h1></span>
+</div>
+<div id="wrapper">
+	<div id="header">
+    	<div id="logo"></div>
+        <div id="navi_position">
+        	<h1>Home</h1>
+            <p><i>Weil jeder wieder einmal gerne zuhause sein will.</i></p>
+        </div>
+        <div id="navi_main">
+        	<ul>
+            	<li style="border-right: 0px;">
+                <a href="#1" class="navi_main_aktiv">
+                	<div class="navi_main_aktiv"></div>
+                	<div>
+                        <div class="navi_main_icon"><img src="img/home.png" alt="" width="32" height="32" /></div>
+                        <div class="navi_main_text">H</div>
+                    </div>
+                </a>
+                </li>
+                <li style="border-right: 0px;">
+                <a href="#2" class="navi_main_show">
+                	<div>
+                        <div class="navi_main_icon"><img src="img/process.png" alt="" width="32" height="32" /></div>
+                        <div class="navi_main_text">E</div>
+                    </div>
+                </a>
+                </li>
+                <li style="border-right: 0px;">
+                <a href="#3" class="navi_main_show">
+                	<div>
+                        <div class="navi_main_icon"><img src="img/chart.png" alt="" width="32" height="32" /></div>
+                        <div class="navi_main_text">S</div>
+                    </div>
+                </a>
+                </li>
+                <li style="border-right: 0px;">
+                <a href="#4" class="navi_main_show">
+                	<div>
+                        <div class="navi_main_icon"><img src="img/user.png" alt="" width="32" height="32" /></div>
+                        <div class="navi_main_text">U</div>
+                    </div>
+                </a>
+                </li>
+                <li>
+                <a href="#5" class="navi_main_show">
+                	<div>
+                        <div class="navi_main_icon"><img src="img/add.png" alt="" width="32" height="32" /></div>
+                        <div class="navi_main_text">A</div>
+                    </div>
+                </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="navi_top">
+    	<ul>
+        	<li><a href="#" onmouseover="show('um_0')" onmouseout="out()">Einstellungen</a>
+            	<!-- 1. Untermenü -->
+                <ul id="um_0">
+                    <li><a href="#" onmouseover="show('um_0')"  onmouseout="out()">Print</a></li>
+                    <li><a href="#" onmouseover="show('um_0')"  onmouseout="out()">Non-Print</a></li>
+                    <li><a href="#" onmouseover="show('um_0')"  onmouseout="out()">Bilder-Service</a></li>
+                </ul>
+            </li>
+            <li><a href="#" onmouseover="show('um_1')" onmouseout="out()">User</a>
+            	<!-- 1. Untermenü -->
+                <ul id="um_1">
+                    <li><a href="#" onmouseover="show('um_1')"  onmouseout="out()">Print</a></li>
+                    <li><a href="#" onmouseover="show('um_1')"  onmouseout="out()">Non-Print</a></li>
+                    <li><a href="#" onmouseover="show('um_1')"  onmouseout="out()">Bilder-Service</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Banner</a></li>
+            <li></li>
+        </ul>
+    </div>
+    <div id="main">
+    
+    <div class="icon"><img src="img/warning.png" alt="" /></div>
+    	<div id="warning">
+        	<div id="warning_header"></div>
+        	<div id="warning_main">
+            	<fieldset><legend>Warnung!</legend>
+				Die Datei include/config.php auf 600 setzen<br />
+				Die Datei include/config_admin.php auf 600 setzen<br />
+				Die Datei admin/config.php auf 600 setzen<br />
+                </fieldset>
+			</div>
+            <div id="warning_footer"></div>
+        </div>
+        
+    	<div class="icon"><img src="img/changelogs.png" alt="" /></div>
+        <div class="box_large">
+        	<h1 class="box_large_link">Changelogs</h1>
+            <div class="box_large_content">
+                <div class="box_large_header"></div>
+                <div class="box_large_main">
+				<p>Lauftext</p>
+                </div>
+                <div class="box_large_footer"></div>
+            </div>
+        </div>
+        
+        <div class="icon"><img src="img/changelogs.png" alt="" /></div>
+        <div class="box_large">
+        	<h1 class="box_large_link">Changelogs</h1>
+            <div class="box_large_content">
+                <div class="box_large_header"></div>
+                <div class="box_large_main">
+				<p>Lauftext</p>
+                </div>
+                <div class="box_large_footer"></div>
+            </div>
+        </div>
+        
+        <div class="icon"><img src="img/changelogs.png" alt="" /></div>
+        <div class="box_large">
+        	<h1 class="box_large_link">Changelogs</h1>
+            <div class="box_large_content">
+                <div class="box_large_header"></div>
+                <div class="box_large_main">
+				<p>Lauftext</p>
+                </div>
+                <div class="box_large_footer"></div>
+            </div>
+        </div>
+    
+    </div>
+    <div id="footer">© 2008 - 2011 <a href="http://www.litotex.de/" target="_blank">Litotex.de</a> - open your source | <a href="http://www.litotex.de/impressum.php" target="_blank">Impressum</a></div>
+</div>
+</body>
+</html>

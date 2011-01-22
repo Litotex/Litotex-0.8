@@ -14,7 +14,7 @@ abstract class installer{
 		$this->_versionOld = package::$packages->getVersionNumber($this->_packageName);
 		$this->_versionNew = $this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php');
 		$this->_checkData();
-		$this->_install();
+		//$this->_install();
 	}
 	public final function __destruct(){
 		
@@ -78,6 +78,32 @@ abstract class installer{
 	}
 	private final function rollback(){
 		package::$packages->restoreBackup($this->_packageName, $this->_backup);
-	}
+        }
 	protected abstract function _freeInstall();
+        private static final function _generateFileListReq($file, $fileAdd, &$return){
+            if(!file_exists($file . '/' . $fileAdd))
+                return false;
+            if(!is_dir($file . '/' . $fileAdd)){
+                return false;
+            }
+            $dir = @opendir($file . '/' . $fileAdd);
+            if(!$dir)
+                return false;
+            while($readf = readdir($dir)){
+                 if($readf == '.' || $readf == '..')
+                    continue;
+                 $return[] = $fileAdd . $readf;
+                 if(is_dir($file . '/' . $readf))
+                     self::_generateFileListReq ($file, $fileAdd . $readf . '/', $return);
+            }
+            return true;
+        }
+        public final function getFileList(){
+            $return = array('tpl' => array(), 'package' => array(), 'db' => array());
+            $db = $package = $tpl = array();
+            self::_generateFileListReq($this->_location . '/template', '', $return['tpl']);
+            self::_generateFileListReq($this->_location . '/package', '', $return['package']);
+            self::_generateFileListReq($this->_location . '/database', '', $return['db']);
+            return $return;
+        }
 }
