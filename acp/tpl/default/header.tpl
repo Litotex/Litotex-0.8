@@ -24,56 +24,59 @@
 
 <body>
 <div id="hg_body_info">
-<span><h1>Angemeldet als Sonorc | <a href="#">Abmelden</a> | <a href="#">Zum Updateserver</a> | <a href="#">Zum Spiel</a></h1></span>
-<span style="float: right;"><h1>Zum Dienstag, 27 April, 2011 18:38:5</h1></span>
+{if package::$user}<span><h1>{#acp_onlineAs#} {package::$user->getUserName()} | <a href="../index.php?package=login&action=logout">{#acp_logout#}</a> | <a href="http://update.freebg.de">{#acp_redirectUpdateServer#}</a> | <a href="..">{#acp_redirectFrontend#}</a></h1></span>
+{else}
+<span><h1>{#acp_notLoggedIn#} | <a href="http://update.freebg.de">{#acp_redirectUpdateServer#}</a> | <a href="..">{#acp_redirectFrontend#}</a></h1></span>
+{/if}
+<span style="float: right;"><h1>Zum {$smarty.now|date_format:#acp_dateFormTop#}</h1></span>
 </div>
 <div id="wrapper">
 	<div id="header">
     	<div id="logo"></div>
         <div id="navi_position">
-        	<h1>Home</h1>
-            <p><i>Weil jeder wieder einmal gerne zuhause sein will.</i></p>
+        	<h1>{#acp_topMenu1_title#}</h1>
+            <p><i>{#acp_topMenu1_description#}</i></p>
         </div>
         <div id="navi_main">
         	<ul>
             	<li style="border-right: 0px;">
-                <a href="#1" class="navi_main_aktiv">
+                <a href="index.php?topMenu=1" class="navi_main_aktiv">
                 	<div class="navi_main_aktiv"></div>
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}home.png" alt="" width="32" height="32" /></div>
-                        <div class="navi_main_text">H</div>
+                        <div class="navi_main_text">{#acp_topMenu1_char#}</div>
                     </div>
                 </a>
                 </li>
                 <li style="border-right: 0px;">
-                <a href="#2" class="navi_main_show">
+                <a href="index.php?topMenu=2" class="navi_main_show">
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}process.png" alt="" width="32" height="32" /></div>
-                        <div class="navi_main_text">E</div>
+                        <div class="navi_main_text">{#acp_topMenu2_char#}</div>
                     </div>
                 </a>
                 </li>
                 <li style="border-right: 0px;">
-                <a href="#3" class="navi_main_show">
+                <a href="index.php?topMenu=3" class="navi_main_show">
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}chart.png" alt="" width="32" height="32" /></div>
-                        <div class="navi_main_text">S</div>
+                        <div class="navi_main_text">{#acp_topMenu3_char#}</div>
                     </div>
                 </a>
                 </li>
                 <li style="border-right: 0px;">
-                <a href="#4" class="navi_main_show">
+                <a href="index.php?topMenu=4" class="navi_main_show">
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}user.png" alt="" width="32" height="32" /></div>
-                        <div class="navi_main_text">U</div>
+                        <div class="navi_main_text">{#acp_topMenu4_char#}</div>
                     </div>
                 </a>
                 </li>
                 <li>
-                <a href="#5" class="navi_main_show">
+                <a href="index.php?topMenu=5" class="navi_main_show">
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}add.png" alt="" width="32" height="32" /></div>
-                        <div class="navi_main_text">A</div>
+                        <div class="navi_main_text">{#acp_topMenu5_char#}</div>
                     </div>
                 </a>
                 </li>
