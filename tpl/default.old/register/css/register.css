@@ -1,0 +1,6 @@
+label { display: inline-block; width: 100px; }
+legend { padding: 0.5em; }
+fieldset fieldset label { display: block; }
+#registerForm { width: 100%; }
+#registerForm label { width: 250px; }
+#registerForm label.error, #registerForm button.submit { margin-left: 253px; }
