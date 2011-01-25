@@ -8,7 +8,7 @@
  */
 class package_acp_packageManager extends acpPackage {
 
-    protected $_availableActions = array('main', 'listInstalled', 'listUpdates', 'updateRemoteList', 'processUpdates', 'processUpdateQueue', 'installPackage', 'displayUpdateQueue');
+    protected $_availableActions = array('main', 'listInstalled', 'listUpdates', 'updateRemoteList', 'processUpdates', 'processUpdateQueue', 'installPackage', 'displayUpdateQueue', 'setQueueDetails');
     protected $_packageName = 'acp_packageManager';
     protected $_theme = 'main.tpl';
     protected $_frontendPackages = false;
@@ -103,24 +103,123 @@ class package_acp_packageManager extends acpPackage {
             exit();
         }
         $installItems = array();
+        $error = false;
         foreach($_SESSION['updateQueue'] as $installItem){
-            $data = self::$db->Execute("SELECT `ID`, `name`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx_packageList` WHERE `ID` = ?", array($installItem));
+            $tplFiles = array();
+            $packageFiles = array();
+            $data = self::$db->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx_packageList` WHERE `ID` = ?", array($installItem));
             if(!$data || !isset($data->fields[0]))
                     throw new lttxError ('E_updateIDNotFound');
             require_once(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/installer.php');
             $installerName = 'installer_' . $data->fields['name'];
+            if(!class_exists($installerName))
+                throw new lttxError('E_couldNotLoadInstallerPackage');
             $installData = new $installerName(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache', $data->fields['name']);
             $data->fields['dependencies'] = unserialize($data->fields['dependencies']);
             $data->fields['changelog'] = unserialize($data->fields['changelog']);
             $data->fields['signInfo'] = unserialize($data->fields['signInfo']);
             $data->fields['packageFiles'] = $installData->getFileList();
+            $data->fields['error'] = false;
+            if($data->fields['prefix'] === ''){
+                $pm = $this->_frontendPackages;
+                $root = LITO_FRONTEND_ROOT;
+            } else {
+                $pm = self::$packages;
+                $root = LITO_ROOT;
+            }
+            foreach($data->fields['packageFiles']['tpl'] as $tplFile){
+                if(is_dir(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/template/' . $tplFile))
+                        continue;
+                if(!file_exists($root . TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile)){
+                        $tplFiles[] = array(0, $tplFile);
+                        continue;
+                }
+                if($pm->compareFileHash(TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile))
+                        $tplFiles[] = array(1, $tplFile, $root. TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/template/' . $tplFile);
+                else{
+                    $tplFiles[] = array(-1, $tplFile, $root. TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/template/' . $tplFile);
+                    $data->fields['error'] = true;
+                }
+            }
+            foreach($data->fields['packageFiles']['package'] as $packageFile){
+                if(is_dir(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/packages/' . $packageFile))
+                    continue;
+                if(!file_exists($root . 'packages/' . $data->fields['name'] . '/' . $packageFile)){
+                        $packageFiles[] = array(0, $packageFile);
+                        continue;
+                }
+                if($pm->compareFileHash('packages/' . $data->fields['name'] . '/' . $packageFile))
+                        $packageFiles[] = array(1, $packageFile, $root.'packages/' . $data->fields['name'] . '/' . $packageFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/package/' . $packageFile);
+                else{
+                    $packageFiles[] = array(-1, $packageFile, $root.'packages/' . $data->fields['name'] . '/' . $packageFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/package/' . $packageFile);
+                    $data->fields['error'] = true;
+                }
+            }
+            $data->fields['tplFilesChecked'] = $tplFiles;
+            $data->fields['packageFilesChecked'] = $packageFiles;
+            if($data->fields['error'])
+                    $error = true;
+            $querys = array();
+            $queryList = $installData->getQueryList();
+            $data->fields['queryList'] = $queryList;
             $installItems[] = $data->fields;
-
         }
+        self::$tpl->assign('error', $error);
         self::$tpl->assign('installQueue', $installItems);
         $this->_theme = 'listQueue.tpl';
         self::addJsFile('checkbox.js', $this->_packageName);
         return true;
     }
+    public function __action_setQueueDetails(){
+        require_once LITO_FRONTEND_ROOT . 'packages/core/classes/installer.class.php';
+        if(!isset($_POST['update']) || !is_array($_POST['update']))
+            throw new lttxError ('E_noPackageListPassed');
+        $fileBlackList = array();
+        if(isset($_POST['fileBlacklist']) && is_array($_POST['fileBlacklist'])){
+            foreach($_POST['fileBlacklist'] as $item){
+                $item = explode(';', $item);
+                if(count($item) != 3)
+                    continue;
+                if(!isset($fileBlackList[$item[0]][$item[1]]))
+                    $fileBlackList[$item[0]][$item[1]] = array();
+                $fileBlackList[$item[0]][$item[1]][] = $item[2];
+            }
+        }
+        $sqlBlacklist = array();
+        if(isset($_POST['queryBlacklist']) && is_array($_POST['queryBlacklist'])){
+            foreach($_POST['queryBlacklist'] as $item){
+                $item = explode(';', $item);
+                if(!isset($sqlBlacklist[$item[0]]))
+                    $sqlBlacklist[$item[0]] = array();
+                $sqlBlacklist[$item[0]][] = $item[1];
+            }
+        }
+        $packages = array();
 
+        foreach($_POST['update'] as $item){
+            $data = package::$db->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx_packageList` WHERE `ID` = ?", array($item));
+            if(!$data || !isset($data->fields[0]))
+                    continue;
+            $data->fields['signInfo'] = unserialize($data->fields['signInfo']);
+            $data->fields['dependencies'] = unserialize($data->fields['dependencies']);
+            $data->fields['changelog'] = unserialize($data->fields['changelog']);
+            $packages[$data->fields['name']] = $data->fields;
+        }
+        foreach($packages as $item){
+            foreach($item['dependencies'] as $dep){
+                if(!isset($packages[$dep['name']]))
+                    throw new lttxError ('E_couldNotResolveDependencies', $item['name']);
+            }
+        }
+        foreach($packages as $item){
+            require_once(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache/installer.php');
+            $installerName = 'installer_' . $item['name'];
+            if(!class_exists($installerName))
+                throw new lttxError('E_couldNotLoadInstallerPackage');
+            $installData = new $installerName(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache', $item['name']);
+            $fBlack = (isset($fileBlackList[$item['name']]))?$fileBlackList[$item['name']]:array();
+            $sBlack = (isset($sqlBlacklist[$item['name']]))?$sqlBlacklist[$item['name']]:array();
+            $installData->install($fBlack, $sBlack);
+        }
+    }
 }

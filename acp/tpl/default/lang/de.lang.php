@@ -1,4 +1,6 @@
 #<?php exit()# ?>
+PHP_LOCALE = "de_DE.UTF-8"
+PHP_DEFAULT_TIMEZONE = "Europe/Berlin"
 E_error = "Fehler"
 E_info="Information"
 E_fatalError = "Schwerer Fehler"
@@ -20,3 +22,5 @@ acp_topMenu2_char = "E"
 acp_topMenu3_char = "S"
 acp_topMenu4_char = "U"
 acp_topMenu5_char = "A"
+E_couldNotLoadInstallerPackage = "Das Installationspaket konnte nicht geladen werden."
+acp_packageManager_packageConflict = "Installationskonflikt"

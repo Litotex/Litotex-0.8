@@ -11,3 +11,8 @@ function checkbox_checkItems(items, ctrl){
 	if(items[i].checked == false){ ctrl.attr('checked', false); return; }
     ctrl.attr('checked', true);
 }
+function checkbox_allItemsSelected(items){
+    for (i = 0; i < items.length; i++)
+	if(items[i].checked == false){ return false; }
+    return true;
+}
