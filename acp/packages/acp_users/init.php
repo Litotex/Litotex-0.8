@@ -1,7 +1,7 @@
 <?php
 class package_acp_users extends acpPackage{
 	
-	protected $_availableActions = array('main', 'new', 'edit', 'list', 'save');
+	protected $_availableActions = array('main', 'new', 'edit', 'list', 'save', 'ban', 'unban', 'del');
 	
 	public static $dependency = array('acp_config');
 	
@@ -34,6 +34,72 @@ class package_acp_users extends acpPackage{
 		
 		self::$tpl->assign('oUser', $oUser);
 		
+		return true;
+	}
+
+	public function __action_del(){
+
+		$this->_theme = 'empty.tpl';
+
+		$iUserId = 0;
+
+		if(isset($_POST['id'])){
+			$iUserId = (int)$_POST['id'];
+		} else if(isset($_GET['id'])){
+			$iUserId = (int)$_GET['id'];
+		}
+
+		if($iUserId <= 0){
+			return false;
+		}
+
+		$oUser = new user($iUserId);
+		$oUser->delete();
+
+		return true;
+	}
+
+	public function __action_ban(){
+
+		$this->_theme = 'empty.tpl';
+
+		$iUserId = 0;
+
+		if(isset($_POST['id'])){
+			$iUserId = (int)$_POST['id'];
+		} else if(isset($_GET['id'])){
+			$iUserId = (int)$_GET['id'];
+		}
+
+		if($iUserId <= 0){
+			return false;
+		}
+
+		$oUser = new user($iUserId);
+		$oUser->banUser();
+
+		return true;
+	}
+
+	public function __action_unban(){
+
+		$this->_theme = 'empty.tpl';
+
+		$iUserId = 0;
+
+		if(isset($_POST['id'])){
+			$iUserId = (int)$_POST['id'];
+		} else if(isset($_GET['id'])){
+			$iUserId = (int)$_GET['id'];
+		}
+
+		if($iUserId <= 0){
+			return false;
+		}
+
+		$oUser = new user($iUserId);
+		$oUser->unbanUser();
+
 		return true;
 	}
 	
@@ -95,32 +161,7 @@ class package_acp_users extends acpPackage{
 		
 		return true;
 	}
-	
-	public function __action_editUser(){
-		$this->_theme = 'editUser.tpl'; 
-		if(!isset($_GET['ID'])){
-			header("Location: ?package=acp_users");
-			exit();
-		}
-		$user = new user($_GET['ID']);
-		self::$tpl->assign('user', $user);
-		return true;
-	}
-	
-	public function __action_searchUser(){
-		if(isset($_GET['q'])){
-			$result = user::search($_GET['q']);
-			self::$tpl->assign('users', $result);
-		}
-		$this->_theme = 'searchUser.tpl';
-		return true;
-	}
-	
-	public function __action_addUser(){
-		$this->_theme = 'addUser.tpl';
-		return true;
-	}
-	
+		
 	public function __action_editUserFields(){
 		
 	}

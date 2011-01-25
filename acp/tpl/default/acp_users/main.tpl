@@ -2,7 +2,7 @@
 
 <div class="acp_users">
 	
-	<div class="litotex_acp_tab">
+	<div class="litotex_acp_tab" id="acp_users_menue">
 	
 		<ul>
 			<li>

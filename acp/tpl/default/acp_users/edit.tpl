@@ -1,7 +1,7 @@
 <div id="successDiv" style="display:none;"></div>
 <div id="errorDiv" style="display:none;"></div>
 	
-<form action="index.php?package=acp_users&action=save" method="post" id="saveUser">
+<form action="index.php?package=acp_users&action=save" method="post">
 
 	<label>{#users_username#}:</label> 
 	<input name="user[{$oUser->getUserID()}][username]" value="{$oUser->getData('username')}" /> 
@@ -21,6 +21,6 @@
 	<br/>
 
 	<br/>
-	<button onclick="saveUser(); return false;">{#users_save_btn#}</button>
+	<button onclick="saveUser(this); return false;">{#users_save_btn#}</button>
 
 </form>

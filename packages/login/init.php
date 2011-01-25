@@ -146,7 +146,8 @@ class package_login extends package {
 		}
 		$user = user::login($_POST['username'],$_POST['password']);
 		if(!$user){
-			throw new lttxError('login_incorrect');
+			$sError = user::$sLastLoginError;
+			throw new lttxError($sError);
 		}
 		header("Location:index.php");
 		exit();

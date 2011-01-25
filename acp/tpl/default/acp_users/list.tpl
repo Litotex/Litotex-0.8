@@ -30,16 +30,30 @@
 			{$oUser->getUserName()}
 		</td>
 		<td>
-			{$oUser->getLastActive()}
-		</td>
-		<td>
 			{$oUser->getCreateDate()}
 		</td>
 		<td>
-			...gebannt...aktiv...
+			{$oUser->getLastActive()}
 		</td>
 		<td>
-			{#users_edit#} | {#users_ban#} | {#users_delete#}
+			{$oUser->getStatus()}
+		</td>
+		<td>
+			<a style="cursor: pointer;" onclick="editUser('{$oUser->getUserName()}', {$oUser->getUserID()}); return false;">
+				{#users_edit#}
+			</a> |
+			{if $oUser->checkUserBanned()}
+				<a style="cursor: pointer;" onclick="unbanUser({$oUser->getUserID()}); return false;">
+					{#users_unban#} |
+				</a>
+			{else}
+				<a style="cursor: pointer;" onclick="banUser({$oUser->getUserID()}); return false;">
+					{#users_ban#} |
+				</a>
+			{/if}
+			<a style="cursor: pointer;" onclick="delUser({$oUser->getUserID()}); return false;">
+				{#users_delete#}
+			</a>
 		</td>
 	<tr>
 {/foreach}

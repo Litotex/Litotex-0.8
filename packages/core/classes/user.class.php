@@ -123,6 +123,11 @@ class user {
      * @var int
      */
     private static $_acpLegitExpire = 3600;
+	/**
+	 * The last error from Login
+	 * @var <string>
+	 */
+	public static $sLastLoginError = '';
     /**
      * This function loads data of a new user from the database
      * There are more ways to get an instance
@@ -193,6 +198,8 @@ class user {
     			
     		$sSqlSetPart .= "`".$sField."` = ?, ";
     		$aSql[] = $mValue;
+			// cache
+			$this->setData($sField, $mValue, true);
     		
     	}
 
@@ -205,7 +212,7 @@ class user {
     		$iUserId > 0  && 
     		self::userExists($iUserId)
     	){
- 
+
     		$sSql = " UPDATE
     						`lttx_users`
     					SET
@@ -216,10 +223,7 @@ class user {
     		$aSql[] = $iUserId;
     		// Update
     		$bSuccess = package::$db->Execute($sSql, $aSql);
-    		
-    		// Write Buffer new
-    		$this->_createFullBuffer();
-    		
+
     	} else if($iUserId == 0){
     		    		
     		$sSql = " INSERT INTO 
@@ -234,8 +238,6 @@ class user {
 
     		// set New ID
     		$this->_currentID = $iUserId;
-    		// Write Buffer new
-    		$this->_createFullBuffer();
     		
     	} else {
     		throw new lttxError('E_unknownUser');
@@ -300,13 +302,23 @@ class user {
      */
     static public function login($username, $password) {
         $user = self::getUserByName($username);
-        if(!$user)
+
+        if(!$user){
+			self::$sLastLoginError = 'login_incorrect';
             return false;
-        if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
+		} else if($user->checkUserBanned()){
+			self::$sLastLoginError = 'login_user_banned';
+			return false;
+		} else if(!$user->checkUserActive()){
+			self::$sLastLoginError = 'login_user_inactive';
+			return false;
+		} else if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
             $user->setUsersInstance();
-            package::$session->setUserObject($user);
+			$user->setData('lastActive', date('Y-m-d H:i:s'), false);
+			package::$session->setUserObject($user);
             return $user;
         }
+		self::$sLastLoginError = 'login_incorrect';
         return false;
     }
     /**
@@ -576,26 +588,8 @@ class user {
             return true;
         return false;
     }
-    
-    /** FIXME
-     * This will check if the user is banned
-     * @return bool
-     */
-    public function checkUserBanned() {
-        if(!$this->_initialized)
-            return false;
-    }
-    
-    /** FIXME
-     * This will ban a user for a specific amount of time
-     * @param str $reason Reason to ban the user (may show up on login)
-     * @param int $duration Time to ban the user in sec
-     * @return bool
-     */
-    public function banUser($reason, $duration) {
-        if(!$this->_initialized)
-            return false;
-    }
+        
+
     
     /**
      * This will return the user's ID
@@ -624,6 +618,60 @@ class user {
     public function getCreateDate(){
     	 return $this->getData('registerDate');
     }
+
+	public function getStatus(){
+		if($this->checkUserBanned()){
+			return package::getLanguageVar('users_is_banned');
+		} else {
+			return package::getLanguageVar('users_is_active');
+		}
+	}
+
+    /**
+     * This will check if the user is banned
+     * @return bool
+     */
+	public function checkUserBanned(){
+		if(
+			$this->getData('bannedDate') != NULL &&
+			$this->getData('bannedDate') != '0000-00-00 00:00:00'
+		){
+			return true;
+		}
+		return false;
+	}
+
+	public function checkUserActive(){
+		if(
+			$this->getData('isActive') == 1
+		){
+			return true;
+		}
+		return false;
+	}
+
+	 /**
+     * This will ban a user for a specific amount of time
+     * @param str $reason Reason to ban the user (may show up on login)
+     * @return bool
+     */
+    public function banUser($reason = '') {
+		$aData = array();
+		$aData['bannedDate'] = date('Y-m-d H:i:s');
+		$aData['bannedReason'] = $reason;
+		$this->update($aData);
+		return true;
+    }
+
+	/**
+	 * This will unban a User
+	 */
+	public function unbanUser(){
+		$aData = array();
+		$aData['bannedDate'] = 'NULL';
+		$aData['bannedReason'] = '';
+		$this->update($aData);
+	}
     
     /**
      * This will check if the current user is owner of this account
@@ -634,13 +682,18 @@ class user {
             return false;
         return $this->_loggedIn;
     }
-    
+
+	public function delete(){
+		$this->setData('isActive', 0, false);
+		return true;
+	}
+
     /**
      * This will set the current user as to be the owner of this account
      * @return bool
      */
     public function setUsersInstance() {
-        if(!$this->_initialized)
+		if(!$this->_initialized)
             return false;
         $this->_loggedIn = true;
         return true;
@@ -750,6 +803,8 @@ class user {
     	return (bool)$this->_initialized;
     }
 
+
+
     /**
      * This will compare two user objects (id's)
      * @param   user    $u1
@@ -774,7 +829,7 @@ class user {
     	//We absolutly need to stop buffering every entry! This would be the perfect overkill
     	$return = array();
     	$match = array();
-    	$searchResults = package::$db->Execute("SELECT `ID`, `".$field."` FROM `lttx_users` WHERE `".$field."` LIKE ?", array('%' . $request . '%'));
+    	$searchResults = package::$db->Execute("SELECT `ID`, `".$field."` FROM `lttx_users` WHERE `".$field."` LIKE ? AND `isActive` = 1", array('%' . $request . '%'));
 		if($searchResults === false){
 			throw new lttxDBError();
 		}

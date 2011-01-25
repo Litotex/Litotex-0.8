@@ -347,7 +347,7 @@ class Smarty_Internal_Data {
      */
     function getConfigVars($varname = null, $search_parents = true)
     {
- //   	var_dump($this);
+    	//var_dump($this->config_vars);
         $_ptr = $this;
         $var_array = array();
         while ($_ptr !== null) {
