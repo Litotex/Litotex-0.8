@@ -24,39 +24,42 @@
 			{#users_action#}
 		</th>
 	</tr>
-{foreach item=oUser from=$aUsers}
+{foreach item=oTempUser from=$aUsers}
 	<tr>
 		<td>
-			{$oUser->getUserName()}
+			{$oTempUser->getUserName()}
 		</td>
 		<td>
-			{$oUser->getCreateDate()}
+			{$oTempUser->getCreateDate()}
 		</td>
 		<td>
-			{$oUser->getLastActive()}
+			{$oTempUser->getLastActive()}
 		</td>
 		<td>
-			{$oUser->getStatus()}
+			{$oTempUser->getStatus()}
 		</td>
 		<td>
-			<a style="cursor: pointer;" onclick="editUser('{$oUser->getUserName()}', {$oUser->getUserID()}); return false;">
+			<a style="cursor: pointer;" onclick="editUser('{$oTempUser->getUserName()}', {$oTempUser->getUserID()}); return false;">
 				{#users_edit#}
 			</a> |
-			<a style="cursor: pointer;" onclick="accessUser('{$oUser->getUserName()}', {$oUser->getUserID()}); return false;">
+			<a style="cursor: pointer;" onclick="accessUser('{$oTempUser->getUserName()}', {$oTempUser->getUserID()}); return false;">
 				{#users_access#}
-			</a> |
-			{if $oUser->checkUserBanned()}
-				<a style="cursor: pointer;" onclick="unbanUser({$oUser->getUserID()}); return false;">
-					{#users_unban#} |
-				</a>
-			{else}
-				<a style="cursor: pointer;" onclick="banUser({$oUser->getUserID()}); return false;">
-					{#users_ban#} |
+			</a>
+			{if $oUser->getUserID() != $oTempUser->getUserID() && $oTempUser->getData('serverAdmin') != 1}
+				 |
+				{if $oTempUser->checkUserBanned()}
+					<a style="cursor: pointer;" onclick="unbanUser({$oTempUser->getUserID()}); return false;">
+						{#users_unban#} |
+					</a>
+				{else}
+					<a style="cursor: pointer;" onclick="banUser({$oTempUser->getUserID()}); return false;">
+						{#users_ban#} |
+					</a>
+				{/if}
+				<a style="cursor: pointer;" onclick="delUser({$oTempUser->getUserID()}); return false;">
+					{#users_delete#}
 				</a>
 			{/if}
-			<a style="cursor: pointer;" onclick="delUser({$oUser->getUserID()}); return false;">
-				{#users_delete#}
-			</a>
 		</td>
 	<tr>
 {/foreach}

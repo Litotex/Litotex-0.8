@@ -10,9 +10,11 @@ class package_acp_users extends acpPackage{
 	protected $_theme = 'main.tpl';
 	
 	public function __action_main(){
+		
 		self::addJsFile('users.js', 'acp_users');
 		self::addCssFile('users.css', 'acp_users');
 		self::addCssFile('permissions.css', 'acp_permissions');
+
 		return true;
 	}
 	
@@ -107,11 +109,14 @@ class package_acp_users extends acpPackage{
 	public function __action_list(){
 		
 		$this->_theme = 'list.tpl';
-		
+
+		$oUser = package::$user;
+
 		$aUsers = array();
 		
 		$aUsers = (array)user::search('');
-		
+
+		self::$tpl->assign('oUser', $oUser);
 		self::$tpl->assign('aUsers', $aUsers);
 		
 		return true;
