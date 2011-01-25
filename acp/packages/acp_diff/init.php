@@ -28,6 +28,10 @@ class package_acp_diff extends acpPackage {
         $diff = new diff;
         $diffOut = $diff->inline($_GET['oldFile'], $_GET['newFile']);
         self::$tpl->assign('diff', $diffOut);
+        if(isset($_GET['noTemplate']) && $_GET['noTemplate'])
+            self::$tpl->assign ('noTemplate', true);
+        else
+            self::$tpl->assign ('noTemplate', false);
         return true;
     }
 }
