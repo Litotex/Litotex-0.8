@@ -924,8 +924,11 @@ CREATE TABLE IF NOT EXISTS `lttx1_users` (
   `dynamicSalt` varchar(100) CHARACTER SET latin1 NOT NULL,
   `race` int(11) DEFAULT NULL,
   `lastActive` date DEFAULT NULL,
+  `isActive` TINYINT( 1 ) NOT NULL DEFAULT '1' ,
   `registerDate` date DEFAULT NULL,
   `serverAdmin` tinyint(1) NOT NULL,
+  `bannedDate` TIMESTAMP NULL DEFAULT NULL,
+  `bannedReason` TEXT NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `username` (`username`),
   KEY `userGroup` (`userGroup`)
@@ -940,3 +943,4 @@ INSERT INTO `lttx1_users` (`ID`, `userGroup`, `username`, `email`, `password`, `
 (2, 0, 'snoop', '1111@freebg.de', '9b4e0080c66dac73d68ee2b465bd8d06aecd577901d0a4ba1a83f611a52d7f5ec769540fbbcd2f8bacbab57aa21fa0a5da544fffea6ed15f2948f7af83dfd8f3', 'b_..§§cc``mwe$b_1337ßß?_$mwe§mwe', 0, NULL, '2010-09-15', 0);
 -- new
 ALTER TABLE  `lttx1_packageList` ADD  `changelog` BLOB NOT NULL;
+
