@@ -1,15 +1,5 @@
-{include file=$HEADER}
-<h1>
-{if $iAssociateType == 2}
-	{#permissions_title_group#}
-{elseif $iAssociateType == 1}
-	{#permissions_title_user#}
-{else}
-	{#permissions_error_no_user#}
-{/if}
-</h1>
 {if $iAssociateType == 1 OR $iAssociateType == 2}
-<form class="permissions" action="index.php?package=acp_permissions&action=save" method="post">
+<form class="permissions" action="" method="post">
 	<input type="hidden" name="associateType" value="{$iAssociateType}" />
 	<input type="hidden" name="associateID" value="{$iAssociateID}" />
 	<table>
@@ -56,7 +46,6 @@
 	<br/>
 	<br/>
 
-<input type="submit" value="{#permissions_save_button#}" />
+	<button class="acp_permissions_save_btn" onclick="savePermissions(this); return false;">{#permissions_save_button#}</button>
 </form>
 {/if}
-{include file=$FOOTER}

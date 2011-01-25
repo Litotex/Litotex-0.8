@@ -10,8 +10,9 @@ class package_acp_users extends acpPackage{
 	protected $_theme = 'main.tpl';
 	
 	public function __action_main(){
-		package::addJsFile('users.js', 'acp_users');
-		package::addCssFile('users.css', 'acp_users');
+		self::addJsFile('users.js', 'acp_users');
+		self::addCssFile('users.css', 'acp_users');
+		self::addCssFile('permissions.css', 'acp_permissions');
 		return true;
 	}
 	

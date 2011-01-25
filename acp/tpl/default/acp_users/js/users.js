@@ -1,21 +1,66 @@
 
-var iLastEditUserIndex = 0;
+var iLastUserTabIndex = 0;
+
+function savePermissions(oButton){
+
+	if(!oButton || !oButton.parentNode){
+		return false;
+	}
+
+	var oForm = oButton.parentNode;
+	var sParam = "";
+
+	if(oForm){
+		sParam = $(oForm).serialize();
+	}
+
+	$.ajax({
+		type: "POST",
+		url: 'index.php?package=acp_permissions&action=save',
+		data: sParam,
+		dataType: 'json',
+		success: function(aMsg){
+			$('#acp_users_menue').tabs( "load", iLastUserTabIndex );
+		}
+	 });
+	 return false;
+}
+
+function accessUser(sTitle, iUserId){
+	
+	// Remove last User Edit Tab
+	if(iLastUserTabIndex > 0){
+		$('#acp_users_menue').tabs( "remove", iLastUserTabIndex );
+	}
+
+	$('#acp_users_menue').tabs("add","index.php?package=acp_permissions&associateType=1&associateID="+iUserId, sTitle);
+
+	var iIndex = $('#acp_users_menue').tabs( "length" );
+	iIndex = iIndex - 1;
+
+
+	$('#acp_users_menue').tabs( "select", iIndex );
+
+	iLastUserTabIndex = iIndex;
+
+}
 
 // Add New Tab vor Edit User
 function editUser(sTitle, iUserId){
 
 	// Remove last User Edit Tab
-	if(iLastEditUserIndex > 0){
-		$('#acp_users_menue').tabs( "remove", iLastEditUserIndex - 1 );
+	if(iLastUserTabIndex > 0){
+		$('#acp_users_menue').tabs( "remove", iLastUserTabIndex );
 	}
 
 	$('#acp_users_menue').tabs("add","index.php?package=acp_users&action=edit&id="+iUserId, sTitle);
 	
 	var iIndex = $('#acp_users_menue').tabs( "length" );
+	iIndex = iIndex - 1;
+	
+	$('#acp_users_menue').tabs( "select", iIndex );
 
-	$('#acp_users_menue').tabs( "select", iIndex - 1 );
-
-	iLastEditUserIndex = iIndex;
+	iLastUserTabIndex = iIndex;
 }
 
 // Delete User if Confirmed

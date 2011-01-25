@@ -1,17 +1,19 @@
 .permissions h1 {
-	font-size: 16px;
+	font-size: 14px;
 }
 
 .permissions h2 {
-	font-size: 14px;
-	background-color:#333333;
+	font-size: 12px;
+	background-color:#E78F08;
 	color:#FFF;
 	padding:3px;
+	-moz-border-radius: 4px 4px 4px 4px;
+	border: 1px solid #E78F08;
 }
 
 .permissions table {
-	width:800px;
-	border: 1px solid #000;
+	width:100%;
+	border: none;
 }
 
 .permissions th {

@@ -42,6 +42,9 @@
 			<a style="cursor: pointer;" onclick="editUser('{$oUser->getUserName()}', {$oUser->getUserID()}); return false;">
 				{#users_edit#}
 			</a> |
+			<a style="cursor: pointer;" onclick="accessUser('{$oUser->getUserName()}', {$oUser->getUserID()}); return false;">
+				{#users_access#}
+			</a> |
 			{if $oUser->checkUserBanned()}
 				<a style="cursor: pointer;" onclick="unbanUser({$oUser->getUserID()}); return false;">
 					{#users_unban#} |

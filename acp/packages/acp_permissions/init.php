@@ -65,6 +65,8 @@ class package_acp_permissions extends acpPackage{
 
 	public function __action_save(){
 
+		$this->_theme = 'empty.tpl';
+
 		$aSavePermissionsData = $_POST['permissions'];
 
 		$iAssociateType = (int)$_POST['associateType'];
@@ -78,7 +80,7 @@ class package_acp_permissions extends acpPackage{
 			$oPermission->insertAvailablePermission($iPermissionID, $iValue);
 		}
 
-		$this->__action_main();
+		
 		return true;
 	}
 
