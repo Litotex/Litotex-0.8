@@ -190,11 +190,15 @@ class package_acp_users extends acpPackage{
 				$aError[] = self::getLanguageVar('users_no_email');
 			}
 		}
+		$iNewUserId = 0;
 		if(empty($aError)){
 			try {
 				foreach((array)$aUserData as $iUserId => $aUser){
 					$oUser = new user((int)$iUserId);
 					$oUser->update($aUser);
+					if($iUserId <= 0){
+						$iNewUserId = $oUser->getUserID();
+					}
 				}
 			} catch (Exception $e) {
 				$aError[] = self::getLanguageVar('users_error');
@@ -205,7 +209,7 @@ class package_acp_users extends acpPackage{
 		if(!empty ($_POST['userfield'])){
 			foreach((array)$_POST['userfield'] as $iUserId => $aData){
 				if($iUserId <= 0){
-					continue;
+					$iUserId = $iNewUserId;
 				}
 				$oUser = new user($iUserId);
 				foreach((array)$aData as $iFieldId => $mValue){
