@@ -212,11 +212,18 @@ class package_acp_packageManager extends acpPackage {
             }
         }
         foreach($packages as $item){
+            if($item['prefix'] === ''){
+                $pm = $this->_frontendPackages;
+                $root = LITO_FRONTEND_ROOT;
+            } else {
+                $pm = self::$packages;
+                $root = LITO_ROOT;
+            }
             require_once(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache/installer.php');
             $installerName = 'installer_' . $item['name'];
             if(!class_exists($installerName))
                 throw new lttxError('E_couldNotLoadInstallerPackage');
-            $installData = new $installerName(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache', $item['name']);
+            $installData = new $installerName(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache', $item['name'], $root . 'packages/', $root . TPL_DIR);
             $fBlack = (isset($fileBlackList[$item['name']]))?$fileBlackList[$item['name']]:array();
             $sBlack = (isset($sqlBlacklist[$item['name']]))?$sqlBlacklist[$item['name']]:array();
             $installData->install($fBlack, $sBlack);

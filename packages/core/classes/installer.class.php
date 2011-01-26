@@ -11,9 +11,13 @@ abstract class installer {
     private $_templateDir = TEMPLATE_DIRECTORY; /* TEMPLATE_DIRECTORY or TEMPLATE_FRONTEND_DIRECTORY */
     private $_packageDir = MODULES_DIRECTORY; /* MODULES_DIRECTORY or MODULES_FRONTEND_DIRECTORY */
 
-    public final function __construct($location, $packageName) {
+    public final function __construct($location, $packageName, $packageDir = false, $templateDir = false) {
         $this->_location = $location;
         $this->_packageName = $packageName;
+        if($templateDir)
+            $this->_templateDir = $templateDir;
+        if($packageDir)
+            $this->_packageDir = $packageDir;
         $this->_versionOld = package::$packages->getVersionNumber($this->_packageName);
         $this->_versionNew = $this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php');
         $this->_checkData();
