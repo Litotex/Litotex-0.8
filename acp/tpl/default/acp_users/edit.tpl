@@ -20,6 +20,19 @@
 	<input type="checkbox" name="user[{$oUser->getUserID()}][serverAdmin]" value="1" {if $oUser->getData('serverAdmin') == 1} checked="checked" {/if} /> 
 	<br/>
 
+	{foreach item=oField from=$aFields}
+		<label>{$oField->key}:</label>
+		{if $oField->type == 'input'}
+			<input name="userfield[{$oUser->getUserID()}][{$oField->ID}]" value="{$oUser->getUserFieldData($oField->ID)}" />
+		{else if $oField->type == 'textarea'}
+			<textarea name="userfield[{$oUser->getUserID()}][{$oField->ID}]">{$oUser->getUserFieldData($oField->ID)}</textarea>
+		{else if $oField->type == 'checkbox'}
+			<input type="hidden" name="userfield[{$oUser->getUserID()}][{$oField->ID}]" value="0" />
+			<input type="checkbox" name="userfield[{$oUser->getUserID()}][{$oField->ID}]" value="1" {if {$oUser->getUserFieldData($oField->ID)} == 1} checked="checked" {/if} />
+		{/if}
+		<br/>
+	{/foreach}
+
 	<br/>
 	<button onclick="saveUser(this); return false;">{#users_save_btn#}</button>
 
