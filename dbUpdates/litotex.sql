@@ -858,6 +858,7 @@ CREATE TABLE IF NOT EXISTS `lttx1_userFields` (
   `display` tinyint(1) NOT NULL,
   `editable` tinyint(1) NOT NULL,
   `package` varchar(100) COLLATE utf8_bin NOT NULL,
+  `position` INT NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
 
@@ -944,3 +945,12 @@ INSERT INTO `lttx1_users` (`ID`, `userGroup`, `username`, `email`, `password`, `
 -- new
 ALTER TABLE  `lttx1_packageList` ADD  `changelog` BLOB NOT NULL;
 
+CREATE TABLE `litotex`.`lttx1_userfields_userdata` (
+`field_id` INT NOT NULL ,
+`user_id` INT NOT NULL ,
+`value` TEXT NOT NULL ,
+UNIQUE (
+`field_id` ,
+`user_id`
+)
+) ENGINE = MYISAM ;

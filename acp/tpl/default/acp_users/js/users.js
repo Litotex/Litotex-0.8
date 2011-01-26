@@ -188,3 +188,56 @@ function resetUserFields(){
 	});
 	
 }
+
+function addUserField(sType){
+
+	if(sType == undefined){
+		var sType = 'input';
+	}
+
+	var sName = $('#new_field_key').val();
+	
+	var iOptional = 0;
+	var iDisplay = 0;
+	var iEditable = 0;
+
+	if($('#new_field_optional').attr('checked')){
+		iOptional = 1;
+	}
+	
+	if($('#new_field_display').attr('checked')){
+		iDisplay = 1;
+	}
+
+	if($('#new_field_editable').attr('checked')){
+		iEditable = 1;
+	}
+
+	var sParam = '&type='+sType+'&name='+sName+'&optional='+iOptional+'&display='+iDisplay+'&editable='+iEditable
+
+	$.ajax({
+		type: "POST",
+		url: "index.php?package=acp_users&action=addField",
+		data: sParam,
+		dataType: 'json',
+		success: function(aMsg){
+			$('#acp_users_menue').tabs( "load", 2 );
+		}
+	 });
+
+}
+
+function deleteUserField(iFieldId, sQuestion){
+	var sParam = '&field_id='+iFieldId;
+	if(confirm(sQuestion)){
+		$.ajax({
+			type: "POST",
+			url: "index.php?package=acp_users&action=delField",
+			data: sParam,
+			dataType: 'json',
+			success: function(aMsg){
+				$('#acp_users_menue').tabs( "load", 2 );
+			}
+		 });
+	}
+}

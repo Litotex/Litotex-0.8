@@ -1,21 +1,6 @@
 <?php
-/*
- * This file is part of Litotex | Open Source Browsergame Engine.
- *
- * Litotex is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Litotex is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
- */
 require_once("userGroup.class.php");
+require_once("userField.class.php");
 /**
  * This file is part of Litotex || Open Source Browsergame Engine.
  * Litotex is free software: you can redistribute it and/or modify
@@ -848,72 +833,16 @@ class user {
     	return $return;
     }
 
-    /**
-     * This will add a new field to the users profile
-     * @param   string  $name
-     * @param   string  $type
-     * @param   string  $extra
-     * @param   bool    $optional
-     * @param   bool    $display
-     * @param   bool    $editable
-     * @param   string  $package
-     * @return  bool
-     */
-    public static function addField($name, $type, $extra = '', $optional = true, $display = false, $editable = false, $package = ''){
-    	if(self::getField($name) != false){
-    		throw new lttxFatalError('Userfield '.$name.' already exists! We will not do any changes.');
-    	}
-    	$result = package::$db->Execute("INSERT INTO `lttx_userFields` (`key`, `type`, `extra`, `optional`, `display`, `editable`, `package`) VALUES (?, ?, ?, ?, ?, ?, ?)", array($name, $type, $extra, (bool)$optional, (bool)$display, (bool)$editable, $package));
-    	if($result && package::$db->Insert_ID())
-    		return true;
-    	throw new lttxFatalError('Unexpected error while adding userfield '.$name.'! We will not do any changes.');
-    }
+	public function saveUserFieldData($iFieldId, $mValue){
+		$sSql = " REPLACE INTO `lttx_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
+		$aSql = array($iFieldId, $this->getData('ID'), $mValue);
+		package::$db->Execute($sSql, $aSql);
+	}
 
-    /**
-     * This will get all user fields in an array
-     * @return  array
-     */
-    public static function getAllFields(){
-    	
-    }
-
-    /**
-     * This will get the value of an extra user profile field
-     * @param   string  $name
-     * @return  mixed
-     */
-    public static function getField($name){
-    	$result = package::$db->Execute("SElECT `ID`, `key`, `type`, `extra`, `optional`, `display`, `editable` FROM `lttx_userFields` WHERE `key` = ?", array($name));
-    	if(!$result || !$result->fields)
-    		return false;
-    	return $result->fields;
-    }
-
-    /**
-     * This will remove an extra fiield from users profile
-     * @param   string  $name
-     * @param   bool    $force
-     * @return  bool
-     */
-    public static function removeField($name, $force = false){
-    	$sql = 'DELETE FROM `lttx_userFields` WHERE `key` = ?';
-    	if(!$force){
-    		$sql .= " AND `package` = ''";
-    	}
-    	$result = package::$db->Execute($sql);
-    	if(!$result) return false;
-    	if(package::$db->Affected_Rows() > 0)
-    		return true;
-    	return false;
-    }
-    
-    public static function getFieldPlugin($type){
-    	
-    }
-    public static function validateField(){
-    	
-    }
-    public static function editField(){
-    	
-    }
+	public function getUserFieldData($iFieldId){
+		$sSql = " SELECT `value` FROM `lttx_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
+		$aSql = array($iFieldId, $this->getData('ID'));
+		$mValue = package::$db->GetOne($sSql, $aSql);
+		return $mValue;
+	}
 }

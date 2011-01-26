@@ -1,7 +1,7 @@
 <?php
 class package_acp_users extends acpPackage{
 	
-	protected $_availableActions = array('main', 'new', 'edit', 'list', 'save', 'ban', 'unban', 'del');
+	protected $_availableActions = array('main', 'new', 'edit', 'list', 'save', 'ban', 'unban', 'del', 'fields', 'addField', 'sortFields', 'delField');
 	
 	public static $dependency = array('acp_config');
 	
@@ -17,7 +17,52 @@ class package_acp_users extends acpPackage{
 
 		return true;
 	}
+
+	public function __action_delField(){
+		$this->_theme = 'empty.tpl';
+		$oField = userField::getInstance($_POST['field_id']);
+		$oField->delete();
+	}
+
+	public function __action_sortFields(){
+		$this->_theme = 'empty.tpl';
+		$aOrder = $_POST['userField'];
+		$i = 0;
+		foreach((array)$aOrder as $iFieldId){
+			if($iFieldId <= 0){
+				continue;
+			}
+			$oField = userField::getInstance($iFieldId);
+			$oField->position = $i;
+			$oField->save();
+			$i++;
+		}
+	}
 	
+	public function __action_addField(){
+		
+		$this->_theme = 'empty.tpl';
+
+		$oNewField = new userField(0);
+		$oNewField->key = $_POST['name'];
+		$oNewField->type = $_POST['type'];
+		$oNewField->optional = $_POST['optional'];
+		$oNewField->display = $_POST['display'];
+		$oNewField->editable = $_POST['editable'];
+		$oNewField->save();
+		
+		return true;
+	}
+
+	public function __action_fields(){
+		$this->_theme = 'fields.tpl';
+
+		$aFields = userField::getList();
+		package::$tpl->assign('aFields', $aFields);
+
+		return true;
+	}
+
 	public function __action_new(){
 		$this->__action_edit();
 		return true;
@@ -35,8 +80,11 @@ class package_acp_users extends acpPackage{
 		
 		$oUser = new user($iUserId);
 		
-		self::$tpl->assign('oUser', $oUser);
-		
+		package::$tpl->assign('oUser', $oUser);
+
+		$aFields = userField::getList();
+		package::$tpl->assign('aFields', $aFields);
+
 		return true;
 	}
 
@@ -151,6 +199,21 @@ class package_acp_users extends acpPackage{
 			} catch (Exception $e) {
 				$aError[] = self::getLanguageVar('users_error');
 				$aError[] = $e->getMessage();
+			}
+		}
+
+		if(!empty ($_POST['userfield'])){
+			foreach((array)$_POST['userfield'] as $iUserId => $aData){
+				if($iUserId <= 0){
+					continue;
+				}
+				$oUser = new user($iUserId);
+				foreach((array)$aData as $iFieldId => $mValue){
+					if($iFieldId <= 0){
+						continue;
+					}
+					$oUser->saveUserFieldData($iFieldId, $mValue);
+				}
 			}
 		}
 		

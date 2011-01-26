@@ -15,6 +15,11 @@
 					<span>{#users_add_user#}</span>
 				</a>
 			</li>
+			<li>
+				<a href="index.php?package=acp_users&action=fields">
+					<span>{#users_add_userfields#}</span>
+				</a>
+			</li>
 		</ul>
 	
 	</div>
