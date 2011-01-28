@@ -43,7 +43,7 @@
         <div id="navi_main">
         	<ul>
             	<li style="border-right: 0px;">
-                <a href="index.php?topMenu=1" class="navi_main_aktiv">
+                <a href="index.php?topMenu=1" class="navi_main_active">
                 	<div class="navi_main_aktiv"></div>
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}home.png" alt="" width="32" height="32" /></div>

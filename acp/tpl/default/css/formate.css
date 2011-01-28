@@ -101,7 +101,7 @@ body {
 #navi_main ul li a:hover {
 }
 
-.navi_main_aktiv {
+.navi_main_active {
 	float: left;
 	padding-top: 35px;
 	background: url(../img/hg_navi_main.png) no-repeat;
@@ -128,7 +128,7 @@ body {
 /* ###### Navi top ################################## */
 /* ################################################## */
 
-/* 1. Ebene */
+/* 1. Level */
 
 #navi_top {
 	height: 37px;
@@ -161,7 +161,7 @@ body {
 	background: url(../img/hg_navi_top_hover.png) repeat-x;
 }
 
-/* 2. Ebene */
+/* 2. Level */
 
 #navi_top ul li ul {
 	position:absolute;
