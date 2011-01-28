@@ -31,7 +31,7 @@
 {else}
 <span><h1>{#acp_notLoggedIn#} | <a href="http://update.freebg.de">{#acp_redirectUpdateServer#}</a> | <a href="..">{#acp_redirectFrontend#}</a></h1></span>
 {/if}
-<span style="float: right;"><h1>Zum {$smarty.now|date_format:#acp_dateFormTop#}</h1></span>
+<span style="float: right;"><h1>{$smarty.now|date_format:#acp_dateFormTop#}</h1></span>
 </div>
 <div id="wrapper">
 	<div id="header">
