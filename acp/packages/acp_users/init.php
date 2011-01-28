@@ -84,6 +84,17 @@ class package_acp_users extends acpPackage{
 
 		$aFields = userField::getList();
 		package::$tpl->assign('aFields', $aFields);
+		$aUserGroups = $oUser->getUserGroups();
+		if($aUserGroups === false){
+			$aUserGroups = array();
+		}
+		package::$tpl->assign('aUserGroups', $aUserGroups);
+
+		$aGroups = $oUser->getAvailableGroups();
+		if($aGroups === false){
+			$aUserGroups = array();
+		}
+		package::$tpl->assign('aGroups', $aGroups);
 
 		return true;
 	}
@@ -218,6 +229,13 @@ class package_acp_users extends acpPackage{
 					}
 					$oUser->saveUserFieldData($iFieldId, $mValue);
 				}
+			}
+		}
+
+		if(!empty ($_POST['group'])){
+			foreach((array)$_POST['group'] as $iGroup){
+				$oGroup = new userGroup($iGroup);
+				$oGroup->addUser($oUser);
 			}
 		}
 		

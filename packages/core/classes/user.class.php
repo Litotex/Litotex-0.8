@@ -702,11 +702,30 @@ class user {
      * @return  mixed
      */
     public function getUserGroups() {
-        if(!$this->_initialized || !$this->isUsersInstance()){
+        if(!$this->_initialized){
             return userGroup::getDefault();
         }
-        return userGroup::getUsersGroups($this);
+
+		$aGroups = userGroup::getUsersGroups($this);
+        return $aGroups;
     }
+
+	public function getAvailableGroups(){
+		$aGroups = userGroup::getList();
+		$aUserGroups = $this->getUserGroups();
+
+		if($aUserGroups !== false){
+			foreach((array)$aUserGroups as $oUserGroup){
+				foreach((array)$aGroups as $iKey => $oGroup){
+					if($oGroup->getID() == $oUserGroup->getID()){
+						unset($aGroups[$iKey]);
+					}
+				}
+			}
+		}
+
+		return $aGroups;
+	}
 
     /**
      * This will logout the currently logged in user by deleting the session

@@ -1,8 +1,18 @@
 /**
  * On Load start some Funktions
  */
-window.onload = function () {
+$(document).ready(function() {
 	litotexAcpTabs();
+	litotexAccordion();
+	
+});
+
+var iAccordionCount = 0;
+function litotexAccordion(){
+	$.each($(".accordion"), function (key, oElement){
+		oElement.id = 'accordion_'+iAccordionCount;
+		$(oElement).accordion({ autoHeight: false });
+	});
 }
 
 /**

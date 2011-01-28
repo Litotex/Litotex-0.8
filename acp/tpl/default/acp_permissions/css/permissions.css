@@ -12,12 +12,14 @@
 }
 
 .permissions table {
-	width:100%;
+	width:90%;
 	border: none;
+	font-size: 12px;
 }
 
 .permissions th {
 	text-align:left;
+	font-size: 12px;
 }
 
 .permissions  table .tr_header {
@@ -25,7 +27,7 @@
 }
 
 .permissions table .tr_permissions:hover {
-	background-color: yellow;
+	background-color: #CCC;
 }
 
 .permissions .col_function {
@@ -39,4 +41,17 @@
 }
 .permissions .col_access_denied_complete {
 	width:80px;
+}
+
+.permissions .permission_button_box {
+	float: right;
+}
+
+.permissions .permission_content_box{
+	clear: both;
+}
+
+.permissions .permission_button {
+	width: 80px;
+	float: left;
 }

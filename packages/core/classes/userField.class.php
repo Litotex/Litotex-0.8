@@ -131,7 +131,8 @@ class userField {
 
 			package::$db->SetFetchMode(ADODB_FETCH_ASSOC);
 			$aResult = package::$db->GetRow($sSql, $aSql);
-
+			package::$db->SetFetchMode(ADODB_FETCH_DEFAULT);
+			
 			if($aResult === false){
 				throw new lttxDBError();
 			} else {

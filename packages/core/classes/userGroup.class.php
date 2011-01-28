@@ -202,20 +202,26 @@ class userGroup {
      */
     private function _get($ID){
         $ID = (int)$ID;
-        if($this->_getCache($ID))
-                return true;
+        if($this->_getCache($ID)){
+			return true;
+		}
         $result = package::$db->Execute("
             SELECT `name`, `description`, `default`, `userNumber`
             FROM `lttx_userGroups`
             WHERE `ID` = ?",
                 array($ID));
-        if(!$result || !isset($result->fields[0]))
-                return false;
+        if(
+			!$result ||
+			!isset($result->fields['name'])
+		){
+			return false;
+		}
+
         $this->_ID = $ID;
-        $this->_name = $result->fields[0];
-        $this->_description = $result->fields[1];
-        $this->_default = $result->fields[2];
-        $this->_userNumber = (int)$result->fields[3];
+        $this->_name = $result->fields['name'];
+        $this->_description = $result->fields['description'];
+        $this->_default = $result->fields['default'];
+        $this->_userNumber = (int)$result->fields['userNumber'];
         self::_writeCache($this->_ID, $this->_name, $this->_description, $this->_default, $this->_userNumber);
         return true;
     }
@@ -225,8 +231,9 @@ class userGroup {
      * @return bool
      */
     private function _getCache($ID){
-        if(!isset(self::$_cache[$ID]))
+        if(!isset(self::$_cache[$ID])){
             return false;
+		}
         $this->_ID = self::$_cache[$ID]['ID'];
         $this->_name = self::$_cache[$ID]['name'];
         $this->_description = self::$_cache[$ID]['description'];
@@ -246,6 +253,7 @@ class userGroup {
         $ID = (int)$ID;
         $userNumber = (int)$userNumber;
         self::$_cache[$ID] = array(
+            'ID' => $ID,
             'name' => $name,
             'description' => $description,
             'default' => (bool)$default,
@@ -358,6 +366,7 @@ class userGroup {
      */
     public static function getUsersGroups(user $user){
         $ID = $user->getUserID();
+				
         if($ID === false)
             return false;
         $return = array();
@@ -390,4 +399,19 @@ class userGroup {
         }
         return $return;
     }
+
+	public static function getList(){
+		$aResult = package::$db->GetArray("
+            SELECT
+				`ID`
+            FROM
+				`lttx_userGroups`");
+		$aList = array();
+		if($aResult !== false){
+			foreach((array)$aResult as $aData){
+				$aList[] = new userGroup($aData['ID']);
+			}
+		}
+		return $aList;
+	}
 }

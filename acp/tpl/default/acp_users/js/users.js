@@ -115,7 +115,7 @@ function unbanUser(iUserId){
 }
 
 // Save Userdata
-function saveUser(oButton){
+function saveUser(oButton, iUserId){
 	
 	if(!oButton || !oButton.parentNode){
 		return false;
@@ -127,7 +127,10 @@ function saveUser(oButton){
 	if(oForm){
 		sParam = $(oForm).serialize();
 	}
-	
+	var sGroups = $('#user_groups_'+iUserId).sortable( "serialize");
+
+	sParam += '&'+sGroups;
+
 	$.ajax({
 		type: "POST",
 		url: "index.php?package=acp_users&action=save",
@@ -241,3 +244,18 @@ function deleteUserField(iFieldId, sQuestion){
 		 });
 	}
 }
+
+
+function startGroupAssignments(iUserId){
+
+	$( "ul.droptrue_"+iUserId ).sortable({
+		connectWith: "ul"
+	});
+
+	$( "#user_groups_"+iUserId+", #all_groups_"+iUserId ).disableSelection();
+
+}
+
+
+
+

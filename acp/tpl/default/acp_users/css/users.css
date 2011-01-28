@@ -31,3 +31,18 @@
 	text-align: left;
 }
 
+.acp_users .users_groupblock {
+	width: 250px;
+	float: left;
+}
+
+.acp_users .users_groupblock span {
+	font-size: 12px;
+	text-decoration: underline;
+	padding: 3px;
+}
+
+.droptrue, .droptrue { list-style-type: none; margin: 0; padding: 0; float: left; margin-right: 10px; background: #ccc; padding: 5px; width: 143px; cursor: move;}
+.droptrue li, .droptrue li { margin: 5px; padding: 5px; width: 120px; }
+
+
