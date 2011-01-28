@@ -23,9 +23,9 @@
 
 <div id="wrapper">
 	<div id="header"></div>
-    <div id="navi_oben">
+    <div id="navi_top">
     	<ul>
-        	<li><a href="#" class="aktiv">Home</a></li>
+        	<li><a href="#" class="active">Home</a></li>
             <li><a href="#">Registrieren</a></li>
             <li><a href="#">Kennwort vergessen</a></li>
             <li><a href="#">Impressum</a></li>
@@ -42,5 +42,5 @@
     </div>
     <div class="both"></div>
     <div id="main">
-    	<div id="links">
+    	<div id="left">
  &nbsp;
