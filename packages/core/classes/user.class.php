@@ -702,7 +702,8 @@ class user {
      * @return  mixed
      */
     public function getUserGroups() {
-        if(!$this->_initialized){
+
+        if(!$this->_initialized || $this->getUserID() <= 0){
             return userGroup::getDefault();
         }
 
