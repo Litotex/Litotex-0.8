@@ -232,6 +232,8 @@ class package_acp_users extends acpPackage{
 			}
 		}
 
+		$oUser->deleteAllGroups();
+
 		if(!empty ($_POST['group'])){
 			foreach((array)$_POST['group'] as $iGroup){
 				$oGroup = new userGroup($iGroup);
