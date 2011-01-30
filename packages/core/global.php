@@ -83,6 +83,10 @@ try{
 	}catch (Exception $e){
 		die("Fatal Exception in uncatchable area!<br /><b>You see this message, because a fatal error occured while initializing the system (especially the error handling system which was not usable when it should handle this error).<br />We appologice any inconviniance that might have happened and hope the system is back up running soon. The following data is backtrace information to find out why this error occured.</b><br /><br />" . $e);
 	}
+        package::loadLang($smarty);
+        @setlocale(LC_ALL, package::getLanguageVar('PHP_LOCALE'));
+        @date_default_timezone_set(package::getLanguageVar('PHP_DEFAULT_TIMEZONE'));
+        //packages::reloadFileHashTable();
 	//Restore Session?
 	if(isset($_SESSION['lttx']['session'])){
 		$session = unserialize($_SESSION['lttx']['session']);
