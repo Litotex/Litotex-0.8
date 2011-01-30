@@ -10,15 +10,16 @@ abstract class installer {
     private $_versionNew = false;
     private $_templateDir = TEMPLATE_DIRECTORY; /* TEMPLATE_DIRECTORY or TEMPLATE_FRONTEND_DIRECTORY */
     private $_packageDir = MODULES_DIRECTORY; /* MODULES_DIRECTORY or MODULES_FRONTEND_DIRECTORY */
+    private $_log = array();
 
-    public final function __construct($location, $packageName, $packageDir = false, $templateDir = false) {
+    public final function __construct($location, $packageName, $pm, $packageDir = false, $templateDir = false) {
         $this->_location = $location;
         $this->_packageName = $packageName;
         if($templateDir)
             $this->_templateDir = $templateDir;
         if($packageDir)
             $this->_packageDir = $packageDir;
-        $this->_versionOld = package::$packages->getVersionNumber($this->_packageName);
+        $this->_versionOld = $pm->getVersionNumber($this->_packageName);
         $this->_versionNew = $this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php');
         $this->_checkData();
     }
@@ -44,19 +45,21 @@ abstract class installer {
         try {
             $this->_backup = package::$packages->createBackup($this->_packageName);
         } catch (Exception $e) {
-            //Nothing
+            $this->addLog(package::getLanguageVar('acp_packageManager_noBackupTaken'));
         }
         if (!isset($fileBlacklist['tpl']))
             $fileBlacklist['tpl'] = array();
         if (!isset($fileBlacklist['package']))
             $fileBlacklist['package'] = array();
         packages::recursiveCopy($this->_location . '/template', $this->_templateDir . 'default/' . $this->_packageName, $fileBlacklist['tpl']);
+        $this->addLog(package::getLanguageVar('acp_packageManager_tplFileCopy'));
         packages::recursiveCopy($this->_location . '/package', $this->_packageDir . $this->_packageName, $fileBlacklist['package']);
-        $this->_patchDatabase(true);
+        $this->addLog(package::getLanguageVar('acp_packageManager_packageFileCopy'));
+        $this->_patchDatabase(true, $dbBlacklist);
         $this->_freeInstall();
     }
 
-    private final function _patchDatabase($install) {
+    private final function _patchDatabase($install, $blackList) {
         if ($install) {
             if (!file_exists($this->_location . '/database/install.sql'))
                 return true;
@@ -72,22 +75,28 @@ abstract class installer {
         if (!isset($data->query))
             return true;
         foreach ($data->query as $query) {
-            if (packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 || packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 2 && $install) {
+            if(in_array(md5($query), $blackList)) continue;
+            if (packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 3 || packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 && $install) {
+                $this->addLog(sprintf(package::getLanguageVar('acp_packageManager_packageSqlQuery'), $query));
                 package::$db->Execute($query);
                 $errorMsg = package::$db->ErrorMsg();
                 if ($errorMsg) {
+                    $this->addLog(sprintf(package::getLanguageVar('acp_packageManager_packageSqlQueryReturn'), $errorMsg));
+                    if ($install)
+                        $this->addLog(package::getLanguageVar('acp_packageManager_packageRollback'));
                     try {
                         if ($install) {
                             $this->rollback();
-                            $this->_patchDatabase(false);
+                            $this->_patchDatabase(false, $blackList);
                         }
                     } catch (Exception $e) {
                         
                     }
-                    throw new lttxError('E_installerMySQLFailure', $errorMsg);
+                    return false;
                 }
             }
         }
+        return true;
     }
 
     private final function _getVersionNumber($modulName, $file) {
@@ -144,5 +153,10 @@ abstract class installer {
             $queryList[] = (string) $query;
         return $queryList;
     }
-
+    public final function addLog($message){
+        $this->_log[] = $message;
+    }
+    public final function getLog(){
+        return $this->_log;
+    }
 }
