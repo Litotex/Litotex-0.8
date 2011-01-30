@@ -31,7 +31,7 @@ class package_core_territory extends package{
      * Dependencies, we need quite a lot of them ;)
      * @var array
      */
-    public static $dependency = array('core_ressource');
+    public static $dependency = array('core_ressource', 'core_buildings');
     /**
      * Only loads the building class
      * @see packages/core/classes/package::__action_main()

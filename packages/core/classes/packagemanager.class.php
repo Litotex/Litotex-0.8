@@ -31,12 +31,12 @@ class packages {
      * Time (sec) hook cached is saved
      * @var int
      */
-    private $_hookCacheExpire = 0;
+    private $_hookCacheExpire = 1110;
     /**
      * Time (sec) packages cache is saved
      * @var int
      */
-    private $_dependencyCacheExpire = 0;
+    private $_dependencyCacheExpire = 1110;
     /**
      * File package cache is saved in
      * @var string
@@ -51,7 +51,7 @@ class packages {
      * Time until the tplMod cache expires
      * @var int
      */
-    private $_tplModificationCacheExpire = 0;
+    private $_tplModificationCacheExpire = 1110;
     /**
      * Template modification cache
      * @var array
@@ -371,7 +371,13 @@ class packages {
             }
             include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
             if ($loadDep)
-                $dep = $this->_getPackageDependencies($packageName);
+                $dep = $this->_getPackageDependencies($packageName, -1);
+            $pack = new $this->_dependencyCache[$packageName][1](false, $dep);
+            $pack->setTemplatePolicy($tplEnable);
+            $this->_loaded[$packageName] = $pack;
+            if ($loadDep)
+                $dep = $this->_getPackageDependencies($packageName, 1);
+            $pack->displayTpl();
             $pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
             $pack->setTemplatePolicy($tplEnable);
             $this->_loaded[$packageName] = $pack;
@@ -385,29 +391,34 @@ class packages {
     /**
      * Gets all dependencies of a package
      * @param string $package Name of package
+     * @param int $type -1 = loadDep 0 = all 1 = usualDep
      * @throws lttxFatalError
      * @throws lttxError
      */
-    private function _getPackageDependencies($package) {
+    private function _getPackageDependencies($package, $type = 0) {
         $dep = array();
         $cache = $this->_dependencyCache[$package];
-        foreach ($cache['loadDep'] as $depName) {
-            if (isset($this->_loaded[$depName])) {
-                $this->_loaded[$depName]->__construct(false, $this->_getPackageDependencies($depName));
-                $dep[$depName] = $this->_loaded[$depName];
-                continue;
+        if($type == 0 || $type == -1){
+            foreach ($cache['loadDep'] as $depName) {
+                if (isset($this->_loaded[$depName])) {
+                    $this->_loaded[$depName]->__construct(false, $this->_getPackageDependencies($depName));
+                    $dep[$depName] = $this->_loaded[$depName];
+                    continue;
+                }
+                $loadCache = $this->loadPackage($depName, false, false);
+                if (!$loadCache)
+                    trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+                $dep[$depName] = $loadCache;
             }
-            $loadCache = $this->loadPackage($depName, false, false);
-            if (!$loadCache)
-                trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
-            $dep[$depName] = $loadCache;
         }
-        foreach ($cache['dep'] as $depName) {
-            if (isset($this->_loaded[$depName]))
-                continue;
-            $loadCache = $this->loadPackage($depName, false, false);
-            if (!$loadCache) {
-                trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+        if($type == 0 || $type == 1){
+            foreach ($cache['dep'] as $depName) {
+                if (isset($this->_loaded[$depName]))
+                    continue;
+                $loadCache = $this->loadPackage($depName, false, false);
+                if (!$loadCache) {
+                    trigger_error("Could not load package <i>" . $depName . "</i> but <i>" . $package . '</i> depends on it. Packagemanager failed.', E_USER_ERROR);
+                }
             }
         }
         return $dep;
@@ -425,7 +436,8 @@ class packages {
         $cacheContents = explode('%', $cacheContents);
         if (!$this->_checkDependencyCacheExpire($cacheContents[0]))
             return false;
-        return ($this->_dependencyCache = unserialize($cacheContents[1]));
+        $this->_dependencyCache = unserialize($cacheContents[1]);
+        return true;
     }
 
     /**
