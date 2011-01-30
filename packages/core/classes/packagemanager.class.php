@@ -31,12 +31,12 @@ class packages {
      * Time (sec) hook cached is saved
      * @var int
      */
-    private $_hookCacheExpire = 1110;
+    private $_hookCacheExpire = 0;
     /**
      * Time (sec) packages cache is saved
      * @var int
      */
-    private $_dependencyCacheExpire = 1110;
+    private $_dependencyCacheExpire = 0;
     /**
      * File package cache is saved in
      * @var string
@@ -51,7 +51,7 @@ class packages {
      * Time until the tplMod cache expires
      * @var int
      */
-    private $_tplModificationCacheExpire = 1110;
+    private $_tplModificationCacheExpire = 0;
     /**
      * Template modification cache
      * @var array
