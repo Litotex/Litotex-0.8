@@ -46,7 +46,7 @@ abstract class installer {
     public final function install($fileBlacklist, $dbBlacklist) {
         try {
             $this->_backup = $this->_pm->createBackup($this->_packageName);
-        } catch (Exception $e) {$this->_pm->createBackup($this->_packageName);
+        } catch (Exception $e) {
             $this->addLog(package::getLanguageVar('acp_packageManager_noBackupTaken'));
         }
         if (!isset($fileBlacklist['tpl']))
