@@ -1,6 +1,6 @@
 #<?php exit()# ?>
 users_save_btn = "Speichern"
-users_user_list = "Userliste"
+users_user_list = "Übersicht"
 users_add_user = "Neuen User anlegen"
 users_add_userfields = "Userfelder ändern"
 users_username = "Benutzername"

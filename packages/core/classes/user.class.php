@@ -702,11 +702,33 @@ class user {
      * @return  mixed
      */
     public function getUserGroups() {
-        if(!$this->_initialized){
+
+        if(!$this->_initialized || $this->getUserID() <= 0){
             return userGroup::getDefault();
         }
 
-		$aGroups = userGroup::getUsersGroups($this);
+		$ID = $this->getUserID();
+
+        if($ID === false){
+            return false;
+		}
+
+        $aGroups = array();
+        $result = package::$db->Execute("
+            SELECT `groupID`
+            FROM `lttx_userGroupConnections`
+            WHERE `userID` = ?",
+                array($ID));
+
+        if(!$result || !isset($result->fields[0])){
+			return false;
+		}
+
+        while(!$result->EOF){
+            $aGroups[] = new userGroup($result->fields[0]);
+            $result->MoveNext();
+        }
+
         return $aGroups;
     }
 
@@ -827,7 +849,7 @@ class user {
      * This will seach for all user id's which profile fields match to the given value
      * @param   string  $request
      * @param   string  $field
-     * @return  array
+     * @return  user
      */
     public static function search($request, $field = 'username'){
     	//We absolutly need to stop buffering every entry! This would be the perfect overkill
@@ -863,5 +885,13 @@ class user {
 		$aSql = array($iFieldId, $this->getData('ID'));
 		$mValue = package::$db->GetOne($sSql, $aSql);
 		return $mValue;
+	}
+
+	public function deleteAllGroups(){
+		 $result = package::$db->Execute("
+            DELETE FROM `lttx_userGroupConnections`
+            WHERE `userID` = ?",
+                array($this->getUserID()));
+		 return true;
 	}
 }

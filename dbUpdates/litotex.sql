@@ -918,7 +918,6 @@ INSERT INTO `lttx1_userGroups` (`ID`, `name`, `description`, `userNumber`, `defa
 
 CREATE TABLE IF NOT EXISTS `lttx1_users` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `userGroup` int(11) NOT NULL,
   `username` varchar(100) CHARACTER SET latin1 NOT NULL,
   `email` varchar(100) CHARACTER SET latin1 NOT NULL,
   `password` varchar(128) CHARACTER SET latin1 NOT NULL,

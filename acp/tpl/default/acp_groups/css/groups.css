@@ -1,0 +1,52 @@
+
+
+.acp_groups {
+	width: 800px;	
+}
+
+.acp_groups form label {
+	width: 150px;
+	display: block;
+	float: left;	
+}
+
+.acp_groups #userTabs {
+	width: 100%;	
+}
+
+.acp_groups #successDiv {
+	color: green;
+	padding-bottom:10px;
+}
+.acp_groups #errorDiv {
+	color: red;
+	padding-bottom:10px;
+}
+
+.acp_groups table {
+	width: 100%;
+}
+
+.acp_groups table th {
+	text-align: left;
+}
+
+.acp_groups .users_groupblock {
+	width: 250px;
+	float: left;
+}
+
+.acp_groups .users_groupblock span {
+	font-size: 12px;
+	text-decoration: underline;
+	padding: 3px;
+}
+
+.acp_groups .userlist_description {
+	font-size: 10px;
+	font-style: italic;
+}
+.droptrue, .droptrue { list-style-type: none; margin: 0; padding: 0; float: left; margin-right: 10px; background: #ccc; padding: 5px; width: 143px; cursor: move;}
+.droptrue li, .droptrue li { margin: 5px; padding: 5px; width: 120px; }
+
+

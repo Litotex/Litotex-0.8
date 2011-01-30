@@ -30,6 +30,7 @@ require_once('classes/plugin.class.php');
 require_once('classes/date.class.php');
 require_once('classes/Smarty/Smarty.class.php');
 require_once('classes/session.class.php');
+require_once('classes/basic/entry.class.php'); // Basic Class for DB Entry based Classes
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
 require_once('classes/perm.class.php');
 require_once 'classes/option.class.php';
