@@ -49,8 +49,9 @@ class package_acp_packageManager extends acpPackage {
         return true;
     }
 
-    public function __action_updateRemoteList() {
+    public function __action_updateRemoteList($refer = true) {
         $this->_frontendPackages->updateRemotePackageList(array('' => $this->_frontendPackages, 'acp' => self::$packages));
+        if($refer)
         header("location: index.php?package=acp_packageManager&action=listUpdates");
     }
 
@@ -92,6 +93,7 @@ class package_acp_packageManager extends acpPackage {
 
     public function __action_processUpdateQueue() {
         require_once LITO_FRONTEND_ROOT . 'packages/core/classes/installer.class.php';
+        $this->__action_updateRemoteList(false);
         if (!isset($_SESSION['updateQueueDetails']))
             header("Location: index.php?package=acp_packageManager&action=listUpdates");
         $item = array_shift($_SESSION['updateQueueDetails']);
@@ -119,7 +121,6 @@ class package_acp_packageManager extends acpPackage {
         $installData->install($fBlack, $sBlack);
         self::$tpl->assign('installItem', $item);
         self::$tpl->assign('installer', $installData);
-        $this->__action_updateRemoteList();
         return true;
     }
 
