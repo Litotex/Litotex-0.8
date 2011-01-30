@@ -119,6 +119,7 @@ class package_acp_packageManager extends acpPackage {
         $installData->install($fBlack, $sBlack);
         self::$tpl->assign('installItem', $item);
         self::$tpl->assign('installer', $installData);
+        $this->__action_updateRemoteList();
         return true;
     }
 
