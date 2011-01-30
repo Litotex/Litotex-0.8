@@ -10,3 +10,4 @@ acp/const.php
 backup/*
 files/cache/*
 acp/files/cache/*
+acp/backup/*

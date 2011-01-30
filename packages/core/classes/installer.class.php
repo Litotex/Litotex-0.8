@@ -11,6 +11,7 @@ abstract class installer {
     private $_templateDir = TEMPLATE_DIRECTORY; /* TEMPLATE_DIRECTORY or TEMPLATE_FRONTEND_DIRECTORY */
     private $_packageDir = MODULES_DIRECTORY; /* MODULES_DIRECTORY or MODULES_FRONTEND_DIRECTORY */
     private $_log = array();
+    private $_pm = false;
 
     public final function __construct($location, $packageName, $pm, $packageDir = false, $templateDir = false) {
         $this->_location = $location;
@@ -20,6 +21,7 @@ abstract class installer {
         if($packageDir)
             $this->_packageDir = $packageDir;
         $this->_versionOld = $pm->getVersionNumber($this->_packageName);
+        $this->_pm = $pm;
         $this->_versionNew = $this->_getVersionNumber($this->_packageName, $this->_location . '/package/init.php');
         $this->_checkData();
     }
@@ -43,8 +45,8 @@ abstract class installer {
 
     public final function install($fileBlacklist, $dbBlacklist) {
         try {
-            $this->_backup = package::$packages->createBackup($this->_packageName);
-        } catch (Exception $e) {
+            $this->_backup = $this->_pm->createBackup($this->_packageName);
+        } catch (Exception $e) {$this->_pm->createBackup($this->_packageName);
             $this->addLog(package::getLanguageVar('acp_packageManager_noBackupTaken'));
         }
         if (!isset($fileBlacklist['tpl']))
@@ -110,7 +112,7 @@ abstract class installer {
     }
 
     private final function rollback() {
-        package::$packages->restoreBackup($this->_packageName, $this->_backup);
+        $this->_pm->restoreBackup($this->_packageName, $this->_backup);
     }
 
     protected abstract function _freeInstall();
