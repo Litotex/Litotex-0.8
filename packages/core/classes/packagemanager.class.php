@@ -147,6 +147,9 @@ class packages {
      * @return bool
      */
     public function generateTplModificationCache() {
+        $oldPM = package::$packages;
+        package::setPackageManagerClass($this);
+        $this->_tplModificationCache = array();
         package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `type` = ? AND `packageDir` = ?", array(2, $this->_packagePrefix));
         if (!is_dir($this->_packagesDir))
             return false;
@@ -168,6 +171,8 @@ class packages {
             throw new lttxFatalError("Could not fetch tplMod settings, this might be a serious database issue!");
         }
         package::$db->Execute("DELETE FROM `lttx_tplModificationSort` WHERE `packageDir` = ?", array($this->_packagePrefix));
+        closedir($packages);
+        package::setPackageManagerClass($oldPM);
         return $this->_writeTplModificationCache();
     }
 
@@ -226,6 +231,8 @@ class packages {
      * @return bool
      */
     public function generateHookCache() {
+        $oldPM = package::$packages;
+        package::setPackageManagerClass($this);
         if (!is_dir($this->_packagesDir))
             return false;
         $packages = opendir($this->_packagesDir);
@@ -242,6 +249,7 @@ class packages {
                     return false;
             }
         }
+        package::setPackageManagerClass($oldPM);
         return $this->_writeHookCache();
     }
 
@@ -458,6 +466,8 @@ class packages {
      * @return bool
      */
     public function generateDependencyCache() {
+        $oldPM = package::$packages;
+        package::setPackageManagerClass($this);
         package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `packageDir` = ? AND `type` = ?", array($this->_packagePrefix, 1));
         if (!is_dir($this->_packagesDir))
             return false;
@@ -476,6 +486,7 @@ class packages {
             }
         }
         $this->_checkDependency();
+        package::setPackageManagerClass($oldPM);
         return $this->_writeDependencyCache();
     }
 
@@ -890,6 +901,9 @@ class packages {
              if(file_exists($destination))
               unlink($destination);
               copy($source, $destination);
+              package::$db->Execute("UPDATE `lttx_fileHash` SET `hash` = ? WHERE `file` = ?", array(md5_file($source), $destination));
+              if(package::$db->Affected_Rows() <= 0)
+                      package::$db->Execute("INSERT INTO `lttx_fileHash` (`hash`, `file`) VALUES (?, ?)", array(md5_file($source), $destination));
             return true;
         } else if (!is_dir($destination)) {
             mkdir($destination);

@@ -22,6 +22,12 @@ class package_acp_packageManager extends acpPackage {
     }
 
     public function __action_main() {
+        package::$packages->generateDependencyCache();
+        package::$packages->generateHookCache();
+        package::$packages->generateTplModificationCache();
+        $this->_frontendPackages->generateDependencyCache();
+        $this->_frontendPackages->generateHookCache();
+        $this->_frontendPackages->generateTplModificationCache();
         return true;
     }
 
@@ -88,7 +94,7 @@ class package_acp_packageManager extends acpPackage {
         require_once LITO_FRONTEND_ROOT . 'packages/core/classes/installer.class.php';
         if (!isset($_SESSION['updateQueueDetails']))
             header("Location: index.php?package=acp_packageManager&action=listUpdates");
-        $item = array_pop($_SESSION['updateQueueDetails']);
+        $item = array_shift($_SESSION['updateQueueDetails']);
         $fileBlacklist = $_SESSION['updateQueueFileBlacklist'];
         $sqlBlacklist = $_SESSION['updateQueueSqlBlacklist'];
         $this->_theme = 'installerWork.tpl';
