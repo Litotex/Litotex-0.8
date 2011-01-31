@@ -400,7 +400,7 @@ abstract class package {
     public final function getPackageName(){
         return $this->_packageName;
     }
-    public function getTplDir($package = false, $tpl = false){
+    public static function getTplDir($package = false, $tpl = false){
     	if(!$package){
     		if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))){
     			return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/';
@@ -415,7 +415,7 @@ abstract class package {
     		}
     	}
     }
-	public function getTplURL($package = false, $tpl = false){
+	public static function getTplURL($package = false, $tpl = false){
 		if(!$package){
 			if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))){
 	    		return TPL_DIRNAME . self::getTemplate($tpl) . '/';

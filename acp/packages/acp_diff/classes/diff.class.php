@@ -10,6 +10,8 @@
 	May be used and distributed under the zlib/libpng license.
 
 	... for the actual diff code, i changed a few things and implemented a pretty interface to it.
+
+        Modified by Jonas Schwabe <j.s@cascaded-web.com> to match the needs of Litotex in 2011
 */
 class diff {
 
@@ -88,9 +90,7 @@ class diff {
 
 	function inline($old, $new, $linepadding=null){
 		$this->linepadding = $linepadding;
-
-		$ret = '<pre><table width="100%" border="0" cellspacing="0" cellpadding="0" class="code">';
-		$ret.= '<tr><td>Old</td><td>New</td><td></td></tr>';
+                $ret = package::$tpl->fetch(package::getTplDir('acp_diff') . 'tableHeader.tpl');
 		$count_old = 1;
 		$count_new = 1;
 
@@ -112,10 +112,11 @@ class diff {
 							if ($insert) $class = '';
 							$insert = false;
 						}
-						$ret.= '<tr><th>'.$count_old.'</th>';
-						$ret.= '<th>&nbsp;</th>';
-						$ret.= '<td class="del '.$class.'">'.$this->formatcode($val).'</td>';
-						$ret.= '</tr>';
+						package::$tpl->assign('oldLine', $count_old);
+                                                package::$tpl->assign('newLine', ' ');
+                                                package::$tpl->assign('code', $this->formatcode($val));
+                                                package::$tpl->assign('cssClass', 'del ' . $class);
+                                                $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
 						$count_old++;
 					}
 					foreach ($k['i'] as $val){
@@ -126,10 +127,11 @@ class diff {
 							if ($delete) $class = '';
 							$delete = false;
 						}
-						$ret.= '<tr><th>&nbsp;</th>';
-						$ret.= '<th>'.$count_new.'</th>';
-						$ret.= '<td class="ins '.$class.'">'.$this->formatcode($val).'</td>';
-						$ret.= '</tr>';
+						package::$tpl->assign('oldLine', ' ');
+                                                package::$tpl->assign('newLine', $count_new);
+                                                package::$tpl->assign('code', $this->formatcode($val));
+                                                package::$tpl->assign('cssClass', 'ins ' . $class);
+                                                $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
 						$count_new++;
 					}
 				} else {
@@ -137,10 +139,11 @@ class diff {
 					$class = ($insert) ? 'ins_end' : $class;
 					$delete = false;
 					$insert = false;
-					$ret.= '<tr><th>'.$count_old.'</th>';
-					$ret.= '<th>'.$count_new.'</th>';
-					$ret.= '<td class="'.$class.'">'.$this->formatcode($k).'</td>';
-					$ret.= '</tr>';
+                                        package::$tpl->assign('oldLine', $count_old);
+                                        package::$tpl->assign('newLine', $count_new);
+                                        package::$tpl->assign('code', $this->formatcode($k));
+                                        package::$tpl->assign('cssClass', $class);
+                                        $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
 					$count_old++;
 					$count_new++;
 				}
@@ -152,17 +155,18 @@ class diff {
 
 				if (!$truncate){
 					$truncate = true;
-					$ret.= '<tr><th>...</th>';
-					$ret.= '<th>...</th>';
-					$ret.= '<td class="truncated '.$class.'">&nbsp;</td>';
-					$ret.= '</tr>';
+                                        package::$tpl->assign('oldLine', '...');
+                                        package::$tpl->assign('newLine', '...');
+                                        package::$tpl->assign('code', ' ');
+                                        package::$tpl->assign('cssClass', 'truncated '.$class);
+                                        $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
 				}
 				$count_old++;
 				$count_new++;
 
 			}
 		}
-		$ret.= '</table></pre>';
+                $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'tableFooter.tpl');
 		return $ret;
 	}
 }
