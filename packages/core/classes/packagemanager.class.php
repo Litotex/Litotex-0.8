@@ -343,6 +343,7 @@ class packages {
      */
     public function callHook($hookname, $args = array()) {
         $nParams = count($args);
+
         if (!isset($this->_hookCache[$hookname . ':' . $nParams]))
             return true;
         $return = true;
@@ -353,8 +354,12 @@ class packages {
                 include_once($func[2]);
             }
             $this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
-            if (!call_user_func_array(array($func[0], '__hook_' . $func[1]), $args))
+			$mFunktionReturn = call_user_func_array(array($func[0], '__hook_' . $func[1]), $args);
+            if ($mFunktionReturn === false){
                 $return = false;
+			} else {
+				return $mFunktionReturn;
+			}
         }
         return $return;
     }
@@ -823,24 +828,50 @@ class packages {
      * @return bool
      */
     public function displayTplModification($position) {
-        if (!isset($this->_tplModificationCache[$position]))
-            return true;
-        $return = true;
+
+		$return = true;
+
+		if (!isset($this->_tplModificationCache[$position])){
+            return $return;
+		}
+
         foreach ($this->_tplModificationCache[$position] as $func) {
-            if ($func[4] == false)
+
+            if ($func[4] == false){
                 continue;
+			}
+
             if ($func[2]) {
-                if ($func[3])
+                if ($func[3]){
                     $this->loadPackage($func[3], false, false);
+				}
                 include_once($func[2]);
             }
+
             $pack = $this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
+
             if (!package::$perm->checkPerm($pack, $func[1], $func[0])) {
                 continue;
             }
-            if (!call_user_func_array(array($func[0], '__tpl_' . $func[1]), array()))
+
+			ob_start();
+
+				$bCallFunction = call_user_func_array(array($func[0], '__tpl_' . $func[1]), array());
+
+				$sHtml = ob_get_contents();
+
+			ob_end_clean();
+
+			$sHtml = package::$packages->callHook('displayTplModification', $sHtml);
+
+			echo $sHtml;
+
+            if (!$bCallFunction){
                 $return = false;
+			}
+			
         }
+		
         return $return;
     }
 

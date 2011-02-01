@@ -930,17 +930,16 @@ CREATE TABLE IF NOT EXISTS `lttx1_users` (
   `bannedDate` TIMESTAMP NULL DEFAULT NULL,
   `bannedReason` TEXT NOT NULL,
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `username` (`username`),
-  KEY `userGroup` (`userGroup`)
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
 --
 -- Daten für Tabelle `lttx1_users`
 --
 
-INSERT INTO `lttx1_users` (`ID`, `userGroup`, `username`, `email`, `password`, `dynamicSalt`, `race`, `lastActive`, `registerDate`, `serverAdmin`) VALUES
-(1, 0, 'gh1234', 'jonas.schwabe@gmail.com', '3656ee5bdd89a43e40ba34dd397eb0998c0e83b3e218a98287073305bf6828e93c379fe2466ffc24aef7298dc41d3abac41a8410ec7c2aa78d571eecf2184f38', '_###bcßß?ßß?//\\$_baßß?//\\`cba//\\//\\1337', 0, NULL, '2010-09-15', 1),
-(2, 0, 'snoop', '1111@freebg.de', '9b4e0080c66dac73d68ee2b465bd8d06aecd577901d0a4ba1a83f611a52d7f5ec769540fbbcd2f8bacbab57aa21fa0a5da544fffea6ed15f2948f7af83dfd8f3', 'b_..§§cc``mwe$b_1337ßß?_$mwe§mwe', 0, NULL, '2010-09-15', 0);
+INSERT INTO `lttx1_users` (`ID`, `username`, `email`, `password`, `dynamicSalt`, `race`, `lastActive`, `registerDate`, `serverAdmin`) VALUES
+(1, 'gh1234', 'jonas.schwabe@gmail.com', '3656ee5bdd89a43e40ba34dd397eb0998c0e83b3e218a98287073305bf6828e93c379fe2466ffc24aef7298dc41d3abac41a8410ec7c2aa78d571eecf2184f38', '_###bcßß?ßß?//\\$_baßß?//\\`cba//\\//\\1337', 0, NULL, '2010-09-15', 1),
+(2, 'snoop', '1111@freebg.de', '9b4e0080c66dac73d68ee2b465bd8d06aecd577901d0a4ba1a83f611a52d7f5ec769540fbbcd2f8bacbab57aa21fa0a5da544fffea6ed15f2948f7af83dfd8f3', 'b_..§§cc``mwe$b_1337ßß?_$mwe§mwe', 0, NULL, '2010-09-15', 0);
 -- new
 ALTER TABLE  `lttx1_packageList` ADD  `changelog` BLOB NOT NULL;
 

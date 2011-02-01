@@ -1,0 +1,25 @@
+.acp_tplmods_container {
+	width: 1000px;
+	clear: both;
+}
+
+.acp_tplmods_container .acp_tplmods_framebox {
+	width: 700px;
+	height: 500px;
+	float: left;
+	overflow: scroll;
+}
+
+.acp_tplmods_container .acp_tplmods_framebox iframe {
+	width: 100%;
+	height: 100%;
+}
+
+.acp_tplmods_container .acp_tplmods_elementbox {
+	width: 300px;
+	float: left;
+}
+
+.acp_tplmods_container .tplmods_draggable {
+
+}

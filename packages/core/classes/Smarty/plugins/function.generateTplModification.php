@@ -21,17 +21,29 @@
 function smarty_function_generateTplModification($params, &$smarty)
 {
 	$position = str_replace("'", '', $params['position']);
+	
     if (empty($position)) {
         trigger_error("displayTplModification: position parameter missing.");
         return;
     }
+
+	global $out;
+
     ob_start();
+
     package::$packages->displayTplModification($position);
-    global $out;
-    if(!$out)
+    
+    if(!$out){
         $out = array();
-    $out[$position] = ob_get_contents();
+	}
+	
+    $sHtml = ob_get_contents();
+	
     ob_end_clean();
+	
+	$out[$position] = $sHtml;
+	
+	
     return '';
 }
 

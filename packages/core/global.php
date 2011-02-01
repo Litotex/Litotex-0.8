@@ -34,6 +34,7 @@ require_once('classes/basic/entry.class.php'); // Basic Class for DB Entry based
 require_once('classes/user.class.php'); //ATTENTION! session.class.php has to be included BEFORE user.class.php
 require_once('classes/perm.class.php');
 require_once 'classes/option.class.php';
+require_once 'classes/tplModSort.class.php';
 try{
 	try{
 		//Next... Database connection!
