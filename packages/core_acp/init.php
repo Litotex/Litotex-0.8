@@ -27,6 +27,10 @@ class package_core_acp extends package {
 	public function __action_tplModSort(){
 		self::addJsFile('tplmod.js', 'core_acp');
 		self::addCssFile('tplmod.css', 'core_acp');
+
+		$aElements = tplModSort::getList();
+		package::$tpl->assign('aElements', $aElements);
+
 		return true;
 	}
 	

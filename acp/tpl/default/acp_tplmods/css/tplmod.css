@@ -1,25 +1,14 @@
 .acp_tplmods_container {
-	width: 1000px;
-	clear: both;
+	min-width: 950px;
+	min-height: 500px;
 }
 
 .acp_tplmods_container .acp_tplmods_framebox {
-	width: 700px;
-	height: 500px;
-	float: left;
-	overflow: scroll;
+
+	overflow: hidden;
 }
 
 .acp_tplmods_container .acp_tplmods_framebox iframe {
-	width: 100%;
-	height: 100%;
-}
-
-.acp_tplmods_container .acp_tplmods_elementbox {
-	width: 300px;
-	float: left;
-}
-
-.acp_tplmods_container .tplmods_draggable {
-
+	min-width: 950px;
+	min-height: 500px;
 }

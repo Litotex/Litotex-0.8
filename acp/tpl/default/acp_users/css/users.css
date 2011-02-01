@@ -46,3 +46,6 @@
 .droptrue li, .droptrue li { margin: 5px; padding: 5px; width: 120px; }
 
 
+#userFields img {
+	padding-right: 5px;
+}
