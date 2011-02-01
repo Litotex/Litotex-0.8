@@ -19,8 +19,6 @@ if(!defined('LITO_ROOT'))
 	define('LITO_ROOT', '/home/jonas/Dokumente/PHP/Litotex8/acp/');
 if(!defined('LITO_URL'))
 	define('LITO_URL', 'http://localhost/Litotex8/acp/');
-if(!defined('LITO_FRONTEND_URL'))
-	define('LITO_FRONTEND_URL', 'http://localhost/Litotex8/');
 if(!defined('DATABASE_CONFIG_FILE'))
 	define('DATABASE_CONFIG_FILE', LITO_ROOT . '../packages/core/config/database.conf.php');
 if(!defined('HOOK_CACHE'))

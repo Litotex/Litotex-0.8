@@ -16,6 +16,7 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 $frontendRoot = 'C:/Users/Martin/Daten/htdocs/litotex/080/';
+$frontendUrl = 'http://localhost/litotex/080/';
 if(!defined('LITO_ROOT'))
 	define('LITO_ROOT', $frontendRoot);
 if(!defined('LITO_PLUGIN_DIRNAME'))
@@ -23,7 +24,7 @@ if(!defined('LITO_PLUGIN_DIRNAME'))
 if(!defined('LITO_PLUGIN_ROOT'))
 	define('LITO_PLUGIN_ROOT', LITO_ROOT . LITO_PLUGIN_DIRNAME);
 if(!defined('LITO_URL'))
-	define('LITO_URL', 'http://localhost/litotex/080/');
+	define('LITO_URL', $frontendUrl);
 if(!defined('DATABASE_CONFIG_FILE'))
 	define('DATABASE_CONFIG_FILE', LITO_ROOT . 'packages/core/config/database.conf.php');
 if(!defined('MODULES_DIRECTORY'))
@@ -62,3 +63,5 @@ if(!defined('TEMPLATE_FRONTEND_DIRECTORY'))
 	define('TEMPLATE_FRONTEND_DIRECTORY', LITO_FRONTEND_ROOT . TPL_DIR);
 if(!defined('TEMPLATE_FRONTEND_COMPILATION'))
 	define('TEMPLATE_FRONTEND_COMPILATION', LITO_FRONTEND_ROOT . 'tpl_c');
+if(!defined('LITO_FRONTEND_URL'))
+	define('LITO_FRONTEND_URL', $frontendUrl);
