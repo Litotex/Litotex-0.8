@@ -22,6 +22,7 @@ class package_acp_navigation extends acpPackage{
 		return true;
 	}
 	public static function __tpl_displayAcpTopNavigation(){
+            package::addJsFile('jquery.effects.core.min.js');
             $elements = array();
             $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_acpNavigation` ORDER BY `sort` ASC");
             while(!$data->EOF){
