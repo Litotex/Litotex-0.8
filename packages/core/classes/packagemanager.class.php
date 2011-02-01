@@ -862,7 +862,7 @@ class packages {
 
 			ob_end_clean();
 
-			$sHtml = package::$packages->callHook('displayTplModification', $sHtml);
+			//$sHtml = package::$packages->callHook('displayTplModification', $sHtml);
 
 			echo $sHtml;
 
