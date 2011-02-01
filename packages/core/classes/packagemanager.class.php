@@ -342,6 +342,10 @@ class packages {
      * @return bool
      */
     public function callHook($hookname, $args = array()) {
+
+		// it musst be an array
+		$args = (array)$args;
+
         $nParams = count($args);
 
         if (!isset($this->_hookCache[$hookname . ':' . $nParams]))
@@ -862,7 +866,7 @@ class packages {
 
 			ob_end_clean();
 
-			$sHtml = package::$packages->callHook('displayTplModification', $sHtml);
+			$sHtml = package::$packages->callHook('displayTplModification', array($sHtml));
 
 			echo $sHtml;
 
