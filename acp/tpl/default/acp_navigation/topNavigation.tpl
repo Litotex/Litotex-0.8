@@ -6,8 +6,8 @@
         	<ul>
                     {foreach from=$navigationItems item=item}
                 <li{if $item.ID == 4} style="border-right: 0px;"{/if}>
-                    <a name="{$item.ID}" title="{$item.title}" rel="{$item.description}" href="index.php?topMenu=1" class="topNavigation {if $item.ID == 1}navi_main_active{else}navi_main_show{/if}">
-                	{if $item.ID == 1}<div class="navi_main_aktiv"></div>{/if}
+                    <a name="{$item.ID}" title="{$item.title}" rel="{$item.description}" href="index.php?topMenu=1" class="topNavigation {if $item.active}navi_main_active{else}navi_main_show{/if}">
+                	{if $item.active}<div class="navi_main_aktiv"></div>{/if}
                 	<div>
                         <div class="navi_main_icon"><img src="{$CORE_IMG_URL}{$item.icon}" alt="" width="32" height="32" /></div>
                         <div class="navi_main_text">{$item.title.0}</div>

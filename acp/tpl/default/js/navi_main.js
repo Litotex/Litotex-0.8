@@ -24,7 +24,7 @@ $(function() {
         oldTitle = $('#menuItemTitle')[0].innerHTML = $(this)[0].title;
         oldDescription= $('#menuItemDescription')[0].innerHTML = $(this)[0].rel;
         $('.navi_top').each(function(){
-            $(this).fadeOut();
+            $(this).fadeOut(0);
         });
         $('#navi_top'+$(this)[0].name).fadeIn();
         return false;
