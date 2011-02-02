@@ -865,8 +865,8 @@ class packages {
 				$sHtml = ob_get_contents();
 
 			ob_end_clean();
-
-			$sHtml = package::$packages->callHook('displayTplModification', array($sHtml));
+                        $hookCache = package::$packages->callHook('displayTplModification', array($sHtml));
+			$sHtml = ($hookCache === true)?$sHtml:$hookCache;
 
 			echo $sHtml;
 

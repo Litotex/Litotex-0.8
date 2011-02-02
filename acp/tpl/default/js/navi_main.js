@@ -17,9 +17,10 @@ $(function() {
     });
     $(navButtons).click(function() {
         $(navButtonsActive).each(function(){
-            $(this).switchClass('navi_main_active', 'navi_main_show', 1);
+            $(this).switchClass('navi_main_active', 'navi_main_show', 0);
         });
-        $(this).switchClass('navi_main_show', 'navi_main_active', 1);
+        $(this).stop().animate({'bottom':'0px'}, 0);
+        $(this).switchClass('navi_main_show', 'navi_main_active', 0);
         oldTitle = $('#menuItemTitle')[0].innerHTML = $(this)[0].title;
         oldDescription= $('#menuItemDescription')[0].innerHTML = $(this)[0].rel;
         return false;

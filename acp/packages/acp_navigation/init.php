@@ -24,7 +24,7 @@ class package_acp_navigation extends acpPackage{
 	public static function __tpl_displayAcpTopNavigation(){
             package::addJsFile('jquery.effects.core.min.js');
             $elements = array();
-            $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_acpNavigation` ORDER BY `sort` ASC");
+            $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_acpNavigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
             while(!$data->EOF){
                 $elements[] = $data->fields;
                 $data->MoveNext();
@@ -33,7 +33,16 @@ class package_acp_navigation extends acpPackage{
             self::$tpl->display(self::getTplDir('acp_navigation') . 'topNavigation.tpl');
 	}
         public static function __tpl_displayAcpSubNavigation(){
-		self::$tpl->display(self::getTplDir('acp_navigation') . 'subNavigation.tpl');
+            $data = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_acpNavigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
+            $elements = array();
+            while(!$data->EOF){
+                if(!isset($elements[$data->fields['parent']]))
+                        $elements[$data->fields['parent']] = array();
+                $elements[$data->fields['parent']][] = $data->fields;
+                $data->MoveNext();
+            }
+            self::$tpl->assign('navigationItems', $elements);
+            self::$tpl->display(self::getTplDir('acp_navigation') . 'subNavigation.tpl');
 	}
 	public static function __hook_addAcpNavigationNode(){
 		
