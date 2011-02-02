@@ -1,24 +1,15 @@
 {foreach from=$navigationItems item=parentNodes key=parentID}
     <div class="navi_top" id="navi_top{$parentID}">
     	<ul>
-        	<li><a href="#" onmouseover="show('um_0')" onmouseout="out()">Einstellungen</a>
-            	<!-- 1. Untermenü -->
-                <ul id="um_0">
-                    <li><a href="#" onmouseover="show('um_0')"  onmouseout="out()">Print</a></li>
-                    <li><a href="#" onmouseover="show('um_0')"  onmouseout="out()">Non-Print</a></li>
-                    <li><a href="#" onmouseover="show('um_0')"  onmouseout="out()">Bilder-Service</a></li>
+            {foreach from=$parentNodes item=item}
+            <li><a href="index.php?package={$item.package}&action={$item.action}{if $item.tab}#ui-tabs-{$item.tab}{/if}" onmouseover="show('um_{$item.ID}')" onmouseout="out('um_{$item.ID}')" onclick="location.reload()">{$item.title}</a>
+                <ul id="um_{$item.ID}">
+                {foreach from=$item.sub item=subItem}
+                    <li><a href="index.php?package={$subItem.package}&action={$subItem.action}{if $subItem.tab}#ui-tabs-{$subItem.tab}{/if}" onmouseover="show('um_{$item.ID}')"  onmouseout="out('um_{$item.ID}')" onclick="location.reload()">{$subItem.title}</a></li>
+                {/foreach}
                 </ul>
             </li>
-            <li><a href="#" onmouseover="show('um_1')" onmouseout="out()">User</a>
-            	<!-- 1. Untermenü -->
-                <ul id="um_1">
-                    <li><a href="#" onmouseover="show('um_1')"  onmouseout="out()">Print</a></li>
-                    <li><a href="#" onmouseover="show('um_1')"  onmouseout="out()">Non-Print</a></li>
-                    <li><a href="#" onmouseover="show('um_1')"  onmouseout="out()">Bilder-Service</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Banner</a></li>
-            <li></li>
+            {/foreach}
         </ul>
     </div>
 {/foreach}

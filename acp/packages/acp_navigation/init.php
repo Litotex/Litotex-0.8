@@ -33,11 +33,22 @@ class package_acp_navigation extends acpPackage{
             self::$tpl->display(self::getTplDir('acp_navigation') . 'topNavigation.tpl');
 	}
         public static function __tpl_displayAcpSubNavigation(){
-            $data = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_acpNavigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
+            $data = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx_acpNavigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
             $elements = array();
             while(!$data->EOF){
+                $sub = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx_acpNavigation` WHERE `parent` = ? ORDER BY `sort` ASC", array($data->fields['ID']));
+                if($sub->NumRows() <= 0){
+                    $data->MoveNext();
+                        continue(1);
+                }
                 if(!isset($elements[$data->fields['parent']]))
                         $elements[$data->fields['parent']] = array();
+                $subElements = array();
+                while(!$sub->EOF){
+                    $subElements[] = $sub->fields;
+                    $sub->MoveNext();
+                }
+                $data->fields['sub'] = $subElements;
                 $elements[$data->fields['parent']][] = $data->fields;
                 $data->MoveNext();
             }

@@ -1,33 +1,18 @@
-<!--
-// Aufklappmenü vertikal
-var untermenue=new Array();
-// hier weitere Untermenüs hinzufügen
-untermenue[0]="um_0";
-untermenue[1]="um_1";
+var current;
+var tOut;
+function show(item){
+    cover('um_'+current);clearTimeout(tOut);
+    if(document.getElementById){
+        document.getElementById(item).style.display="block";
+    }
+}
 
-function show(ebene1)
-{
-if(document.getElementById)
-{
-clearout();cover();
-document.getElementById(ebene1).style.display="block";
-}}
-
-function cover() 
-{
-for(i=0;i<untermenue.length;i++)
-{
-document.getElementById(untermenue[i]).style.display="none";
-}}
-	
-function out()
-{
-timer=setTimeout("cover()",200);
+function cover(item){
+    if(!document.getElementById(item))
+        return;
+    document.getElementById(item).style.display="none";
 }
 	
-function clearout() 
-{
-if(window.timer)
-{
-clearTimeout(timer);
-}}
+function out(item){
+    tOut=setTimeout("cover('"+item+"')",200);
+}

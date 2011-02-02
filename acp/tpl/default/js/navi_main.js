@@ -23,6 +23,10 @@ $(function() {
         $(this).switchClass('navi_main_show', 'navi_main_active', 0);
         oldTitle = $('#menuItemTitle')[0].innerHTML = $(this)[0].title;
         oldDescription= $('#menuItemDescription')[0].innerHTML = $(this)[0].rel;
+        $('.navi_top').each(function(){
+            $(this).fadeOut();
+        });
+        $('#navi_top'+$(this)[0].name).fadeIn();
         return false;
     });
 });
