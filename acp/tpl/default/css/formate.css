@@ -130,25 +130,28 @@ body {
 
 /* 1. Level */
 
-#navi_top {
+.navi_top {
 	height: 37px;
 	background: url(../img/hg_navi_top.png) repeat-x;
 	font-size: 120%;
+        z-index: 10;
 }
 
-#navi_top ul {
+.navi_top ul {
 	float: right;
 	margin: 0 20px 0 0;
+        z-index: 10;
 }
-#navi_top ul li {
+.navi_top ul li {
 	height: 36px;
 	display:inline;
 	float:left;
 	position:relative;
 	border-left: 1px solid #d9d9d9;
+        z-index: 10;
 }
 
-#navi_top ul li a {
+.navi_top ul li a {
 	padding: 2px 20px 11px 20px;
 	color: #000000;
 	text-decoration:none;
@@ -157,13 +160,13 @@ body {
 	height:23px;
 }
 
-#navi_top ul li a:hover {
+.navi_top ul li a:hover {
 	background: url(../img/hg_navi_top_hover.png) repeat-x;
 }
 
 /* 2. Level */
 
-#navi_top ul li ul {
+.navi_top ul li ul {
 	position:absolute;
 	left:0;
 	top:5px;
@@ -173,20 +176,20 @@ body {
 	border: 1px solid #d9d9d9;
 }
 
-#navi_top ul li ul li {
+.navi_top ul li ul li {
 	position:relative;
 	float:none;
 	display: block;
 	border-left: 0px;
 }
 
-#navi_top ul li ul li a {
+.navi_top ul li ul li a {
 	background-color: #fcfdfb;
 	color: #000000;
 	float: none;
 }
 
-#navi_top ul li ul li a:hover {
+.navi_top ul li ul li a:hover {
 	background: url(../img/hg_navi_top_hover.png) repeat-x;
 }
 

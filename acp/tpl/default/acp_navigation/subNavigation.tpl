@@ -1,5 +1,5 @@
 {foreach from=$navigationItems item=parentNodes key=parentID}
-    <div id="navi_top{$parentID}">
+    <div class="navi_top" id="navi_top{$parentID}">
     	<ul>
         	<li><a href="#" onmouseover="show('um_0')" onmouseout="out()">Einstellungen</a>
             	<!-- 1. Untermenü -->
