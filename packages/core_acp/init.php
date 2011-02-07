@@ -79,7 +79,9 @@ class package_core_acp extends package {
      * Hook function
     */
 	public static function __hook_displayTplModification($sHtml, $sPosition, $sPackage, $aFunc) {
-
+                if(!isset($_GET['package']))
+                    $_GET['package'] = 'main';
+                if($_GET['package'] != 'core_acp') return $sHtml;
 		if($sPosition == ""){
 			$sPosition = 'inactive';
 		}
@@ -95,7 +97,9 @@ class package_core_acp extends package {
     }
 
 	public static function __hook_generateTplModification($sHtml) {
-
+                if(!isset($_GET['package']))
+                    $_GET['package'] = 'main';
+                if($_GET['package'] != 'core_acp') return $sHtml;
 		$sHtml = '<div class="tplmods_dropable connectedDropable">'.$sHtml.' </div>';
 
         return $sHtml;
