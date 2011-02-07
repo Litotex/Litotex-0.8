@@ -1,7 +1,9 @@
 
 function startTplMod(){
 
-	$("#acp_tplmods_container").show();
+	if($("#acp_tplmods_container")){
+		$("#acp_tplmods_container").show();
+	}
 
 	startDragDropSortable();
 	
@@ -15,14 +17,9 @@ function showTplModBox(){
 
 function startDragDropSortable(){
 
-	var i = 0;
-
 	$.each($(".tplmods_dropable"), function (key, oElement){
 
-		//oElement.id = 'tpl_sortable_'+i;
-		i++;
-
-		$( oElement ).sortable({
+		$(oElement).sortable({
 			connectWith: ".connectedDropable",
 			receive: function(event, ui) {
 				// ID umschreiben

@@ -24,7 +24,9 @@
 </div>
 {literal}
 <script type="text/javascript">
-	$(document).ready(function(){startTplMod();})
+	$(document).ready(function(){
+		startTplMod();
+	});
 </script>
 {/literal}
 {include file=$FOOTER}
