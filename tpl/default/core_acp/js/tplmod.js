@@ -3,47 +3,70 @@ function startTplMod(){
 
 	$("#acp_tplmods_container").show();
 
-	startDropable();
+	startDragDropSortable();
 	
 }
 
 function showTplModBox(){
 
-	$("#acp_tplmods_elementbox").dialog({resizable:false});
-
-	startDragable();
+	$("#acp_tplmods_elementbox").dialog({resizable:true, height: 500});
 
 }
 
-var iTplModDragableCount = 0;
+function startDragDropSortable(){
 
-function startDragable(){
+	var i = 0;
 
-	$.each($(".tplmods_draggable"), function (key, oElement){
-		oElement.id = 'tplmod_dragable_'+iTplModDragableCount;
-		$(oElement).draggable({
-			helper: "clone",
-			appendTo: "body",
-			start: function(event, ui) {
+	$.each($(".tplmods_dropable"), function (key, oElement){
+
+		oElement.id = 'tpl_sortable_'+i;
+		i++;
+
+		$( oElement ).sortable({
+			connectWith: ".connectedDropable",
+			update: function(event, ui) {
+
+				var sParam = ''
+
+				$.each($(".tplmods_dropable"), function (key, oElement){
+					sParam += '&'+$(oElement).sortable('serialize');
+				});
+				$.each($(".acp_tplmods_elementbox"), function (key, oElement){
+					sParam += '&'+$(oElement).sortable('serialize');
+				});
+
+				
+				$.ajax({
+					url: "index.php?package=core_acp&action=tplModSave",
+					type: "POST",
+					data: sParam
+				});
+			}
+		}).disableSelection();
+	});
+
+	$.each($(".acp_tplmods_elementbox"), function (key, oElement){
+		$( oElement ).sortable({
+			helper: 'clone',
+			appendTo: 'body',
+			connectWith: ".connectedDropable",
+			sort: function(event, ui) {
 				$("#acp_tplmods_elementbox").dialog('close');
 			}
-
-		});
-		iTplModDragableCount++;
+		}).disableSelection();
 	});
 
+	
 }
 
-var iTplModDropableCount = 0;
+function openNewWindow(){ 
 
-function startDropable(){
-	
-	$.each($(".tplmods_droppable"), function (key, oElement){
-		oElement.id = 'tplmod_droppable_'+iTplModDropableCount;
-		$(oElement).dropable();
-		iTplModDropableCount++;
-	});
-	
+	var sAddress = self.location.href;
+
+	oWindow = window.open(sAddress, "TPL Mods");
+	oWindow.focus();
+
+
 }
 
 

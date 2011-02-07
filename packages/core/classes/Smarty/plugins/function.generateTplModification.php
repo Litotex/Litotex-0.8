@@ -40,7 +40,10 @@ function smarty_function_generateTplModification($params, &$smarty)
     $sHtml = ob_get_contents();
 	
     ob_end_clean();
-	
+
+	$hookCache = package::$packages->callHook('generateTplModification', array($sHtml));
+	$sHtml = ($hookCache === true) ? $sHtml : $hookCache;
+
 	$out[$position] = $sHtml;
 	
 	
