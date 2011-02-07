@@ -24,6 +24,11 @@ function startDragDropSortable(){
 
 		$( oElement ).sortable({
 			connectWith: ".connectedDropable",
+			receive: function(event, ui) {
+				var oNewContainer = event.target;
+				var oCurrentTplMod = ui.item[0];
+		
+			},
 			update: function(event, ui) {
 
 				var sParam = ''

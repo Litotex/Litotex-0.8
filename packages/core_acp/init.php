@@ -71,7 +71,7 @@ class package_core_acp extends package {
 	 */
 	public static function registerHooks(){
 		self::_registerHook(__CLASS__, 'displayTplModification', 4);
-		self::_registerHook(__CLASS__, 'generateTplModification', 1);
+		self::_registerHook(__CLASS__, 'generateTplModification', 2);
 		return true;
 	}
 
@@ -96,11 +96,11 @@ class package_core_acp extends package {
         return $sHtml;
     }
 
-	public static function __hook_generateTplModification($sHtml) {
+	public static function __hook_generateTplModification($sHtml, $sPosition) {
                 if(!isset($_GET['package']))
                     $_GET['package'] = 'main';
                 if($_GET['package'] != 'core_acp') return $sHtml;
-		$sHtml = '<div class="tplmods_dropable connectedDropable">'.$sHtml.' </div>';
+		$sHtml = '<div class="tplmods_dropable connectedDropable" id="tpl_mod_list_'.$sPosition.'">'.$sHtml.' </div>';
 
         return $sHtml;
     }
