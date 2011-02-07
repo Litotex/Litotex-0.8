@@ -19,15 +19,18 @@ function startDragDropSortable(){
 
 	$.each($(".tplmods_dropable"), function (key, oElement){
 
-		oElement.id = 'tpl_sortable_'+i;
+		//oElement.id = 'tpl_sortable_'+i;
 		i++;
 
 		$( oElement ).sortable({
 			connectWith: ".connectedDropable",
 			receive: function(event, ui) {
+				// ID umschreiben
 				var oNewContainer = event.target;
 				var oCurrentTplMod = ui.item[0];
-		
+				var aData = oNewContainer.id.split('_');
+				var aIdData = oCurrentTplMod.id.split('_');
+				oCurrentTplMod.id = 'tpl['+aData[3]+']_'+aIdData[1];
 			},
 			update: function(event, ui) {
 

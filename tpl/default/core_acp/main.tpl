@@ -22,9 +22,9 @@
 	</div>
 
 </div>
-
-<script>
-	startTplMod();
+{literal}
+<script type="text/javascript">
+	$(document).ready(function(){startTplMod();})
 </script>
-
+{/literal}
 {include file=$FOOTER}
