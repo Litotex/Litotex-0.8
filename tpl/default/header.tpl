@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>{$TITLE}</title>
+<title>{$TITLE}{if isset($PAGE_TITLE)} {$PAGE_TITLE}{/if}</title>
 {foreach from=$CSS_FILES item=CSS_FILE}
 	<link rel="stylesheet" type="text/css" href="{$CSS_FILE}">
 {/foreach}
