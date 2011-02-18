@@ -7,8 +7,7 @@ class userField extends Basis_Entry {
 	
 	public function  __construct($iFieldId = 0) {
 		parent::__construct($iFieldId);
-		$this->_pluginHandler = new plugin_handler($name = 'userFields', $location = LITO_FRONTEND_ROOT . 'plugins/userFields/', $cacheLocation = LITO_FRONTEND_ROOT . 'packages/core/cache/userFields.plugin.cache.php', $currentFile = __FILE__);
-		var_dump($this->_pluginHandler->callPluginFunc($this->type, 'checkValid', array('')));
+		$this->_pluginHandler = new plugin_handler($name = 'userFields', $location = 'userFields', $cacheLocation = 'userFields.plugin.cache.php', $currentFile = __FILE__);
 	}
 	
 	public static function getList(){

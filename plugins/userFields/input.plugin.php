@@ -1,7 +1,7 @@
 <?php
-class plugin_string extends plugin{
-	public static $handlerName = 'fields';
-	public static $name = 'string';
+class plugin_input extends plugin{
+	public static $handlerName = 'userFields';
+	public static $name = 'input';
 	public static $availableFunctions = array('getHTML', 'checkValid', 'setContent', 'getContent');
 	public static function getHTML($fieldName, $value){
 		return '<input type="text" value="'.self::getContent($value).'" name="'.$fieldName.'" />';
