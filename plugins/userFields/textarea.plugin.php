@@ -1,10 +1,10 @@
 <?php
-class plugin_text extends plugin{
+class plugin_textarea extends plugin{
 	public static $handlerName = 'userFields';
-	public static $name = 'text';
+	public static $name = 'textarea';
 	public static $availableFunctions = array('getHTML', 'checkValid', 'setContent', 'getContent');
-	public static function getHTML($fieldName, $value){
-		return '<textarea name="'.$fieldName.'">'.self::getContent($value).'</textarea>';
+	public static function getHTML(userField $field, user $user){
+		return '<textarea name="userfield['.$user->getUserID().']['.$field->ID.']">'.self::getContent($user->getUserFieldData($field->ID)).'</textarea>';
 	}
 	public static function checkValid($value){
 		return true;

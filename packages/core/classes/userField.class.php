@@ -27,6 +27,9 @@ class userField extends Basis_Entry {
 		return $aBack;
 	}
 
+        public function getHTML($user){
+            return $this->_pluginHandler->callPluginFunc($this->type, 'getHTML', array($this, $user));
+        }
 
 	public function getTypeName(){
 		switch ($this->type) {
