@@ -32,16 +32,7 @@ class userField extends Basis_Entry {
         }
 
 	public function getTypeName(){
-		switch ($this->type) {
-			case 'input':
-				return package::getLanguageVar('users_fieldtype_input');
-			case 'checkbox':
-				return package::getLanguageVar('users_fieldtype_checkbox');
-			case 'textarea':
-				return package::getLanguageVar('users_fieldtype_textarea');
-			default:
-				return package::getLanguageVar('users_fieldtype_unknown');
-		}
+		return $this->_pluginHandler->getLangVar($this->type, 'typeName');
 	}
 
 
