@@ -123,6 +123,18 @@ class plugin_handler {
         return fclose($file);
     }
 
+    public function getLangVar($pluginName, $varName){
+        $langCache = new Smarty();
+        if (!isset($this->_cache[$pluginName]))
+            return false;
+        $this->_location = preg_replace("!/$!", '', $this->_location);
+        $this->_location .= '/';
+        if (!file_exists(LITO_PLUGIN_ROOT . $this->_location . $this->_cache[$pluginName][1] . '.' . package::getLanguage() . '.lang.php'))
+            return false;
+        $langCache->configLoad(LITO_PLUGIN_ROOT . $this->_location . $this->_cache[$pluginName][1] . '.' . package::getLanguage() . '.lang.php');
+        return $langCache->getConfigVariable($varName);
+    }
+
 }
 
 abstract class plugin {
