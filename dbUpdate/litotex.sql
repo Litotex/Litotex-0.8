@@ -1088,3 +1088,5 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2011-03-07 17:29:15
+
+DROP TABLE `lttx1_test1`, `lttx1_test2`, `lttx1_test3`, `lttx1_test4`, `lttx1_test5`;
