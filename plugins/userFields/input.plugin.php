@@ -17,5 +17,8 @@ class plugin_input extends plugin{
 	public static function getContent($value){
 		return $value;
 	}
+        public static function validateContent($value){
+            return true;
+        }
 }
 

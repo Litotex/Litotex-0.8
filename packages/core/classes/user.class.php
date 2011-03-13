@@ -880,6 +880,13 @@ class user {
 		package::$db->Execute($sSql, $aSql);
 	}
 
+        public function validateFieldData($iFieldId, $mValue){
+            $field = new userField($iFieldId);
+            if(!$field->validateContent($mValue)){
+                throw new lttxError('E_user_couldNotValidateUserField', $field->key);
+            }
+        }
+
 	public function getUserFieldData($iFieldId){
 		$sSql = " SELECT `value` FROM `lttx_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'));

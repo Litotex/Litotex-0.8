@@ -53,4 +53,9 @@ class userField extends Basis_Entry {
             }
             return $return;
         }
+
+        public function  validateContent($value) {
+            return $this->_pluginHandler->callPluginFunc($this->type, 'validateContent', array($value));
+            return parent::validateContent($value);
+        }
     }

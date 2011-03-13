@@ -17,5 +17,8 @@ class plugin_checkbox extends plugin{
 	public static function getContent($value){
 		return ($value)?true:false;
 	}
+        public static function validateContent($value){
+            return true;
+        }
 }
 
