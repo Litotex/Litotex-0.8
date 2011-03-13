@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-$frontendRoot = 'C:/Users/Martin/Daten/htdocs/litotex/080/';
-$frontendUrl = 'http://localhost/litotex/080/';
 if(!defined('LITO_ROOT'))
 	define('LITO_ROOT', $frontendRoot);
 if(!defined('LITO_PLUGIN_DIRNAME'))

@@ -20,6 +20,7 @@ define("DEVDEBUG", true);
 header("Content-Type: text/html; charset=utf-8");
 session_start();
 error_reporting(E_ALL);
+require_once('config/path.php');
 require_once('config/const.php');
 require_once('classes/math.class.php');
 require_once('classes/package.class.php');

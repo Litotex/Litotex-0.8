@@ -16,9 +16,9 @@
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
 if(!defined('LITO_ROOT'))
-	define($frontendRoot . 'acp/');
+	define('LITO_ROOT', $frontendRoot . 'acp/');
 if(!defined('LITO_URL'))
-	define($frontendUrl . 'acp/');
+	define('LITO_URL', $frontendUrl . 'acp/');
 if(!defined('DATABASE_CONFIG_FILE'))
 	define('DATABASE_CONFIG_FILE', LITO_ROOT . '../packages/core/config/database.conf.php');
 if(!defined('HOOK_CACHE'))
