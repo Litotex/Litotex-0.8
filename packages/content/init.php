@@ -7,7 +7,7 @@ class package_content extends package{
 		$id = (isset($_GET['ID']))?$_GET['ID']:0;
 		$contentData = self::$db->Execute("SELECT `title`, `text`, `lastEdit`, `editUser` FROM `lttx_contents` WHERE `ID` = ?", array($id));
 		if(!isset($contentData->fields[0])){
-			$error = self::$packages->loadPackage('errorPage', true);
+			$error = self::$packages->loadPackage(LITO_ERROR_MODULE, true);
                         if(!$error){
                                 header('HTTP/ 500');
                                 die('<h1>Internal Server Error</h1><p>Whoops something went wrong!</p>');

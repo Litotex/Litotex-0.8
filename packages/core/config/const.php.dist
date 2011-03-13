@@ -65,3 +65,5 @@ if(!defined('TEMPLATE_FRONTEND_COMPILATION'))
 	define('TEMPLATE_FRONTEND_COMPILATION', LITO_FRONTEND_ROOT . 'tpl_c');
 if(!defined('LITO_FRONTEND_URL'))
 	define('LITO_FRONTEND_URL', $frontendUrl);
+if(!defined('LITO_ERROR_MODULE'))
+	define('LITO_ERROR_MODULE', 'errorPage');

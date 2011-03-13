@@ -112,7 +112,7 @@ try{
 		$package = $_GET['package'];
 		$package = $packageManager->loadPackage($package, true);
 		if(!$package){
-			$error = $packageManager->loadPackage('errorPage', true);
+			$error = $packageManager->loadPackage(LITO_ERROR_MODULE, true);
 			if(!$error){
 				header('HTTP/ 500');
 				die('<h1>Internal Server Error</h1><p>Whoops something went wrong!</p>');
