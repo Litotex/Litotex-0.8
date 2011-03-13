@@ -35,5 +35,9 @@ class userField extends Basis_Entry {
 		return $this->_pluginHandler->getLangVar($this->type, 'typeName');
 	}
 
-
-}
+        public function  validate() {
+            if(!$this->_pluginHandler->pluginExists($this->type))
+                throw new lttxError ('userField_noPlugin', $this->type);
+            parent::validate();
+        }
+    }
