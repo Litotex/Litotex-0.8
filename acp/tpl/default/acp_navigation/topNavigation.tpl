@@ -1,6 +1,6 @@
 <div id="navi_position">
         	<h1 id="menuItemTitle">{#acp_topMenu1_title#}</h1>
-            <p><i id="menuItemDescription">{#acp_topMenu1_description#}</i></p>
+            <div id="menuItemDescription">{#acp_topMenu1_description#}</div>
         </div>
         <div id="navi_main">
         	<ul>
