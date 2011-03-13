@@ -1134,3 +1134,4 @@ INSERT INTO `lttx1_acpNavigation` (`ID`, `parent`, `title`, `description`, `icon
 (10, 9, 'Installierte Pakete', 'Liste mit allen installierten Paketen', '', 'acp_packageManager', 'listInstalled', 1, 0),
 (11, 9, 'Updates anzeigen', 'Zeigt eine Liste mit allen Update (kritisch und unkritisch) an und erlaubt gleichzeitig das einspielen dieser.', '', 'acp_packageManager', 'listUpdates', 2, 0);
 
+ALTER TABLE `lttx1_log`  ADD COLUMN `log_type` INT(3) NULL DEFAULT '0' AFTER `message`;
