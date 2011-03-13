@@ -18,3 +18,5 @@ E_couldNotFetchPackage = "Konnte Downloadinformationen für das Paket %s nicht d
 E_wrongFetchRetrieved = "Es wurde keine Paketinformation zurück gegeben."
 E_couldNotLoadPackage = "Konnte Paket nicht downloaden, es scheint ein Problem mit dem Updateserver vorzuliegen."
 E_couldNotOpenCachePackage = "Die Datei %s konnte nicht geschrieben werden, überprüfen sie die Berechtigungen."
+userField_noPlugin = "Konnte Userfeld Plugin %s nicht finden!"
+E_user_couldNotValidateUserField = "Konnte das Userfeld %s nicht validieren"

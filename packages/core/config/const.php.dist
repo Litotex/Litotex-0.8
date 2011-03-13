@@ -20,7 +20,7 @@ if(!defined('LITO_ROOT'))
 if(!defined('LITO_PLUGIN_DIRNAME'))
 	define('LITO_PLUGIN_DIRNAME', 'plugins/');
 if(!defined('LITO_PLUGIN_ROOT'))
-	define('LITO_PLUGIN_ROOT', LITO_ROOT . LITO_PLUGIN_DIRNAME);
+	define('LITO_PLUGIN_ROOT', $frontendRoot . LITO_PLUGIN_DIRNAME);
 if(!defined('LITO_URL'))
 	define('LITO_URL', $frontendUrl);
 if(!defined('DATABASE_CONFIG_FILE'))

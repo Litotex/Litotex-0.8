@@ -159,6 +159,10 @@ class Basis_Entry {
 
 	}
 
+        public function validateContent($value){
+            return true;
+        }
+
 	/**
 	 * Delete the current Entry
 	 */

@@ -67,8 +67,8 @@ $(function() {
 	<div style="width: 150px; float: left;">Editierbar: </div><input type="checkbox" value="1" id="new_field_editable" /><br/>
 	<div style="width: 150px; float: left;">Optional: </div><input type="checkbox" value="1" id="new_field_optional" /><br/>
 	<br/>
-	<button style="width: 200px; text-align: center;" onclick="addUserField('input'); return false;">{#users_insert_input#}</button><br/>
-	<button style="width: 200px; text-align: center;" onclick="addUserField('checkbox'); return false;">{#users_insert_checkbox#}</button><br/>
-	<button style="width: 200px; text-align: center;" onclick="addUserField('textarea'); return false;">{#users_insert_textarea#}</button><br/>
+        {foreach from=$fieldTypes item=type}
+	<button style="width: 200px; text-align: center;" onclick="addUserField('{$type.0}'); return false;">{$type.1}</button><br/>
+	{/foreach}
 </div>
 <div style="clear: both;"></div>

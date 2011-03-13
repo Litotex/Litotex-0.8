@@ -254,7 +254,10 @@ class Smarty extends Smarty_Internal_Data {
         $this->start_time = microtime(true); 
         // set default dirs
         $this->template_dir = array('.' . DS . 'templates' . DS);
-        $this->compile_dir = '.' . DS . 'templates_c' . DS;
+        if(defined('TEMPLATE_COMPILATION'))
+            $this->compile_dir = TEMPLATE_COMPILATION;
+        else
+            $this->compile_dir = '.' . DS . 'templates_c' . DS;
         $this->plugins_dir = array(SMARTY_PLUGINS_DIR);
         $this->cache_dir = '.' . DS . 'cache' . DS;
         $this->config_dir = '.' . DS . 'configs' . DS;
