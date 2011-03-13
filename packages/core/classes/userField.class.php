@@ -36,8 +36,10 @@ class userField extends Basis_Entry {
 	}
 
         public function  validate() {
-            if(!$this->_pluginHandler->pluginExists($this->type))
+            if(!$this->_pluginHandler->pluginExists($this->type)){
                 throw new lttxError ('userField_noPlugin', $this->type);
-            parent::validate();
+                return false;
+            }
+            return parent::validate();
         }
     }

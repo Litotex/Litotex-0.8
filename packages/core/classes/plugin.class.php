@@ -135,6 +135,10 @@ class plugin_handler {
         return $langCache->getConfigVariable($varName);
     }
 
+    public final function pluginExists($plugin){
+        return isset($this->_cache[$plugin]);
+    }
+
 }
 
 abstract class plugin {
