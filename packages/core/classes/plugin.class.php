@@ -139,6 +139,14 @@ class plugin_handler {
         return isset($this->_cache[$plugin]);
     }
 
+    public final function getPluginList(){
+        $return = array();
+        foreach ($this->_cache as $name => $data){
+            $return[] = $name;
+        }
+        return $return;
+    }
+
 }
 
 abstract class plugin {

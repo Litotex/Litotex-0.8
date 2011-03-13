@@ -31,8 +31,10 @@ class userField extends Basis_Entry {
             return $this->_pluginHandler->callPluginFunc($this->type, 'getHTML', array($this, $user));
         }
 
-	public function getTypeName(){
-		return $this->_pluginHandler->getLangVar($this->type, 'typeName');
+	public function getTypeName($type = false){
+                if($type === false)
+                    $type = $this->type;
+		return $this->_pluginHandler->getLangVar($type, 'typeName');
 	}
 
         public function  validate() {
@@ -41,5 +43,14 @@ class userField extends Basis_Entry {
                 return false;
             }
             return parent::validate();
+        }
+
+        public function getTypes(){
+            $list = $this->_pluginHandler->getPluginList();
+            $return = array();
+            foreach($list as $type){
+                $return[] = array($type, $this->getTypeName($type));
+            }
+            return $return;
         }
     }
