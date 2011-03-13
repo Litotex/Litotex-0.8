@@ -20,6 +20,7 @@ define("DEVDEBUG", true);
 header("Content-Type: text/html; charset=utf-8");
 session_start();
 error_reporting(E_ALL);
+require_once('config/path.php');
 require_once('config/const.php');
 require_once('classes/math.class.php');
 require_once('classes/package.class.php');
@@ -112,7 +113,7 @@ try{
 		$package = $_GET['package'];
 		$package = $packageManager->loadPackage($package, true);
 		if(!$package){
-			$error = $packageManager->loadPackage('errorPage', true);
+			$error = $packageManager->loadPackage(LITO_ERROR_MODULE, true);
 			if(!$error){
 				header('HTTP/ 500');
 				die('<h1>Internal Server Error</h1><p>Whoops something went wrong!</p>');

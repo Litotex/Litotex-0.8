@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-$frontendRoot = 'C:/Users/Martin/Daten/htdocs/litotex/080/';
-$frontendUrl = 'http://localhost/litotex/080/';
 if(!defined('LITO_ROOT'))
 	define('LITO_ROOT', $frontendRoot);
 if(!defined('LITO_PLUGIN_DIRNAME'))
@@ -65,3 +63,5 @@ if(!defined('TEMPLATE_FRONTEND_COMPILATION'))
 	define('TEMPLATE_FRONTEND_COMPILATION', LITO_FRONTEND_ROOT . 'tpl_c');
 if(!defined('LITO_FRONTEND_URL'))
 	define('LITO_FRONTEND_URL', $frontendUrl);
+if(!defined('LITO_ERROR_MODULE'))
+	define('LITO_ERROR_MODULE', 'errorPage');
