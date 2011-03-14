@@ -44,6 +44,8 @@ class package_acp_users extends acpPackage {
         $oNewField = new userField(0);
         $oNewField->key = $_POST['name'];
         $oNewField->type = $_POST['type'];
+		$oNewField->extra = '';
+		$oNewField->package='';
         $oNewField->optional = $_POST['optional'];
         $oNewField->display = $_POST['display'];
         $oNewField->editable = $_POST['editable'];
