@@ -58,7 +58,7 @@ class plugin_handler {
 
     public final function generatePluginCache() {
         if (!is_dir(LITO_PLUGIN_ROOT . $this->_location))
-            return false;
+            throw new lttxFatalError('Could not find plugin directory in ' . LITO_PLUGIN_ROOT . $this->_location);
         $dir = opendir(LITO_PLUGIN_ROOT . $this->_location);
         $this->_location = preg_replace("!/$!", '', $this->_location);
         $this->_location .= '/';
