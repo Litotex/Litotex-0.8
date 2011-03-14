@@ -41,4 +41,19 @@ class package_errorPage extends package{
 	public function __action_main(){
 		return true;
 	}
+
+        private static $_sqlErrors = array();
+
+        public static function  registerHooks() {
+            self::$packages->registerHook(__CLASS__, 'AdoDBResult', 1, 'AdoDBResult', __FILE__, 'errorPage');
+            return true;
+        }
+
+        public static function __hook_AdoDBResult(ADOConnection $result){
+            $msg = $result->ErrorMsg();
+            if($msg && !in_array($msg, self::$_sqlErrors)){
+                    self::$db->Execute ("INSERT INTO `lttx_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)", array((self::$user)?self::$user->getUserID ():0, $msg, 1));
+                    self::$_sqlErrors[] = $msg;
+            }
+        }
 }

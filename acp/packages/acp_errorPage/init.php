@@ -23,7 +23,7 @@ class package_acp_errorPage extends package{
 	 * Name of the module, please do not change this!
 	 * @var string
 	 */
-    protected $_packageName = 'errorPage';
+    protected $_packageName = 'acp_errorPage';
     /**
      * No dependencies because they are loaded automatic by hook's
      * @var array
@@ -41,4 +41,19 @@ class package_acp_errorPage extends package{
 	public function __action_main(){
 		return true;
 	}
+
+        private static $_sqlErrors = array();
+
+        public static function  registerHooks() {
+            self::$packages->registerHook(__CLASS__, 'AdoDBResult', 1, 'AdoDBResult', __FILE__, 'acp_errorPage');
+            return true;
+        }
+
+        public static function __hook_AdoDBResult(ADOConnection $result){
+            $msg = $result->ErrorMsg();
+            if($msg && !in_array($msg, self::$_sqlErrors)){
+                    self::$db->Execute ("INSERT INTO `lttx_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)", array((self::$user)?self::$user->getUserID ():0, $msg, 1));
+                    self::$_sqlErrors[] = $msg;
+            }
+        }
 }
