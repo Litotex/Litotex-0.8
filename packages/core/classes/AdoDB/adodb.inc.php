@@ -946,7 +946,7 @@
 			$fn = $this->fnExecute;
 			$ret = $fn($this,$sql,$inputarr);
 			if (isset($ret)){
-                            package::$packages->callHook('AdoDBResult', array($this));
+                            package::$packages->callHook('AdoDBResult', array($this, $sql));
                             return $ret;
                         }
 		}
@@ -996,7 +996,7 @@
 						$this->outp_throw( "Input array does not match ?: ".htmlspecialchars($sql),'Execute');
 					$ret = $this->_Execute($sql);
 					if (!$ret){
-                                            package::$packages->callHook('AdoDBResult', array($this));
+                                            package::$packages->callHook('AdoDBResult', array($this, $sql));
                                             return $ret;
                                         }
 				}	
@@ -1010,7 +1010,7 @@
 					foreach($inputarr as $arr) {
 						$ret = $this->_Execute($stmt,$arr);
 						if (!$ret){
-                                                    package::$packages->callHook('AdoDBResult', array($this));
+                                                    package::$packages->callHook('AdoDBResult', array($this, $sql));
                                                     return $ret;
                                                 }
 					}
@@ -1022,7 +1022,7 @@
 			$ret = $this->_Execute($sql,false);
 		}
                 //Litotex Addon
-                package::$packages->callHook('AdoDBResult', array($this));
+                package::$packages->callHook('AdoDBResult', array($this, $sql));
 		return $ret;
 	}
 	

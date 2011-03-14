@@ -45,14 +45,14 @@ class package_errorPage extends package{
         private static $_sqlErrors = array();
 
         public static function  registerHooks() {
-            self::$packages->registerHook(__CLASS__, 'AdoDBResult', 1, 'AdoDBResult', __FILE__, 'errorPage');
+            self::$packages->registerHook(__CLASS__, 'AdoDBResult', 2, 'AdoDBResult', __FILE__, 'errorPage');
             return true;
         }
 
-        public static function __hook_AdoDBResult(ADOConnection $result){
+        public static function __hook_AdoDBResult(ADOConnection $result, $sql){
             $msg = $result->ErrorMsg();
             if($msg && !in_array($msg, self::$_sqlErrors)){
-                    self::$db->Execute ("INSERT INTO `lttx_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)", array((self::$user)?self::$user->getUserID ():0, $msg, 1));
+                    self::$db->Execute ("INSERT INTO `lttx_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)", array((self::$user)?self::$user->getUserID ():0, $msg . "\nquery was:\n" . $sql, 1));
                     self::$_sqlErrors[] = $msg;
             }
         }
