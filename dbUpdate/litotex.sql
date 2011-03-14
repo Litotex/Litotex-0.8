@@ -1137,3 +1137,5 @@ INSERT INTO `lttx1_acpNavigation` (`ID`, `parent`, `title`, `description`, `icon
 ALTER TABLE `lttx1_log`  ADD COLUMN `log_type` INT(3) NULL DEFAULT '0' AFTER `message`;
 
 ALTER TABLE  `lttx1_log` CHANGE  `logdate`  `logdate` TIMESTAMP NOT NULL;
+
+INSERT INTO `lttx1_acpnavigation` (`parent`, `title`, `description`, `icon`, `package`, `action`, `sort`, `tab`) VALUES (4, 'Gruppen', 'Berechtigungsgruppen', 'nothing.png', 'acp_groups', 'main', 3, 1);
