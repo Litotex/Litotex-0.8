@@ -277,7 +277,7 @@ class perm {
 					SELECT 
 						*
 					FROM 
-						`lttx_permissionsAvailable`
+						`lttx_permissions_available`
 					ORDER BY
 						`package`, `function`
 					";

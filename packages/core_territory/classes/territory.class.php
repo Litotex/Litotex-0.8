@@ -47,7 +47,7 @@ class territory{
 		if($result->RecordCount() == 0)
 			return false;
 		$this->_data['name'] = $result->fields[1];
-		$buildings = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx_territoryBuildings` WHERE `territoryID` = ?", array($this->_ID));
+		$buildings = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx_territory_buildings` WHERE `territoryID` = ?", array($this->_ID));
 		while(!$buildings->EOF){
 			try {
 				$this->_data['buildings'][$buildings->fields[0]] = array($buildings->fields[2], new building($buildings->fields[1]));
@@ -56,7 +56,7 @@ class territory{
 			}
 			$buildings->MoveNext();
 		}
-		$explores = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx_territoryExplores` WHERE `territoryID` = ?", array($this->_ID));
+		$explores = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx_territory_explores` WHERE `territoryID` = ?", array($this->_ID));
 		while(!$explores->EOF){
 			try {
 				$this->_data['explores'][$explores->fields[0]] = array($explores->fields[2], new building($explores->fields[1]));
@@ -183,9 +183,9 @@ class territory{
 			$building = $this->_data['buildings'][$buildingID][1];
 		$building->increaseBuildingLevel($newLevel, $this);
 		if($new){
-			$result = package::$db->Execute("INSERT INTO `lttx_territoryBuildings` (`territoryID`, `buildingID`, `level`) VALUES (?, ?, ?)", array($this->_ID, $buildingID, $newLevel));
+			$result = package::$db->Execute("INSERT INTO `lttx_territory_buildings` (`territoryID`, `buildingID`, `level`) VALUES (?, ?, ?)", array($this->_ID, $buildingID, $newLevel));
 		}else{
-			$result = package::$db->Execute("UPDATE `lttx_territoryBuildings` SET `level` = ? WHERE `territoryID` = ? AND `buildingID` = ?", array($newLevel, $this->_ID, $buildingID));
+			$result = package::$db->Execute("UPDATE `lttx_territory_buildings` SET `level` = ? WHERE `territoryID` = ? AND `buildingID` = ?", array($newLevel, $this->_ID, $buildingID));
 		}
 		unset(self::$_cache[$this->_ID]);
 		$this->_getData();

@@ -114,7 +114,7 @@ class building{
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$db->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx_buildingDependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
+		$dep = package::$db->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
 		$return = array();
 		if(!$dep)
 			return false;

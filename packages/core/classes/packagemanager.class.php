@@ -150,7 +150,7 @@ class packages {
         $oldPM = package::$packages;
         package::setPackageManagerClass($this);
         $this->_tplModificationCache = array();
-        package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `type` = ? AND `packageDir` = ?", array(2, $this->_packagePrefix));
+        package::$db->Execute("DELETE FROM `lttx_permissions_available` WHERE `type` = ? AND `packageDir` = ?", array(2, $this->_packagePrefix));
         if (!is_dir($this->_packagesDir))
             return false;
         $packages = opendir($this->_packagesDir);
@@ -170,7 +170,7 @@ class packages {
         if (!$this->_orderTplModificationCache()) {
             throw new lttxFatalError("Could not fetch tplMod settings, this might be a serious database issue!");
         }
-        package::$db->Execute("DELETE FROM `lttx_tplModificationSort` WHERE `packageDir` = ?", array($this->_packagePrefix));
+        package::$db->Execute("DELETE FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ?", array($this->_packagePrefix));
         closedir($packages);
         package::setPackageManagerClass($oldPM);
         return $this->_writeTplModificationCache();
@@ -191,7 +191,7 @@ class packages {
         foreach ($this->_tplModificationCache as $position => $list) {
             $n = 0;
             foreach ($list as $item) {
-                package::$db->Execute("INSERT INTO `lttx_tplModificationSort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
+                package::$db->Execute("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)", array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
                 $n++;
             }
         }
@@ -258,7 +258,7 @@ class packages {
      * @return bool
      */
     private function _orderTplModificationCache() {
-        $database = package::$db->Execute("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx_tplModificationSort` WHERE `packageDir` = ? ORDER BY `sort` ASC", array($this->_packagePrefix));
+        $database = package::$db->Execute("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ? ORDER BY `sort` ASC", array($this->_packagePrefix));
         if (!$database)
             return false;
         $cache = array();
@@ -330,7 +330,7 @@ class packages {
         }
         if (!method_exists($class, '__tpl_' . $function))
             return false;
-        package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(2, $packageName, $class, $function, $this->_packagePrefix));
+        package::$db->Execute("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(2, $packageName, $class, $function, $this->_packagePrefix));
         $this->_tplModificationCache[$class . ':' . $function] = array($class, $function, $file, $packageName, false);
         return true;
     }
@@ -477,7 +477,7 @@ class packages {
     public function generateDependencyCache() {
         $oldPM = package::$packages;
         package::setPackageManagerClass($this);
-        package::$db->Execute("DELETE FROM `lttx_permissionsAvailable` WHERE `packageDir` = ? AND `type` = ?", array($this->_packagePrefix, 1));
+        package::$db->Execute("DELETE FROM `lttx_permissions_available` WHERE `packageDir` = ? AND `type` = ?", array($this->_packagePrefix, 1));
         if (!is_dir($this->_packagesDir))
             return false;
         $packages = opendir($this->_packagesDir);
@@ -544,7 +544,7 @@ class packages {
         $pack = $this->loadPackage($path, false, false, false);
         $actions = $pack->getActions();
         foreach ($actions as $action) {
-            package::$db->Execute("INSERT INTO `lttx_permissionsAvailable` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(1, $path, $class, $action, $this->_packagePrefix));
+            package::$db->Execute("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(1, $path, $class, $action, $this->_packagePrefix));
         }
         return true;
     }
@@ -630,7 +630,7 @@ class packages {
         }
         //Every check passed :)
         //after this we can delete the old database tables...
-        package::$db->Execute("TRUNCATE TABLE `lttx_packageList`");
+        package::$db->Execute("TRUNCATE TABLE `lttx_package_list`");
         $dataSection = $xmlData->data;
         foreach ($dataSection->children() as $package) {
             $packageAttributes = $package->attributes();
@@ -701,7 +701,7 @@ class packages {
                 $dependency[] = array('name' => (string) $dependencyAttributes['name'], 'minVersion' => (string) $dependencyAttributes['minVersion'], 'installed' => $installedDep);
             }
             //Now we have to write all this to the database :)
-            package::$db->Execute("INSERT INTO  `lttx_packageList` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
+            package::$db->Execute("INSERT INTO  `lttx_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
 				VALUES (NULL ,  ?, ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?, ?);",
                     array($name, $prefix, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
         }
@@ -936,9 +936,9 @@ class packages {
              if(file_exists($destination))
               unlink($destination);
               copy($source, $destination);
-              package::$db->Execute("UPDATE `lttx_fileHash` SET `hash` = ? WHERE `file` = ?", array(md5_file($source), $destination));
+              package::$db->Execute("UPDATE `lttx_file_hash` SET `hash` = ? WHERE `file` = ?", array(md5_file($source), $destination));
               if(package::$db->Affected_Rows() <= 0)
-                      package::$db->Execute("INSERT INTO `lttx_fileHash` (`hash`, `file`) VALUES (?, ?)", array(md5_file($source), $destination));
+                      package::$db->Execute("INSERT INTO `lttx_file_hash` (`hash`, `file`) VALUES (?, ?)", array(md5_file($source), $destination));
             return true;
         } else if (!is_dir($destination)) {
             mkdir($destination);
@@ -954,7 +954,7 @@ class packages {
     public static final function reloadFileHashTable() {
         $startdir = LITO_FRONTEND_ROOT;
         //First clear old storage, we will completly rewrite it thought
-        package::$db->Execute("TRUNCATE TABLE `lttx_fileHash`");
+        package::$db->Execute("TRUNCATE TABLE `lttx_file_hash`");
         //Done... write the new data
         self::_insertFileHashReq($startdir);
     }
@@ -963,7 +963,7 @@ class packages {
         if (!file_exists($file))
             return false;
         if (!is_dir($file)) {
-            package::$db->Execute("INSERT INTO `lttx_fileHash` (`file`, `hash`) VALUES (?, ?)", array(str_replace('//', '/', $file), md5_file($file)));
+            package::$db->Execute("INSERT INTO `lttx_file_hash` (`file`, `hash`) VALUES (?, ?)", array(str_replace('//', '/', $file), md5_file($file)));
             return true;
         }
         $dir = opendir($file);
@@ -979,7 +979,7 @@ class packages {
         if (!file_exists(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName) || is_dir(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName))
             return true;
         //The file exists, check if its original
-        $result = package::$db->Execute("SELECT `hash` FROM `lttx_fileHash` WHERE `file` = ?", array(str_replace('//', '/', LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName)));
+        $result = package::$db->Execute("SELECT `hash` FROM `lttx_file_hash` WHERE `file` = ?", array(str_replace('//', '/', LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName)));
         if (!$result || !isset($result->fields[0]))
             return false;
         return md5_file(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName) == $result->fields[0];

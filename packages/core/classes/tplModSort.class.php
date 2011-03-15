@@ -1,7 +1,7 @@
 <?php
 class tplModSort extends Basis_Entry {
 
-	protected $_sTableName = 'lttx_tplmodificationsort';
+	protected $_sTableName = 'lttx1_tpl_modification_sort';
 	protected static $_sClassName = 'tplModSort';
 
 	/**

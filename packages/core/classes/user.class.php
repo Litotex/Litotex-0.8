@@ -716,7 +716,7 @@ class user {
         $aGroups = array();
         $result = package::$db->Execute("
             SELECT `groupID`
-            FROM `lttx_userGroupConnections`
+            FROM `lttx1_user_group_connections`
             WHERE `userID` = ?",
                 array($ID));
 
@@ -896,7 +896,7 @@ class user {
 
 	public function deleteAllGroups(){
 		 $result = package::$db->Execute("
-            DELETE FROM `lttx_userGroupConnections`
+            DELETE FROM `lttx1_user_group_connections`
             WHERE `userID` = ?",
                 array($this->getUserID()));
 		 return true;

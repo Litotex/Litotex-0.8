@@ -17,7 +17,7 @@
  */
 class userGroup extends Basis_Entry {
 
-	protected $_sTableName = 'lttx_userGroups';
+	protected $_sTableName = 'lttx1_user_groups';
 	static protected $_sClassName = 'userGroup';
 
 	/**
@@ -77,7 +77,7 @@ class userGroup extends Basis_Entry {
     public function getUsers(){
         $result = package::$db->Execute("
             SELECT `userID`
-            FROM `lttx_userGroupConnections`
+            FROM `lttx1_user_group_connections`
             WHERE `groupID` = ?",
                 array($this->ID));
         if(!$result)
@@ -104,7 +104,7 @@ class userGroup extends Basis_Entry {
         //Check if already in first...
         $result = package::$db->Execute("
             SELECT COUNT(`ID`)
-            FROM  `lttx_userGroupConnections`
+            FROM  `lttx1_user_group_connections`
             WHERE `userID` = ?
             AND `groupID` = ?",
                 array($ID, $this->ID));
@@ -114,7 +114,7 @@ class userGroup extends Basis_Entry {
                 return true;
         //end check
         $result = package::$db->Execute("
-            INSERT INTO `lttx_userGroupConnections`
+            INSERT INTO `lttx1_user_group_connections`
             (`userID`, `groupID`)
             VALUES
             (?, ?)",
@@ -158,7 +158,7 @@ class userGroup extends Basis_Entry {
 		}
 
        package::$db->Execute("
-            DELETE FROM `lttx_userGroupConnections`
+            DELETE FROM `lttx1_user_group_connections`
             WHERE `groupID` = ?",
                 array($this->ID));
 
@@ -171,7 +171,7 @@ class userGroup extends Basis_Entry {
     	$return = array();
         $result = package::$db->Execute("
             SELECT `ID`
-            FROM `lttx_userGroups`
+            FROM `lttx1_user_groups`
             WHERE `default` = ?",
                 array(1));
                 echo mysql_error();
