@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Litotex | Open Source Browsergame Engine.
  *
@@ -15,12 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  * This class has to be extended by every modul used in Litotex 0.8
  * @author: Jonas Schwbae <jonas.schwabe@gmail.com>
  * @copyright: 2010
  */
 abstract class package {
+
     /**
      * This will keep an instance of the database class for usage in extending classes
      * @var ADODB_mysql
@@ -31,7 +34,7 @@ abstract class package {
      * @var Smarty
      */
     public static $tpl;
-	    /**
+    /**
      * This will keep an instance of the lttxLog.log classes
      * @var lttxLog
      */
@@ -68,9 +71,9 @@ abstract class package {
      */
     protected static $_cssFiles = array();
     /**
-	 * This var contains a list of every JavaScript file that should be loaded by smarty
-	 * @var array
-    */
+     * This var contains a list of every JavaScript file that should be loaded by smarty
+     * @var array
+     */
     protected static $_jsFiles = array();
     /**
      * This will save the status of the running class, it will be used in the destructor
@@ -122,79 +125,90 @@ abstract class package {
      * @var string
      */
     public static $version = '0.0.0';
+
     /**
      * This function registers the class into the package manager and loads the casted action
      * @return void
      */
     public final function __construct($init = true, $dep = array()) {
-    	$this->_dep = $dep;
-    	if(!$init)return;
-    	$this->_tplDir = self::getTplDir();
+        $this->_dep = $dep;
+        if (!$init
+            )return;
+        $this->_tplDir = self::getTplDir();
         $this->setTemplateSettings(self::$tpl, $this->_packageName);
-        if(!isset($_GET['action']))
+        if (!isset($_GET['action']))
             $action = 'main';
         else
             $action = $_GET['action'];
         $this->_returnValue = $this->_castAction($action);
-        if(!is_bool($this->_returnValue)) {
-            $this->_returnValue = (bool)$this->_returnValue;
+        if (!is_bool($this->_returnValue)) {
+            $this->_returnValue = (bool) $this->_returnValue;
         }
         return;
     }
-	public final function success(){
-    	return $this->_returnValue;
+
+    public final function success() {
+        return $this->_returnValue;
     }
+
     /**
      * Displays the template if set to do
      * @return bool
      */
-    public final function displayTpl(){
-    	if($this->_tpl) {
-                package::$tpl->assign('queryCount', package::$db->count);
-        	if(file_exists(self::getTplDir($this->_packageName) . $this->_theme)){
-            	self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
-        	}else{
-        		self::$tpl->display(self::getTplDir($this->_packageName, 'default') . $this->_theme);
-        	}
+    public final function displayTpl() {
+        if ($this->_tpl) {
+            package::$tpl->assign('queryCount', package::$db->count);
+            if (file_exists(self::getTplDir($this->_packageName) . $this->_theme)) {
+                self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
+            } else {
+                self::$tpl->display(self::getTplDir($this->_packageName, 'default') . $this->_theme);
+            }
         }
         return true;
     }
+
     /**
      * Returns a language variable
      * @param string $var key to lookup
      * @return string language var
      */
-    public static function getLanguageVar($var){
-    		return self::$tpl->getConfigVars($var);
-    } 
+    public static function getLanguageVar($var) {
+        if (!self::$tpl)
+            return false;
+        return self::$tpl->getConfigVars($var);
+    }
+
     /**
      * This functions checks which actions are available ($_availableActions) and casts the best function for $action
      * return bool (from action function)
      */
     protected final function _castAction($action) {
-        if(in_array($action, $this->_availableActions)) {
+        if (in_array($action, $this->_availableActions)) {
             $functionName = '__action_' . $action;
-        }else {
-        	if(in_array('main', $this->_availableActions)){
-        		$action = 'main';
-        		$functionName = '__action_main';
-        	} else return false;
-        	if(!self::$perm->checkPerm($this->_packageName, $action, 'package_' . $this->_packageName)){
-        		throw new lttxError('E_noPermission');
-        	}
+        } else {
+            if (in_array('main', $this->_availableActions)) {
+                $action = 'main';
+                $functionName = '__action_main';
+            } else
+                return false;
+            if (!self::$perm->checkPerm($this->_packageName, $action, 'package_' . $this->_packageName)) {
+                throw new lttxError('E_noPermission');
+            }
         }
-   		if(!self::$perm->checkPerm($this, $action, 'package_' . $this->_packageName)){
-        	throw new lttxError('E_noPermission');
-       	}
-       	$this->runtime();
+        if (!self::$perm->checkPerm($this, $action, 'package_' . $this->_packageName)) {
+            throw new lttxError('E_noPermission');
+        }
+        $this->runtime();
         return $this->$functionName();
     }
+
     /**
      * This is the main function which is called if no other function is avaialbe
      * It has to be redeclared!
      * @return bool
      */
     abstract public function __action_main();
+
     /**
      * This function passes a hook to the package manager for further usage.
      * This function is cached so that it should do the job if every hook is registered in registerHooks()
@@ -204,29 +218,32 @@ abstract class package {
      * @return bool was the hook registered successfully?
      */
     protected static final function _registerHook($class, $hookname, $nParams, $function = false, $file = false, $packageName = false) {
-        if(!self::$packages) {
+        if (!self::$packages) {
             trigger_error('The packagemanager was not accessible for this package, register it first.', E_USER_ERROR);
             exit();
         }
-        $function = (!$function)?$hookname:$function;
+        $function = (!$function) ? $hookname : $function;
         $return = self::$packages->registerHook($class, $hookname, $nParams, $function, $file, $packageName);
-        if(!$return)
+        if (!$return)
             trigger_error('Packagemanager was unable to load hook function "__hook_' . $function . '"', E_USER_ERROR);
     }
+
     /**
      * This function is used to regenerate the hook cache
      * @return bool
      */
-    static public function registerHooks(){
-    	return true;
+    static public function registerHooks() {
+        return true;
     }
+
     /**
      * This function is used to regenerate the tplMod cache
      * @return bool
      */
-	static public function registerTplModifications(){
-    	return true;
+    static public function registerTplModifications() {
+        return true;
     }
+
     /**
      * This function passes a tplMod to the package manager for further usage.
      * This function is cached so that it should do the job if every hook is registered in registerHooks()
@@ -234,88 +251,91 @@ abstract class package {
      * @param bool | str $function name of function, used if the function is overloaded
      * @return bool was the hook registered successfully?
      */
-	protected static final function _registerTplModification($class, $function, $packageName, $file = false) {
-        if(!self::$packages) {
+    protected static final function _registerTplModification($class, $function, $packageName, $file = false) {
+        if (!self::$packages) {
             trigger_error('The packagemanager was not accessible for this package, register it first.', E_USER_ERROR);
             exit();
         }
         $return = self::$packages->registerTplModification($class, $function, $file, $packageName);
-        if(!$return)
+        if (!$return)
             trigger_error('Packagemanager was unable to load tplModification function "__tpl_' . $function . '"', E_USER_ERROR);
     }
-    
-	    /**
+
+    /**
      * This will save a database instance in the root class
      * Attention! Only allowed on package class
      * @return bool
      */
     static public final function setlttxLogClass($log) {
-        if(__CLASS__ != 'package')
+        if (__CLASS__ != 'package')
             return false;
-		package::$log = $log;
+        package::$log = $log;
         return true;
     }
-	
-	
-	
+
     /**
      * This will save a database instance in the root class
      * Attention! Only allowed on package class
      * @return bool
      */
     static public final function setDatabaseClass($db) {
-        if(__CLASS__ != 'package')
+        if (__CLASS__ != 'package')
             return false;
         package::$db = $db;
         return true;
     }
+
     /**
      * This will save a template instance in the root class
      * Attention! Only allowed on package class
      * @return bool
      */
     public static final function setTemplateClass($tpl) {
-        if(__CLASS__ != 'package')
+        if (__CLASS__ != 'package')
             return false;
         package::$tpl = $tpl;
         self::$tpl->assign('CSS_FILES', self::$_cssFiles);
         self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
     }
+
     /**
      * This will save a package and hook manager instance in the root class
      * Attention! Only allowed on package class
      * @return bool
      */
     public static final function setPackageManagerClass($packages) {
-        if(__CLASS__ != 'package')
+        if (__CLASS__ != 'package')
             return false;
         package::$packages = $packages;
         return true;
     }
+
     /**
      * This will save the session instance in the package
      * @param session $session instance
      * @return bool
      */
     public static final function setSessionClass($session) {
-        if(__CLASS__ != 'package')
+        if (__CLASS__ != 'package')
             return false;
         package::$session = $session;
         package::$user = &$session->user;
         return true;
     }
+
     /**
      * This will save the permission class instance in the package
      * @param perm $perm instance
      * @return bool
      */
     public static final function setPermClass($perm) {
-        if(__CLASS__ != 'package')
+        if (__CLASS__ != 'package')
             return false;
         package::$perm = $perm;
         return true;
     }
+
     /**
      * This is casted by packagemanger on regenerate cache
      * @param string $class classname to register (need to be same as class name)
@@ -324,17 +344,20 @@ abstract class package {
     public static function registerClass($class) {
         return self::$packages->registerClass($class);
     }
+
     /**
      * Set to true if the template should be showed on destroy
      * @param bool $tpl Tpl policy
      * @return bool
      */
     public final function setTemplatePolicy($tpl) {
-    	if($this->_returnValue)
-        	$this->_tpl = (bool)$tpl;
-        else $this->_tpl = false;
+        if ($this->_returnValue)
+            $this->_tpl = (bool) $tpl;
+        else
+            $this->_tpl = false;
         return true;
     }
+
     /**
      * Add a new css file to include to the template
      * @param string $href name of css file
@@ -342,17 +365,18 @@ abstract class package {
      * @return bool
      */
     public function addCssFile($href, $package = false) {
-    	if(file_exists(self::getCssDir($package) . $href)){
-    		if(!in_array(self::getCssUrl($package) . $href, self::$_cssFiles))
-        		self::$_cssFiles[] = self::getCssUrl($package) . $href;
-    	}else{
-    		if(!in_array(self::getCssUrl($package, 'default') . $href, self::$_cssFiles))
-    			self::$_cssFiles[] = self::getCssUrl($package, 'default') . $href;
-    	}
-        if(self::$tpl)
+        if (file_exists(self::getCssDir($package) . $href)) {
+            if (!in_array(self::getCssUrl($package) . $href, self::$_cssFiles))
+                self::$_cssFiles[] = self::getCssUrl($package) . $href;
+        }else {
+            if (!in_array(self::getCssUrl($package, 'default') . $href, self::$_cssFiles))
+                self::$_cssFiles[] = self::getCssUrl($package, 'default') . $href;
+        }
+        if (self::$tpl)
             self::$tpl->assign('CSS_FILES', self::$_cssFiles);
         return true;
     }
+
     /**
      * Adds a new js file to include to the template
      * @param string $href name of js file
@@ -360,185 +384,208 @@ abstract class package {
      * @return bool
      */
     public static function addJsFile($href, $package = false) {
-    	if(file_exists(self::getJsDir($package) . $href)){
-    		if(!in_array(self::getJsUrl($package) . $href, self::$_jsFiles))
-        		self::$_jsFiles[] = self::getJsUrl($package) . $href;
-    	}else{
-    		if(!in_array(self::getJsUrl($package, 'default') . $href, self::$_jsFiles))
-    			self::$_jsFiles[] = self::getJsUrl($package, 'default') . $href;
-    	}
-        if(self::$tpl)
+        if (file_exists(self::getJsDir($package) . $href)) {
+            if (!in_array(self::getJsUrl($package) . $href, self::$_jsFiles))
+                self::$_jsFiles[] = self::getJsUrl($package) . $href;
+        }else {
+            if (!in_array(self::getJsUrl($package, 'default') . $href, self::$_jsFiles))
+                self::$_jsFiles[] = self::getJsUrl($package, 'default') . $href;
+        }
+        if (self::$tpl)
             self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
     }
+
     /**
      * Adds a new JS file with no relations to a package, just type the url to use
      * @param str $href
      * @return bool
      */
-    public static function addNonPackageJsFile($href){
-    	if(!in_array($href, self::$_jsFiles))
-    		self::$_jsFiles[] = $href;
-    	if(self::$tpl)
+    public static function addNonPackageJsFile($href) {
+        if (!in_array($href, self::$_jsFiles))
+            self::$_jsFiles[] = $href;
+        if (self::$tpl)
             self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
     }
+
     /**
      * This will refer the user back to the front page of a package
      * It will prevent from refering to the same page again due to errors by passing an error!
      */
-    protected final function _referMain(){
-        if(isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] == 'package=' . $this->_packageName)
-                throw new Exception('Refer loop... This might be related to a previous error in the source code!');
+    protected final function _referMain() {
+        if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] == 'package=' . $this->_packageName)
+            throw new Exception('Refer loop... This might be related to a previous error in the source code!');
         header('Location: index.php?package=' . $this->_packageName);
         exit();
     }
+
     /**
      * Returns the name of the current package
      * @return str
      */
-    public final function getPackageName(){
+    public final function getPackageName() {
         return $this->_packageName;
     }
-    public static function getTplDir($package = false, $tpl = false){
-    	if(!$package){
-    		if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))){
-    			return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/';
-    		}else{
-    			return TEMPLATE_DIRECTORY . self::getTemplate('default') . '/';
-    		}
-    	}else{
-    		if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/')){
-    			return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/';
-    		}else{
-    			return TEMPLATE_DIRECTORY . self::getTemplate('default') . '/' . $package . '/';
-    		}
-    	}
-    }
-	public static function getTplURL($package = false, $tpl = false){
-		if(!$package){
-			if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))){
-	    		return TPL_DIRNAME . self::getTemplate($tpl) . '/';
-			}else{
-				return TPL_DIRNAME . self::getTemplate('default') . '/';
-			}
-		}else{
-			if(is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/')){
-    			return TPL_DIRNAME . self::getTemplate($tpl) . '/' . $package . '/';
-			}else{
-				return TPL_DIRNAME . self::getTemplate('default') . '/' . $package . '/';
-			}
-		}
-    }
-    public static function getTemplate($tpl = false){
-    	if($tpl)
-    		return $tpl;
-    	$return = 'default';
-    	self::$packages->callHook('getTemplateName', array(&$return));
-    	return $return;
-    }
-    public function getImgUrl($package = false, $tpl = false){
-    	return self::getTplURL($package, $tpl) . IMG_DIR;
-    }
-	public function getJsUrl($package = false, $tpl = false){
-    		return self::getTplURL($package, $tpl) . JS_DIR;
-    }
-	public function getCssUrl($package = false, $tpl = false){
-    	return self::getTplURL($package, $tpl) . CSS_DIR;
-    }
-	public function getImgDir($package = false, $tpl = false){
-    	return self::getTplDir($package, $tpl) . IMG_DIR;
-    }
-	public function getJsDir($package = false, $tpl = false){
-    		return self::getTplDir($package, $tpl) . JS_DIR;
-    }
-	public function getCssDir($package = false, $tpl = false){
-    	return self::getTplDir($package, $tpl) . CSS_DIR;
-    }
-	public function getLangPath($package = false, $tpl = false){
-		if(is_dir(self::getTplDir($package, $tpl) . LANG_DIR)){
-    		return self::getTplDir($package, $tpl) . LANG_DIR;
-		}else{
-			return self::getTplDir($package, 'default') . LANG_DIR;
-		}
-    }
-    public static function getLanguage(){
-    	return 'de';
-    }
-	public static function loadLang($tpl, $package = false){
-		if(!is_a($tpl, 'Smarty'))
-			return false;
-    	if(file_exists(self::getLangPath() . self::getLanguage() . '.lang.php')){
-        	$tpl->configLoad(self::getLangPath() . self::getLanguage() . '.lang.php');
-        } else if(file_exists(self::getLangPath() . 'en' . '.lang.php')){
-        	$tpl->configLoad(self::getLangPath() . 'en' . '.lang.php');
-        }
-        if($package && file_exists(self::getLangPath($package) .  self::getLanguage() . '.lang.php')){
-        	$tpl->configLoad(self::getLangPath($package) . self::getLanguage() . '.lang.php');
-        }else if(file_exists(self::getLangPath($package) . 'en' . '.lang.php')){
-        	$tpl->configLoad(self::getLangPath($package) . 'en' . '.lang.php');
+
+    public static function getTplDir($package = false, $tpl = false) {
+        if (!$package) {
+            if (is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))) {
+                return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/';
+            } else {
+                return TEMPLATE_DIRECTORY . self::getTemplate('default') . '/';
+            }
         } else {
-        	return false;
+            if (is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/')) {
+                return TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/';
+            } else {
+                return TEMPLATE_DIRECTORY . self::getTemplate('default') . '/' . $package . '/';
+            }
+        }
+    }
+
+    public static function getTplURL($package = false, $tpl = false) {
+        if (!$package) {
+            if (is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl))) {
+                return TPL_DIRNAME . self::getTemplate($tpl) . '/';
+            } else {
+                return TPL_DIRNAME . self::getTemplate('default') . '/';
+            }
+        } else {
+            if (is_dir(TEMPLATE_DIRECTORY . self::getTemplate($tpl) . '/' . $package . '/')) {
+                return TPL_DIRNAME . self::getTemplate($tpl) . '/' . $package . '/';
+            } else {
+                return TPL_DIRNAME . self::getTemplate('default') . '/' . $package . '/';
+            }
+        }
+    }
+
+    public static function getTemplate($tpl = false) {
+        if ($tpl)
+            return $tpl;
+        $return = 'default';
+        self::$packages->callHook('getTemplateName', array(&$return));
+        return $return;
+    }
+
+    public function getImgUrl($package = false, $tpl = false) {
+        return self::getTplURL($package, $tpl) . IMG_DIR;
+    }
+
+    public function getJsUrl($package = false, $tpl = false) {
+        return self::getTplURL($package, $tpl) . JS_DIR;
+    }
+
+    public function getCssUrl($package = false, $tpl = false) {
+        return self::getTplURL($package, $tpl) . CSS_DIR;
+    }
+
+    public function getImgDir($package = false, $tpl = false) {
+        return self::getTplDir($package, $tpl) . IMG_DIR;
+    }
+
+    public function getJsDir($package = false, $tpl = false) {
+        return self::getTplDir($package, $tpl) . JS_DIR;
+    }
+
+    public function getCssDir($package = false, $tpl = false) {
+        return self::getTplDir($package, $tpl) . CSS_DIR;
+    }
+
+    public function getLangPath($package = false, $tpl = false) {
+        if (is_dir(self::getTplDir($package, $tpl) . LANG_DIR)) {
+            return self::getTplDir($package, $tpl) . LANG_DIR;
+        } else {
+            return self::getTplDir($package, 'default') . LANG_DIR;
+        }
+    }
+
+    public static function getLanguage() {
+        return 'de';
+    }
+
+    public static function loadLang($tpl, $package = false) {
+        if (!is_a($tpl, 'Smarty'))
+            return false;
+        if (file_exists(self::getLangPath() . self::getLanguage() . '.lang.php')) {
+            $tpl->configLoad(self::getLangPath() . self::getLanguage() . '.lang.php');
+        } else if (file_exists(self::getLangPath() . 'en' . '.lang.php')) {
+            $tpl->configLoad(self::getLangPath() . 'en' . '.lang.php');
+        }
+        if ($package && file_exists(self::getLangPath($package) . self::getLanguage() . '.lang.php')) {
+            $tpl->configLoad(self::getLangPath($package) . self::getLanguage() . '.lang.php');
+        } else if (file_exists(self::getLangPath($package) . 'en' . '.lang.php')) {
+            $tpl->configLoad(self::getLangPath($package) . 'en' . '.lang.php');
+        } else {
+            return false;
         }
         return true;
     }
-    public static function loadNonPackageLang($tpl, $href){
-    	if(!is_a($tpl, 'Smarty'))
-			return false;
-    	if(file_exists($href . '.' . self::getLanguage() . '.lang.php')){
-        	$tpl->configLoad($href . '.' . self::getLanguage() . '.lang.php');
+
+    public static function loadNonPackageLang($tpl, $href) {
+        if (!is_a($tpl, 'Smarty'))
+            return false;
+        if (file_exists($href . '.' . self::getLanguage() . '.lang.php')) {
+            $tpl->configLoad($href . '.' . self::getLanguage() . '.lang.php');
         } else {
-        	$tpl->configLoad($href . '.en' . '.lang.php');
+            $tpl->configLoad($href . '.en' . '.lang.php');
         }
     }
-    public static function setTemplateSettings($tpl, $package = false){
-    	if(is_dir(self::getImgDir(false))){
-    		$tpl->assign('CORE_IMG_URL', self::getImgUrl(false));
-    	}else{
-    		$tpl->assign('CORE_IMG_URL', self::getImgUrl(false, 'default'));
-    	}
-    	if(is_dir(self::getCssDir(false))){
-        	$tpl->assign('CORE_CSS_URL', self::getCssUrl(false));
-    	}else{
-    		$tpl->assign('CORE_CSS_URL', self::getCssUrl(false, 'default'));
-    	}
-    	if(is_dir(self::getJsDir(false))){
-        	$tpl->assign('CORE_JS_URL', self::getJsUrl(false));
-    	}else{
-    		$tpl->assign('CORE_JS_URL', self::getJsUrl(false, 'default'));
-    	}
-        if($package){
-        	if(is_dir(self::getImgDir($package))){
-	        	$tpl->assign('IMG_URL', self::getImgUrl($package));
-        	}else{
-        		$tpl->assign('IMG_URL', self::getImgUrl($package, 'default'));
-        	}
-        	if(is_dir(self::getCssDir($package))){
-	        	$tpl->assign('CSS_URL', self::getCssUrl($package));
-        	}else{
-        		$tpl->assign('CSS_URL', self::getCssUrl($package, 'default'));
-        	}
-        	if(is_dir(self::getJsDir($package))){
-	        	$tpl->assign('JS_URL', self::getJsUrl($package));
-        	}else{
-        		$tpl->assign('JS_URL', self::getJsUrl($package, 'default'));
-        	}
-                $tpl->assign('PACKAGE_DIR', MODULES_DIRECTORY . $package . '/');
-                $tpl->assign('TPL_DIR', self::getTplDir($package = $package) . '/');
+
+    public static function setTemplateSettings($tpl, $package = false) {
+        if (is_dir(self::getImgDir(false))) {
+            $tpl->assign('CORE_IMG_URL', self::getImgUrl(false));
+        } else {
+            $tpl->assign('CORE_IMG_URL', self::getImgUrl(false, 'default'));
+        }
+        if (is_dir(self::getCssDir(false))) {
+            $tpl->assign('CORE_CSS_URL', self::getCssUrl(false));
+        } else {
+            $tpl->assign('CORE_CSS_URL', self::getCssUrl(false, 'default'));
+        }
+        if (is_dir(self::getJsDir(false))) {
+            $tpl->assign('CORE_JS_URL', self::getJsUrl(false));
+        } else {
+            $tpl->assign('CORE_JS_URL', self::getJsUrl(false, 'default'));
+        }
+        if ($package) {
+            if (is_dir(self::getImgDir($package))) {
+                $tpl->assign('IMG_URL', self::getImgUrl($package));
+            } else {
+                $tpl->assign('IMG_URL', self::getImgUrl($package, 'default'));
+            }
+            if (is_dir(self::getCssDir($package))) {
+                $tpl->assign('CSS_URL', self::getCssUrl($package));
+            } else {
+                $tpl->assign('CSS_URL', self::getCssUrl($package, 'default'));
+            }
+            if (is_dir(self::getJsDir($package))) {
+                $tpl->assign('JS_URL', self::getJsUrl($package));
+            } else {
+                $tpl->assign('JS_URL', self::getJsUrl($package, 'default'));
+            }
+            $tpl->assign('PACKAGE_DIR', MODULES_DIRECTORY . $package . '/');
+            $tpl->assign('TPL_DIR', self::getTplDir($package = $package) . '/');
         }
         return true;
     }
-    public function getActions(){
-    	return $this->_availableActions;
+
+    public function getActions() {
+        return $this->_availableActions;
     }
-	public function debug($message = ''){
-    	self::$log->debug($message);
-		return true;
+
+    public function debug($message = '') {
+        self::$log->debug($message);
+        return true;
     }
+
     /**
      * This function will be called automaticly before every other __action_method is used on a package
      * It can be empty as well
      * @return void
      */
-    public function runtime(){}
+    public function runtime() {
+        
+    }
+
 }
