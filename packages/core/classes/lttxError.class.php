@@ -65,11 +65,11 @@ class lttxFatalError extends Exception{
 		$this->_log($message, $package);
 	}
 	private function _log($message, $package){
-		package::$db->Execute("INSERT INTO `lttx_errorLog` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)", array($package, 1, '##' . $this->getFile() . '(' . $this->getLine() . '):' . $message . "\n" . $this->getTraceAsString()));
+		package::$db->Execute("INSERT INTO `lttx_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)", array($package, 1, '##' . $this->getFile() . '(' . $this->getLine() . '):' . $message . "\n" . $this->getTraceAsString()));
 		$this->_oID = package::$db->Insert_ID();
 	}
 	public function setTraced($option){
 		if(!$this->_oID)return false;
-		package::$db->Execute("UPDATE `lttx_errorLog` SET `traced` = ? WHERE `ID` = ?", array($option, $this->_oID));
+		package::$db->Execute("UPDATE `lttx_error_log` SET `traced` = ? WHERE `ID` = ?", array($option, $this->_oID));
 	}
 }
