@@ -22,11 +22,6 @@ class package_acp_log_viewer extends acpPackage{
 			return true;
 	}
 
-	public function __action_del_logs(){
-	package::$log->debug("action_del_logs");
-	echo "";
-	return true;
-	}
 	public function __action_show_log(){
 
 		$this->_theme = 'empty.tpl';
@@ -57,11 +52,6 @@ class package_acp_log_viewer extends acpPackage{
 		$responce->total = $total_pages; 
 		$responce->records = $count; 
 		
-		package::$log->debug("limit:".$limit);
-		package::$log->debug("start:".$start);
-		package::$log->debug("Page:".$page);
-		package::$log->debug("total:".$total_pages);
-		package::$log->debug("COUNT:".$count);
 		$i=0; 
 		while(!$result->EOF){
 			$responce->rows[$i]['id']=$result->fields['ID']; 
@@ -111,11 +101,6 @@ class package_acp_log_viewer extends acpPackage{
 		$responce->total = $total_pages; 
 		$responce->records = $count; 
 		
-		package::$log->debug("limit:".$limit);
-		package::$log->debug("start:".$start);
-		package::$log->debug("Page:".$page);
-		package::$log->debug("total:".$total_pages);
-		package::$log->debug("COUNT:".$count);
 		$i=0; 
 		while(!$result->EOF){
 			$responce->rows[$i]['id']=$result->fields['ID']; 
