@@ -1,4 +1,13 @@
 /**
+ * Button Design
+ */
+
+$(function(){
+$("#button").button();
+$("#radioset").buttonset();
+});
+
+/**
  * On Load start some Funktions
  */
 $(document).ready(function() {

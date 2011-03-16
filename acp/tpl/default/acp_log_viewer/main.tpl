@@ -35,6 +35,7 @@ colModel:[ 	{name:'ID',index:'ID', width:60, sorttype:"int"},
 <table id="list3"></table> 
 <div id="pager3"></div> 
 <br>
+<button id="button">A button element</button>
 
 Logeintr&auml;ge k&ouml;nnen mit <strong>package::$log-&gt;debug('eintrag')</strong> geschrieben werden.
 
