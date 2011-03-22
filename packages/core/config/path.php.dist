@@ -1,4 +1,0 @@
-<?php
-$frontendRoot = '/home/jonas/Dokumente/PHP/Litotex8/';
-$frontendUrl = 'http://localhost/Litotex8/';
-?>
