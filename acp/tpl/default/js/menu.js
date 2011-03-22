@@ -20,3 +20,5 @@ function out(item){
         return;
     tOut=setTimeout("cover('"+item+"')",200);
 }
+
+

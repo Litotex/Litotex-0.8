@@ -1,6 +1,6 @@
 {foreach from=$navigationItems item=parentNodes key=parentID}
     <div class="navi_top" id="navi_top{$parentID}"{if !$parentNodes.active} style="display:none"{/if}>
-    	<ul>
+     <ul>
             {foreach from=$parentNodes item=item}
             {if is_array($item)}
             <li><a href="index.php?package={$item.package}&action={$item.action}{if $item.tab}#ui-tabs-{$item.tab}{/if}" onmouseover="show('um_{$item.ID}')" onmouseout="out('um_{$item.ID}')">{$item.title}</a>
