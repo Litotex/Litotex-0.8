@@ -243,7 +243,7 @@ class user {
      * @param array $data array of data that should be written to the database
      * @return int on failure [-1 username exists -2 email exists -3 unknown error] | user
      */
-    public function register($username, $password, $email, $data) {
+    public static function register($username, $password, $email, $data) {
         $passwordSalted = self::_saltString($password);
         if(self::userExists($username))
             return -1;

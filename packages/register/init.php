@@ -41,6 +41,21 @@ class package_register extends package {
         return true;
     }
  	public function __action_register_submit(){
-		
+		if(!isset($_POST['confirm_password']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['username']) || !isset($_POST['rules'])){
+                    throw new lttxError('E_notAllInformationPassed');
+                }
+                $result = user::register($_POST['username'], $_POST['password'], $_POST['email'], array());
+                if(is_a($result, 'user')){
+                    throw new lttxInfo('registrationComplete');
+                }
+                if($result == -2){
+                    throw new lttxError('E_userNameAlreadyExists');
+                }
+                if($result == -1){
+                    throw new lttxError('E_emailAlreadyExists');
+                }
+                if($result == -3){
+                    throw new lttxFatalError('unexpected error while registration.');
+                }
 	}
 }
