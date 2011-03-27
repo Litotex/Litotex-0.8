@@ -29,8 +29,8 @@
     </ul>
 </div>
 <div id="legend" style="bottom:0px; position:absolute;">
-<div id="get_result">get_result</div>
-<div id="navSelected">1</div>
+<div id="get_result"></div>
+<div id="navSelected"></div>
 {foreach from=$navigationItems item=item}
     <div id="acp_topMenu{$item.ID}_title" style="display:none;">{$item.title}</div>
     <div id="acp_topMenu{$item.ID}_description" style="display:none;">{$item.description}</div>
