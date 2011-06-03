@@ -81,6 +81,11 @@ try{
 		}else{
 			$smarty->assign('FOOTER', package::getTplDir(false, 'default') . 'footer.tpl');
 		}
+                //Check for AJAX Lock
+                if(isset($_GET['ajaxLock']) && isset($_SESSION['ajaxLocks'][$_GET['ajaxLock']])){
+                    $smarty->assign ('CONTENTONLY', true);
+                    unset($_SESSION['ajaxLocks'][$_GET['ajaxLock']]);
+                }
 		$smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
 		package::setTemplateClass($smarty);
 	}catch (Exception $e){
@@ -109,6 +114,8 @@ try{
 	else
 	$perm = new userPerm(package::$user);
 	package::setPermClass($perm);
+
+
 	if(isset($_GET['package'])) {
 		$package = $_GET['package'];
 		$package = $packageManager->loadPackage($package, true);

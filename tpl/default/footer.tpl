@@ -1,4 +1,5 @@
-        </div>
+{if !$CONTENTONLY}
+</div>
         <div id="right">
             	{displayTplModification position=right}
         </div> 
@@ -26,3 +27,4 @@
 
 </body>
 </html>
+{/if}
