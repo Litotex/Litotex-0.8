@@ -28,6 +28,7 @@
 <div id="wrapper">
 	<div id="header"></div>
     <div id="navi_top">
+	{displayTplModification position=TopNavi}
     	<ul>
         	<li><a href="#" class="active">Home</a></li>
             <li><a href="#">Registrieren</a></li>
@@ -36,6 +37,7 @@
         </ul>
     </div>
 	<div id="subnavi">
+	{displayTplModification position=SubNavi}
     	<ul>
 			<li><a href="#">Haus</a></li>
 			<li><a href="#">Karte</a></li>
