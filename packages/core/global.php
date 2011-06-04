@@ -82,6 +82,7 @@ try{
 			$smarty->assign('FOOTER', package::getTplDir(false, 'default') . 'footer.tpl');
 		}
                 //Check for AJAX Lock
+				$smarty->assign ('CONTENTONLY', false);
                 if(isset($_GET['ajaxLock']) && isset($_SESSION['ajaxLocks'][$_GET['ajaxLock']])){
                     $smarty->assign ('CONTENTONLY', true);
                 }
