@@ -28,23 +28,14 @@
 <div id="wrapper">
 	<div id="header"></div>
     <div id="navi_top">
+	{generateTplModification position=TopNavi}
 	{displayTplModification position=TopNavi}
-    	<ul>
-        	<li><a href="#" class="active">Home</a></li>
-            <li><a href="#">Registrieren</a></li>
-            <li><a href="#">Kennwort vergessen</a></li>
-            <li><a href="#">Impressum</a></li>
-        </ul>
+    	
     </div>
 	<div id="subnavi">
+	{generateTplModification position=SubNavi}
 	{displayTplModification position=SubNavi}
-    	<ul>
-			<li><a href="#">Haus</a></li>
-			<li><a href="#">Karte</a></li>
-			<li><a href="#">Test</a></li>
-			<li><a href="#">Freunde</a></li>
-			<li><a href="#">...</a></li>
-		</ul>
+    	
     </div>
     <div class="both"></div>
     <div id="main">
