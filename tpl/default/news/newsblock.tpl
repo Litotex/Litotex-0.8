@@ -1,4 +1,4 @@
-<h2>{#news#}</h2>
+<h3>{#news#}</h3>
 <table width="100%">
 {foreach from=$news item=item}
 <tr>
