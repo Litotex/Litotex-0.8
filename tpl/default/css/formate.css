@@ -202,7 +202,8 @@ select, textarea, input {
 	border-left:solid 1px #999999;
 	border-right:solid 1px #e4e4e4;
 	border-bottom:solid 1px #e4e4e4;
-	margin: 10px 0 0 0;
+	margin: 5px 0 0 5px;
+	widht:79px;
 }
 
 .button {

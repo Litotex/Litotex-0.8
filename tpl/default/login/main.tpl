@@ -1,17 +1,19 @@
 {include file=$HEADER}
-<div class="rbroundbox">
-	<div class="rbtop"><div></div></div>
-		<div class="rbcontent">
-			<h2>Login </h2>
-			 <form action="index.php?package=login&amp;action=loginsubmit" name="frm_login" method="post">
-					<p>{#LN_LOGIN_USERNAME#}
-					<input class="textinput" name="username" type="text" value="" maxlength="255" ></p>
-					<p>{#LN_LOGIN_PASSWORD#}
-					<input class="textinput" name="password" type="password" value="" maxlength="255" >
-					</p>
-					<p> <a href="index.php?package=login&amp;action=forget">{#LN_LOGIN_FORGET_LINKNAME#}</a> | <a href="#" onClick="document.frm_login.submit();">{#LN_LOGIN_LINKNAME#}</a></p>
-				 </form>
-	 </div><!-- /rbcontent -->
-	<div class="rbbot"><div></div></div>
-</div><!-- /rbroundbox -->
+<form class="cmxform" id="loginForm" method="post" action="index.php?package=login&amp;action=loginsubmit">
+	<fieldset class="ui-widget ui-widget-content ui-corner-all">
+		<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_LOGIN_TITLE#}</legend>
+		<p>
+			<label for="username">{#LN_LOGIN_USERNAME#}</label>
+			<input id="username" name="username" class="required ui-widget-content" minlength="2" >
+		</p>
+		<p>
+			<label for="password">{#LN_LOGIN_PASSWORD#}</label>
+			<input type="password" id="password" name="password" class="required ui-widget-content" minlength="2" >
+		</p>
+		<p>
+			<button class="submit" type="submit">{#LN_LOGIN_BUTTON_TITLE#}</button>
+		</p>
+		<p> <a href="index.php?package=login&amp;action=forget">{#LN_LOGIN_FORGET_LINKNAME#}</a></p>
+	</fieldset>
+</form>
 {include file=$FOOTER}

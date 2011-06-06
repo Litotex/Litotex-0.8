@@ -36,10 +36,10 @@ $.validator.setDefaults({
 <form class="cmxform" id="registerForm" method="post" action="index.php?package=login&amp;action=forget_submit">
 	<fieldset class="ui-widget ui-widget-content ui-corner-all">
 		<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_LOGIN_FORGET_NOTE2#}</legend>
-		<p>
+
 			<label for="email">{#LN_LOGIN_EMAIL#}</label>
 			<input id="email" name="email" class="required email ui-widget-content" />
-		</p>
+
 		<p>
 			<button class="submit" type="submit">{#LN_LOGIN_MAIL_SENDEN#}</button>
 		</p>

@@ -1,4 +1,6 @@
 #<?php exit()# ?>
+LN_LOGIN_TITLE="Anmelden"
+LN_LOGIN_BUTTON_TITLE="Anmelden"
 login_noUsername = "Bitte geben sie ihren Usernamen an."
 login_noPassword = "Bitte geben sie ihr Passwort an."
 login_incorrect = "Das eingegebene Passwort konnte dem Benutzer nicht zugeordnet werden."
