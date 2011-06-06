@@ -29,17 +29,17 @@ class package_impressum extends package {
      */
     public function __action_main() {
 		if(!self::$_options)
-            self::$_options = new option('Impressum');
+            self::$_options = new option('impressum');
         $this->_initialized = true;
 	
 	
 		
-		$ImpressumMail = self::$_options->get('ImpressumMail');
-		$ImpressumName = self::$_options->get('ImpressumName');
-		$ImpressumStreet = self::$_options->get('ImpressumStreet');
-		$ImpressumCity = self::$_options->get('ImpressumCity');
-		$ImpressumTel = self::$_options->get('ImpressumTel');
-		$ImpressumFax = self::$_options->get('ImpressumFax');
+		$ImpressumMail = self::$_options->get('ImpressumMail', 'mustermann@musterfirma.de');
+		$ImpressumName = self::$_options->get('ImpressumName', 'Max Mustermann');
+		$ImpressumStreet = self::$_options->get('ImpressumStreet', 'Musterstraße 111');
+		$ImpressumCity = self::$_options->get('ImpressumCity', '90210 Musterstadt');
+		$ImpressumTel = self::$_options->get('ImpressumTel', '+49 (0) 123 44 55 66');
+		$ImpressumFax = self::$_options->get('ImpressumFax', '+49 (0) 123 44 55 99');
 
         self::$tpl->assign('ImpressumMail', $ImpressumMail );
 		self::$tpl->assign('ImpressumName', $ImpressumName );

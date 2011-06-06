@@ -59,8 +59,13 @@ class option{
      * @param string $key key to get value from
      * @return bool on failure | mixed
      */
-    public function get($key){
-        return (isset(self::$_cache[$this->_package][$key][0])) ? self::$_cache[$this->_package][$key][0] : false;
+    public function get($key, $default = false){
+    	$value = (isset(self::$_cache[$this->_package][$key][0])) ? self::$_cache[$this->_package][$key][0] : false;
+    	if($value === false && $default !== false){
+    		$this->add($key, $default, $default);
+    		$value = $default;
+    	}
+        return $value;
     }
     /**
      * This function saves a new value for an existing key
