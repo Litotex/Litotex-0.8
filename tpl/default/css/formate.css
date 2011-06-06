@@ -232,6 +232,9 @@ h1 {
 h2 {
 	font-size: 24px;
 }
+h3 {
+	font-size: 16px;
+}
 
 p, ol, ul, dl {
 	margin-top: 0;

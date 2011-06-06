@@ -3,5 +3,5 @@ legend { padding: 0.5em; }
 fieldset fieldset label { display: block; }
 #loginForm { width: 100%; }
 #loginForm label { width: 100%; }
-
+#loginForm label.error, #loginForm button.submit_S { margin-left: 100px; }
 

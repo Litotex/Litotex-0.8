@@ -45,6 +45,7 @@ class package_tplSwitcher extends package {
 	 * @return bool
 	 */
 	public static function __hook_showTemplateSwitch() {
+		package::addCssFile('switch.css', 'tplSwitcher');
 		$dir = opendir(TEMPLATE_DIRECTORY);
 		$tpls = array();
 		$option = new option('tplSwitcher');
