@@ -50,7 +50,7 @@ class package_impressum extends package {
  
 	
 		self::$tpl->display(self::getTplDir('impressum') . 'main.tpl');
-        return true;
+        return false;
     }
 	
 }

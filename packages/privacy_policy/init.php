@@ -29,7 +29,7 @@ class package_privacy_policy extends package {
 	
 	
 		self::$tpl->display(self::getTplDir('privacy_policy') . 'main.tpl');
-        return true;
+        return false;
     }
 	
 }

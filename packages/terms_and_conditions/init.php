@@ -29,7 +29,7 @@ class package_terms_and_conditions extends package {
 	
 	
 		self::$tpl->display(self::getTplDir('terms_and_conditions') . 'main.tpl');
-        return true;
+        return false;
     }
 	
 }
