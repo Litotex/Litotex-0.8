@@ -25,7 +25,7 @@
 </head>
 
 <body>
-
+{generateTplModification position=content}
 <div id="wrapper">
 	<div id="header"></div>
     <div id="navi_top">
