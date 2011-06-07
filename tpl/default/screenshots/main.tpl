@@ -1,5 +1,5 @@
 {include file=$HEADER}
-Screenshots
+{#LN_SCREENSHOT_EMPTY#}
 {include file=$FOOTER}
  
 
