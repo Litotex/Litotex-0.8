@@ -15,6 +15,7 @@
 <script type="text/javascript" src="{$CORE_JS_URL}jquery-ui-1.8.6.custom.min.js"></script>
 <script type="text/javascript" src="{$CORE_JS_URL}box_large.js"></script>
 <script type="text/javascript" src="{$CORE_JS_URL}litotex.js"></script>
+<script type="text/javascript" src="{$CORE_JS_URL}jquery.validate.min.js"></script>
 
 {foreach from=$CSS_FILES item=CSS_FILE}
 <link rel="stylesheet" type="text/css" href="{$CSS_FILE}">
