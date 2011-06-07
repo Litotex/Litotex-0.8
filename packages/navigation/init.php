@@ -79,8 +79,11 @@ class package_navigation extends package {
 				$data->fields['active'] = false;
 		
 			$package_name=$data->fields['package'];
+			$action_name=$data->fields['action'];
 			if ($package_name =="") $package_name="main"; 
-			$data->fields['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$data->fields['ID'];
+			if ($action_name =="") $action_name="main"; 
+			
+			$data->fields['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$data->fields['ID']."&action=".$action_name;
 			if($data->fields[0] == $submenu_item)
 				$data->fields['active'] = true;
 			else

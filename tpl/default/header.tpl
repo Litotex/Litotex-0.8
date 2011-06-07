@@ -41,5 +41,4 @@
     <div class="both"></div>
     <div id="main">
     	<div id="left">
- &nbsp;
 {/if}

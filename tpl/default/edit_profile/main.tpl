@@ -57,14 +57,14 @@ $.validator.setDefaults({
 	<fieldset class="ui-widget ui-widget-content ui-corner-all">
 		<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_EDIT_PROFILE_CAPTION#}</legend>
 		<p>
-			<label for="password">{#LN_REGISTER_PASSWORD#}</label>
+			<label for="password">{#LN_EDIT_PASSWORD#}</label>
 			<input id="password" name="password" class="required ui-widget-content" minlength="2" >
 		<p>
 		<p>
-			<label for="confirm_password">{#LN_REGISTER_PASSWORD_2#}</label>
+			<label for="confirm_password">{#LN_EDIT_PASSWORD_2#}</label>
 			<input id="confirm_password" name="confirm_password" class="required ui-widget-content" minlength="2" >
 		<p>
-			<label for="email">{#LN_REGSITER_NAME_EMAIL#}</label>
+			<label for="email">{#LN_EDIT_EMAIL#}</label>
 			<input id="email" name="email" class="required email ui-widget-content" value="{$EMAIL}"/>
 		</p>
 		<p>
