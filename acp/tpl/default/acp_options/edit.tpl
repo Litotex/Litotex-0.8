@@ -65,11 +65,12 @@ $.validator.setDefaults({
 		<legend class="ui-widget ui-widget-header ui-corner-all">{#LN_OPTION_EDIT#}</legend>
 		<p>
 			<label for="package">{#LN_OPTION_TITEL_1#}</label>
-			<input id="package" name="package" class="required ui-widget-content" minlength="2" value="{$Option_package}" >
+			<label for="package">{$Option_package}</label>
 		</p>
 		<p>
 			<label for="Okey">{#LN_OPTION_TITEL_2#}</label>
-			<input id="Okey" name="Okey" class="required ui-widget-content" minlength="2"  value="{$Option_key}" >
+			<label for="Okey">{$Option_key}</label>
+			
 		</p>
 		<p>
 			<label for="Ovalue">{#LN_OPTION_TITEL_3#}</label>

@@ -2,10 +2,11 @@
 
 class package_acp_options extends acpPackage {
 
-    protected $_availableActions = array('main', 'new', 'edit', 'list', 'save','del' );
+    protected $_availableActions = array('main', 'edit', 'list', 'save' );
     public static $dependency = array('acp_config');
     protected $_packageName = 'acp_options';
     protected $_theme = 'main.tpl';
+	private static $_options = false;
 
     public function __action_main() {
 
@@ -54,28 +55,6 @@ class package_acp_options extends acpPackage {
         return true;
     }
 
-    public function __action_del() {
-
-        $this->_theme = 'empty.tpl';
-
-        $iUserId = 0;
-
-        if (isset($_POST['id'])) {
-            $iUserId = (int) $_POST['id'];
-        } else if (isset($_GET['id'])) {
-            $iUserId = (int) $_GET['id'];
-        }
-
-        if ($iUserId <= 0) {
-            return false;
-        }
-
-        $oUser = new user($iUserId);
-        $oUser->delete();
-
-        return true;
-    }
-
 
     public function __action_list() {
 
@@ -97,42 +76,46 @@ class package_acp_options extends acpPackage {
     }
 
     public function __action_save() {
+   self::addJsFile('options.js', 'acp_options');
+        self::addCssFile('options.css', 'acp_options');
 
 		if (isset($_GET['id'])) {
             $iOptionID = (int) $_GET['id'];
         }
-		echo($iOptionID );
 	
         $this->_theme = 'main.tpl';
-
-        $aError = array();
-
-        if (isset($_POST['package'])) {
-            $aPackageData = $_POST['package'];
-        } else {
-			throw new lttxError('LN_OPTION_ERROR_PAKET');
-        }
-
-        if (isset($_POST['Okey'])) {
-            $aPackageData = $_POST['Okey'];
-        } else {
-			throw new lttxError('LN_OPTION_ERROR_KEY');			
-        }
+		
+		
+		$result = package::$db->Execute("SELECT * FROM `lttx_options` WHERE `ID` = ?",$iOptionID);
+		
+		
+		if(!$result || !$result->RecordCount() ){
+				throw new lttxError('LN_DB_ERRROR_1');
+				return true;
+		}
+		
+		$Option_package =$result->fields['package'];
+		$Option_key =$result->fields['key'];
 		
         if (isset($_POST['Ovalue'])) {
-            $aPackageData = $_POST['Ovalue'];
+            $aPackageValue = $_POST['Ovalue'];
         } else {
 			throw new lttxError('LN_OPTION_ERROR_VALUE');					
         }
 
         if (isset($_POST['Odefault'])) {
-            $aPackageData = $_POST['Odefault'];
+            $aPackageDefaultValue = $_POST['Odefault'];
         } else {
 			throw new lttxError('LN_OPTION_ERROR_DEFASULTVALUE');							
         }
 
-       
+		
 
+		$option = new option($Option_package);
+		$option->set($Option_key,$aPackageValue);
+
+
+			
         return true;
     }
 
