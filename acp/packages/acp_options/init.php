@@ -111,7 +111,7 @@ class package_acp_options extends acpPackage {
 
 		
 
-		$option = new option($Option_package);
+		$option = new option($Option_package, true);
 		$option->set($Option_key,$aPackageValue);
 
 

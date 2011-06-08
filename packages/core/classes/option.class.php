@@ -35,12 +35,18 @@ class option{
      * @param string $package packagename
      * @return void
      */
-    public function  __construct($package) {
+    public function  __construct($package, $allowOtherPackageSpace = false) {
     	if(isset(self::$_cache[$package])){
     		$this->_package = $package;
     		return;
     	}
-        if(!package::$packages->exists($package))
+        if($allowOtherPackageSpace){
+            if(PACKAGE_PREFIX == 'acp')
+                $otherSpace = new packages('', false, MODULES_FRONTEND_DIRECTORY, TEMPLATE_FRONTEND_DIRECTORY);
+            else
+                $otherSpace = new packages('acp', false, MODULES_BACKEND_DIRECTORY, TEMPLATE_BACKEND_DIRECTORY);
+        }
+        if(!package::$packages->exists($package) && !($allowOtherPackageSpace && $otherSpace->exists($package)))
             return false;
         $this->_package = $package;
         $cache = package::$db->Execute("SELECT `key`, `value`, `default` FROM `lttx_options` WHERE `package` = ?", array($package));
