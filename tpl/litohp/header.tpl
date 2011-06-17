@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {generateTplModification position=left}
 {generateTplModification position=right}
-{generateTplModification position=content}
+{generateTplModification position=content surrounddiv=content}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>{$TITLE}</title>
@@ -140,4 +140,4 @@ $(document).ready(function() {
     	<p>Sie wollen Litotex mit Ihrem eigenen Stempel versehen? Nutzen Sie die Möglichkeit zum Erwerb eines Branding Free License!</p>
     </div>
     <div id="main">
-    	
+           

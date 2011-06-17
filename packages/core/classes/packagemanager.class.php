@@ -831,7 +831,7 @@ class packages {
      * @param string $position name of the position
      * @return bool
      */
-    public function displayTplModification($position) {
+    public function displayTplModification($position, $surroundDiv) {
 
 		$return = true;
 
@@ -859,9 +859,9 @@ class packages {
             }
 
 			ob_start();
-
+                                echo '<div'.$surroundDiv.'>';
 				$bCallFunction = call_user_func_array(array($func[0], '__tpl_' . $func[1]), array());
-
+                                echo '</div>';
 				$sHtml = ob_get_contents();
 
 			ob_end_clean();

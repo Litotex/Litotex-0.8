@@ -21,6 +21,7 @@
 function smarty_function_generateTplModification($params, &$smarty)
 {
 	$position = str_replace("'", '', $params['position']);
+        $surrounddiv = (isset($params['surrounddiv']))?' class="'.$params['surrounddiv'].'"':'';
 	
     if (empty($position)) {
         trigger_error("displayTplModification: position parameter missing.");
@@ -30,9 +31,9 @@ function smarty_function_generateTplModification($params, &$smarty)
 	global $out;
 
     ob_start();
-
-    package::$packages->displayTplModification($position);
     
+    package::$packages->displayTplModification($position, $surrounddiv);
+
     if(!$out){
         $out = array();
 	}
