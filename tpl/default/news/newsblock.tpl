@@ -1,3 +1,4 @@
+<br>
 <h3>{#news#}</h3>
 
 {foreach from=$news item=item}
