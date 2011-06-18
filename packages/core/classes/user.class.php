@@ -653,9 +653,10 @@ class user {
 	 */
 	public function unbanUser(){
 		$aData = array();
-		$aData['bannedDate'] = 'NULL';
+		$aData['bannedDate'] = '0000-00-00 00:00:00';
 		$aData['bannedReason'] = '';
 		$this->update($aData);
+		return true;
 	}
     
     /**
