@@ -1,0 +1,1 @@
+ALTER TABLE `lttx1_news`  CHANGE COLUMN `active` `active` TINYINT(1) UNSIGNED NOT NULL AFTER `writtenBy`,  ADD COLUMN `allow_comments` TINYINT(1) NOT NULL DEFAULT '0' AFTER `active`;
