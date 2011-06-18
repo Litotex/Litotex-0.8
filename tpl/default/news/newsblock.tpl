@@ -11,9 +11,9 @@
 
 			<div class="NewsPostFooter">
 				<span class="NewsPostComments "><a href="{make_link package=news action=showComments id=$item->getID()}" title="Kommentartitel">{$item->getCommentNum()} Kommentare</a></span>
-
-				<span class="NewsPostTags"><span>keine</span></span>
 				<a class="NewsPostReadMore" href="Link"><b><b><b>Weiterlesen</b></b></b>
+				
+				
 				</a>
 			</div>
 		</div>
