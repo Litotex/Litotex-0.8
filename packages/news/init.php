@@ -21,7 +21,8 @@ require_once('classes/comment.class.php');
 class package_news extends package {
     protected $_packageName = 'news';
     protected $_availableActions = array('main', 'showComments');
-    private static function _newsPageExists($page, $category = false, $newsPerSite = false) {
+    
+	private static function _newsPageExists($page, $category = false, $newsPerSite = false) {
         if($category !== false && !is_a($category, 'category'))
             return false;
         if($newsPerSite === false) {
@@ -36,6 +37,7 @@ class package_news extends package {
         return false;
     }
     public function __action_main() {
+		package::addCssFile('news.css', 'news');	
         $category = false;
         $page = 1;
         if(isset($_GET['page']))
@@ -59,8 +61,12 @@ class package_news extends package {
     	self::_registerTplModification(__CLASS__, 'showNewsBlock', 'news');
     	return true;
     }
+	
+
+	
     public function __action_showComments() {
-        if(!isset($_GET['id']))
+        
+		if(!isset($_GET['id']))
             $this->_referMain();
         $this->_theme = 'comments.tpl';
         try {
@@ -81,17 +87,22 @@ class package_news extends package {
         return news::getAll($category, $page, $newsPerSite);
     }
     public static function __hook_getNews(&$news, $n) {
+	
         $news = self::getNews(false, 1, $n);
         return true;
     }
     public static function  __hook_showNewsBlock($n) {
-        $news = self::getNews(false, 1, $n);
+		package::addCssFile('news.css', 'news');	
+       
+		$news = self::getNews(false, 1, $n);
+		
         self::loadLang(self::$tpl, 'news');
         self::$tpl->assign('news', $news);
         self::$tpl->display(self::getTplDir('news') . 'newsblock.tpl');
-        return true;
+        
+		return true;
     }
 	public static function  __tpl_showNewsBlock() {
-        return self::__hook_showNewsBlock(2);
+        return self::__hook_showNewsBlock(-1);
     }
 }

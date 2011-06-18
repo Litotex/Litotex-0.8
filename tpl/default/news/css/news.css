@@ -1,0 +1,77 @@
+.NewsPost {
+	margin-bottom:20px;
+}
+.NewsPostHeader {
+	position:relative;
+	width:630px;
+	margin-bottom:10px;
+}
+.NewsPostTitle {
+	width:600px;
+	background:url(./images/LayoutBgs.jpg) no-repeat -2230px -100px;
+	margin-left:30px;
+	font-size:16px;
+	min-height:24px;
+	padding:1px 0;
+	position:relative;
+}
+.NewsPostTitle a,
+.NewsPostTitle a:visited,
+.NewsPostTitle a:hover {
+	text-decoration:none;
+	color:#000;
+	padding-left:10px;
+	position:relative;
+	display:block;
+	line-height:24px;
+}
+.NewsPostCategories {
+	float:right;
+	padding:3px 0 3px 25px;
+	font-size:11px;
+	background:url(./images/LayoutBgs.jpg) no-repeat -4500px 0;
+}
+.NewsPostSubTitle{
+	text-align:right;
+	padding-right:10px;
+	font-size:11px;
+	overflow:hidden;
+}
+.NewsPostContent {
+	font-family:Verdana,"BitStream vera Sans",Helvetica,Sans-serif;
+	font-size:12px;
+	line-height:145%;
+	padding:0 25px 0 15px;
+	overflow:hidden;
+}
+.NewsPostFooter {
+	overflow:hidden;
+	border-top:1px solid #d9d9d9;
+	padding:3px 10px 0;
+	margin:20px 5px 0;
+}
+.NewsPostComments {
+	float:left;
+	width:95px;
+	padding:2px 0 3px 25px;
+	font-size:11px;
+	background:url(./images/LayoutBgs.jpg) no-repeat -2000px -190px;
+	color:#aaa;
+}
+.NewsPostTags {
+	float:left;
+	width:355px;
+	padding:2px 10px 3px 25px;
+	font-size:11px;
+	background:url(./images/LayoutBgs.jpg) no-repeat -4000px 0;
+}
+.NewsPostTags span {
+	color:#aaa;
+	font-style:italic;
+}
+.NewsPostReadMore {
+	display:block;
+	float:right;
+	width:100px;
+	outline:none;
+}
