@@ -10,13 +10,14 @@ class package_acp_news extends acpPackage{
 	protected $_theme = 'main.tpl';
 	
 	public function __action_main(){
-		$folder=package::getFilesDir('news');
 
-		$_SESSION['uploadfolder']=$folder.'/';	
+	
+
+
 		self::addJsFile('news.js', 'acp_news');
 		self::addJsFile('ckeditor/ckeditor.js',false);
 		self::addJsFile('ckfinder/ckfinder.js',false);
-
+		
 		return true;
 	}
 
@@ -26,10 +27,10 @@ class package_acp_news extends acpPackage{
 	}
 	
 	public function __action_edit(){
-		
-		
-		
-		
+		$FilemanagerFolder=package::getTplURL()."js/pdw_file_browser/";
+		$folder=package::getFilesDir('news');
+		// Create Session for Filemanger
+		$_SESSION['uploadfolder']=$folder.'/';			
 
 		$this->_theme = 'edit.tpl';
 		
@@ -60,6 +61,7 @@ class package_acp_news extends acpPackage{
 		package::$tpl->assign('News_Text', $NewsText );
 		package::$tpl->assign('News_Comments', $NewsComments);
 		package::$tpl->assign('News_ID', $iNewsId);
+		package::$tpl->assign('FileBrowser', $FilemanagerFolder );
         return true;
 			
 

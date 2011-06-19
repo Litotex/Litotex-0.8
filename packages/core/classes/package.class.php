@@ -510,9 +510,9 @@ abstract class package {
 		$return_path ='';
 		if ($fronted==true){
 			if (!$package)
-				$return_path= LITO_ROOT_FRONTEND.'files/'.$this->_packageName;
+				$return_path= LITO_FRONTEND_ROOT.'files/'.$this->_packageName;
 			else
-				$return_path= LITO_ROOT_FRONTEND.'files/'.$package;
+				$return_path= LITO_FRONTEND_ROOT.'files/'.$package;
 		}else{
 			if (!$package)
 				$return_path= LITO_ROOT.'files/'.$this->_packageName;
@@ -531,9 +531,9 @@ abstract class package {
         $return_path ='';
 		if ($fronted==true){
 			if (!$package)
-				$return_path= LITO_URL_FRONTEND.'files/'.$this->_packageName;
+				$return_path= LITO_FRONTEND_URL.'files/'.$this->_packageName;
 			else
-				$return_path= LITO_URL_FRONTEND.'files/'.$package;
+				$return_path= LITO_FRONTEND_URL.'files/'.$package;
 		}else{
 			if (!$package)
 				$return_path= LITO_URL.'files/'.$this->_packageName;

@@ -7,6 +7,7 @@
 		<p>Inhalt:</p>
 		<textarea cols="80" id="news_text" name="news_text" rows="10">{$News_Text}</textarea>
 	</div>	
+	{literal} 
 	<script type="text/javascript">
 				
 				CKEDITOR.replace( 'news_text',
@@ -15,12 +16,13 @@
 						fullPage : false,
 						enterMode : CKEDITOR.ENTER_DIV,
 
-						filebrowserBrowseUrl : 'http://localhost/08/acp/tpl/default/js/pdw_file_browser/index.php?editor=ckeditor',			
-						filebrowserImageBrowseUrl : 'http://localhost/08/acp/tpl/default/js/pdw_file_browser/index.php?editor=ckeditor&filter=image',
-						filebrowserFlashBrowseUrl : 'http://localhost/08/acp/tpl/default/js/pdw_file_browser/index.php?editor=ckeditor&filter=flash'
+						filebrowserBrowseUrl : '{/literal}{$FileBrowser}{literal}index.php?editor=ckeditor',			
+						filebrowserImageBrowseUrl : '{/literal}{$FileBrowser}{literal}index.php?editor=ckeditor&filter=image',
+						filebrowserFlashBrowseUrl : '{/literal}{$FileBrowser}{literal}index.php?editor=ckeditor&filter=flash'
 
 						
 					});
 
 			</script>
+	{/literal}			
 </form>
