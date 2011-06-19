@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-if(!defined('LITO_ROOT_FRONTEND'))
-	define('LITO_ROOT_FRONTEND', $frontendRoot );
-if(!defined('LITO_URL_FRONTEND'))
-	define('LITO_URL_FRONTEND', $frontendUrl ); 
 if(!defined('LITO_ROOT'))
 	define('LITO_ROOT', $frontendRoot . 'acp/');
 if(!defined('LITO_URL'))
