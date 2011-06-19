@@ -18,8 +18,6 @@
 						filebrowserBrowseUrl : 'http://localhost/08/acp/tpl/default/js/pdw_file_browser/index.php?editor=ckeditor',			
 						filebrowserImageBrowseUrl : 'http://localhost/08/acp/tpl/default/js/pdw_file_browser/index.php?editor=ckeditor&filter=image',
 						filebrowserFlashBrowseUrl : 'http://localhost/08/acp/tpl/default/js/pdw_file_browser/index.php?editor=ckeditor&filter=flash'
-						//filebrowserBrowseUrl: 'http://localhost/08/acp/tpl/default/js/filemanager/index.html',
-						//extraPlugins : 'docprops'
 
 						
 					});

@@ -10,15 +10,6 @@ class package_acp_news extends acpPackage{
 	protected $_theme = 'main.tpl';
 	
 	public function __action_main(){
-		/*
-		echo(package::getFilesDir('news'));
-		echo('<br>');
-		echo(package::getFilesURL('news'));
-		exit();
-		*/
-		//define('DOCUMENTROOT', realpath((getenv('DOCUMENT_ROOT') && preg_match('#^'.preg_quote(realpath(getenv('DOCUMENT_ROOT'))).'#', realpath(__FILE__))) ? getenv('DOCUMENT_ROOT') : str_replace(dirname(@$_SERVER['PHP_SELF']), '', str_replace(DIRECTORY_SEPARATOR, '/', dirname(__FILE__)))));
-		
-
 		$folder=package::getFilesDir('news');
 
 		$_SESSION['uploadfolder']=$folder.'/';	
