@@ -500,6 +500,50 @@ abstract class package {
         }
     }
 
+	 /**
+     * returns the path to order  'files'
+     * @param string $package name of package
+     * @param bool $fronted is true (default) it is the frontend files-folder, else ACP Files folder
+     * @return Path
+     */
+    public function getFilesDir($package=false,$fronted=true) {
+		$return_path ='';
+		if ($fronted==true){
+			if (!$package)
+				$return_path= LITO_ROOT_FRONTEND.'files/'.$this->_packageName;
+			else
+				$return_path= LITO_ROOT_FRONTEND.'files/'.$package;
+		}else{
+			if (!$package)
+				$return_path= LITO_ROOT.'files/'.$this->_packageName;
+			else
+				$return_path= LITO_ROOT.'files/'.$package;
+		}		
+	return  $return_path;
+	}		
+	 /**
+     * returns the URL to order  'files'
+     * @param string $package name of package
+     * @param bool $fronted is true (default) it is the frontend files-folder-URL, else ACP Files folder URL
+     * @return Path
+     */
+    public function getFilesURL($package=false,$fronted=true) {
+        $return_path ='';
+		if ($fronted==true){
+			if (!$package)
+				$return_path= LITO_URL_FRONTEND.'files/'.$this->_packageName;
+			else
+				$return_path= LITO_URL_FRONTEND.'files/'.$package;
+		}else{
+			if (!$package)
+				$return_path= LITO_URL.'files/'.$this->_packageName;
+			else
+				$return_path= LITO_URL.'files/'.$package;
+		}
+		return  $return_path;
+	}
+	
+	
     public static function getLanguage() {
         return 'de';
     }
