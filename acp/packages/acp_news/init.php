@@ -10,10 +10,21 @@ class package_acp_news extends acpPackage{
 	protected $_theme = 'main.tpl';
 	
 	public function __action_main(){
+		/*
+		echo(package::getFilesDir('news'));
+		echo('<br>');
+		echo(package::getFilesURL('news'));
+		exit();
+		*/
+		//define('DOCUMENTROOT', realpath((getenv('DOCUMENT_ROOT') && preg_match('#^'.preg_quote(realpath(getenv('DOCUMENT_ROOT'))).'#', realpath(__FILE__))) ? getenv('DOCUMENT_ROOT') : str_replace(dirname(@$_SERVER['PHP_SELF']), '', str_replace(DIRECTORY_SEPARATOR, '/', dirname(__FILE__)))));
 		
+
+		$folder=package::getFilesDir('news');
+
+		$_SESSION['uploadfolder']=$folder.'/';	
 		self::addJsFile('news.js', 'acp_news');
-		self::addCssFile('news.css', 'acp_news');
 		self::addJsFile('ckeditor/ckeditor.js',false);
+		self::addJsFile('ckfinder/ckfinder.js',false);
 
 		return true;
 	}
@@ -24,6 +35,7 @@ class package_acp_news extends acpPackage{
 	}
 	
 	public function __action_edit(){
+		
 		
 		
 		
@@ -161,6 +173,7 @@ class package_acp_news extends acpPackage{
 	}
 	
 	public function __action_save(){
+
 		
 		$this->_theme = 'empty.tpl';
 		$iNewsID=0;
