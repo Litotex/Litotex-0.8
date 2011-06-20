@@ -24,13 +24,17 @@ class package_acp_news extends acpPackage{
 	* Make new News
 	*/
 	public function __action_new(){
-		$this->__action_edit();
+		$this->__action_edit(true);
 		return true;
 	}
 	/**
 	* Edit News News
 	*/
-	public function __action_edit(){
+	public function __action_edit($new_entry=false){
+		$NewsTitle="";
+		$NewsText="";
+		$NewsComments="";
+		$iNewsId=0;
 		$FilemanagerFolder=package::getTplURL()."js/pdw_file_browser/";
 		$folder=package::getFilesDir('news');
 		// Create Session for Filemanger
@@ -41,19 +45,20 @@ class package_acp_news extends acpPackage{
 		if(isset($_GET['id'])){
 			$iNewsId = (int)$_GET['id'];
 		}		
-		if ($iNewsId <= 0) {
-            return false;
-        }
+		if ($iNewsId > 0) {
+            
+
 		$result = package::$db->Execute("SELECT * FROM `lttx1_news` WHERE `id` = ?",$iNewsId);
 		if(!$result || !$result->RecordCount() ){
 				throw new lttxError('LN_DB_ERRROR_1');
 				return true;
 		}
 				
-		$NewsTitle =$result->fields['title'];
-		$NewsText =$result->fields['text'];
-		$NewsComments =$result->fields['allow_comments'];
-
+			$NewsTitle =$result->fields['title'];
+			$NewsText =$result->fields['text'];
+			$NewsComments =$result->fields['allow_comments'];
+        }
+		
 		package::$tpl->assign('News_Title', $NewsTitle );
 		package::$tpl->assign('News_Text', $NewsText );
 		package::$tpl->assign('News_Comments', $NewsComments);
@@ -170,18 +175,12 @@ class package_acp_news extends acpPackage{
 	}
 	
 	public function __action_save(){
-
-		
 		$this->_theme = 'empty.tpl';
 		$iNewsID=0;
-		if (isset($_GET['id'])) {
-            $iNewsID = (int) $_GET['id'];
-        }		
-		if ($iNewsID <= 0) {
-            return false;
-        }
-
+		$saveDate=date("Y-m-d H:m:s", time());
 		
+		$saveUserID=package::$user->getUserID();
+
 		if(isset($_POST['news_text'])){
 			$news_text = $_POST['news_text'];
 		} else {
@@ -189,12 +188,16 @@ class package_acp_news extends acpPackage{
 		}
 
 		if(isset($_POST['news_over'])){
-			$news_title = $_POST['news_over'];
+			$news_title = htmlspecialchars($_POST['news_over']);
 		} else {
 			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
 		}
 
-		
+		if (isset($_GET['id'])) {
+            $iNewsID = (int) $_GET['id'];
+        }		
+		if ($iNewsID > 0) {
+	
 		self::$db->Execute('UPDATE lttx1_news
                             SET
                                 title = ?,
@@ -207,7 +210,24 @@ class package_acp_news extends acpPackage{
                                 '0',
                                 $iNewsID
                             ));
-		
+	   }else{
+		self::$db->Execute('INSERT into lttx1_news
+                            (title,text,date,commentNum,writtenBy,active,allow_comments,category)
+							 values
+							 (?,?,?,?,?,?,?,?)',
+                            array(
+                                $news_title,
+                                $news_text,
+								$saveDate,
+                                '0',
+								$saveUserID,
+                                '0',
+								'0',
+								'0'
+                            ));
+	   
+	   
+	   }		
 	header('Location: index.php?package=acp_news');
 
         return true;

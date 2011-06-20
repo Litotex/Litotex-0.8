@@ -11,6 +11,11 @@
 					<span>{#LN_NEWS_TAB_1#}</span>
 				</a>
 			</li>
+			<li>
+				<a href="index.php?package=acp_news&action=new">
+					<span>{#LN_NEWS_TITEL_8#}</span>
+				</a>
+			</li>
 			
 		</ul>
 	
