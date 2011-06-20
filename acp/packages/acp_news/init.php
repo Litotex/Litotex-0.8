@@ -1,57 +1,54 @@
 <?php
 class package_acp_news extends acpPackage{
 	
-	protected $_availableActions = array('main', 'new', 'edit', 'list', 'save', 'delete','activate','deactivate','allow_comments','forbid_comments');
+	protected $_availableActions = array('main', 'new', 'edit', 'list', 'save', 'delete','activate','deactivate','allow_comments','forbid_comments','categories_list','categories_edit','categories_save','categories_delete','categories_show_list');
 	
 	public static $dependency = array('acp_config');
 	
 	protected $_packageName = 'acp_news';
 	
 	protected $_theme = 'main.tpl';
-	
+
+	/**
+	* Init
+	*/
 	public function __action_main(){
-
-	
-
-
 		self::addJsFile('news.js', 'acp_news');
+		self::addCssFile('news.css', 'acp_news');
 		self::addJsFile('ckeditor/ckeditor.js',false);
 		self::addJsFile('ckfinder/ckfinder.js',false);
-		
 		return true;
 	}
 
+	/**
+	* Make new News
+	*/
 	public function __action_new(){
 		$this->__action_edit();
 		return true;
 	}
-	
+	/**
+	* Edit News News
+	*/
 	public function __action_edit(){
 		$FilemanagerFolder=package::getTplURL()."js/pdw_file_browser/";
 		$folder=package::getFilesDir('news');
 		// Create Session for Filemanger
 		$_SESSION['uploadfolder']=$folder.'/';			
-
 		$this->_theme = 'edit.tpl';
-		
 		$iNewsId = 0;
 		
 		if(isset($_GET['id'])){
 			$iNewsId = (int)$_GET['id'];
 		}		
-		 if ($iNewsId <= 0) {
+		if ($iNewsId <= 0) {
             return false;
         }
-		
-		
 		$result = package::$db->Execute("SELECT * FROM `lttx1_news` WHERE `id` = ?",$iNewsId);
-		
-		
 		if(!$result || !$result->RecordCount() ){
 				throw new lttxError('LN_DB_ERRROR_1');
 				return true;
 		}
-		
 				
 		$NewsTitle =$result->fields['title'];
 		$NewsText =$result->fields['text'];
@@ -62,11 +59,12 @@ class package_acp_news extends acpPackage{
 		package::$tpl->assign('News_Comments', $NewsComments);
 		package::$tpl->assign('News_ID', $iNewsId);
 		package::$tpl->assign('FileBrowser', $FilemanagerFolder );
-        return true;
-			
-
 		return true;
 	}
+
+	/**
+	* activate News
+	*/
 	public function __action_activate(){
 		$this->_theme = 'empty.tpl';
 		if(isset($_POST['id'])){
@@ -81,7 +79,10 @@ class package_acp_news extends acpPackage{
 		$searchResults =self::$db->Execute("update `lttx1_news` set active=1 where id ='".$newsId."'");
 		return true;
 	}
-
+	
+	/**
+	* deactivate News
+	*/
 	public function __action_deactivate(){
 	$this->_theme = 'empty.tpl';
 		if(isset($_POST['id'])){
@@ -97,6 +98,9 @@ class package_acp_news extends acpPackage{
 		return true;
 	}	
 
+	/**
+	* allow News comments
+	*/
 	public function __action_allow_comments(){
 	$this->_theme = 'empty.tpl';
 		if(isset($_POST['id'])){
@@ -208,6 +212,105 @@ class package_acp_news extends acpPackage{
 
         return true;
 	}
+	
+	public function __action_categories_list(){
+		self::addJsFile('news.js', 'acp_news');
+		self::addCssFile('news.css', 'acp_news');
+		$this->_theme = 'cat_list.tpl';
+		return true;
+	}	
+	
+	public function __action_categories_show_list(){
+		self::addJsFile('news.js', 'acp_news');
+		$this->_theme = 'show_catlist.tpl';
+		$elements = array();
+    	$searchResults =self::$db->Execute("SELECT * FROM `lttx1_news_categories` order by title");
+		if($searchResults == false){
+			throw new lttxDBError();
+		}
+		 while(!$searchResults->EOF) {
+			$elements[] = $searchResults->fields;
+            $searchResults->MoveNext();
+        }
+        self::$tpl->assign('aOptions', $elements);
+        return true;
+	}	
+	
+
+	public function __action_categories_edit(){
+		$this->_theme = 'edit_cat.tpl';
+		
+		$iNewsId =0;
+		$cat_titel="";
+		$cat_description="";
+		if(isset($_GET['id'])){
+			$iNewsId = (int)$_GET['id'];
+		}		
+		if ($iNewsId > 0) {
+            
+        
+		$result = package::$db->Execute("SELECT * FROM `lttx1_news_categories` WHERE `id` = ?",$iNewsId);
+		if(!$result || !$result->RecordCount() ){
+				throw new lttxError('LN_DB_ERRROR_1');
+				return true;
+		}
+				
+		$cat_titel =$result->fields['title'];
+		$cat_description =$result->fields['description'];
+		}
+		
+		package::$tpl->assign('cat_titel', $cat_titel );
+		package::$tpl->assign('cat_description', $cat_description );
+		package::$tpl->assign('edit_id', $iNewsId );
+		
+        return true;
+	}	
+	
+	public function __action_categories_save(){
+		$this->_theme = 'empty.tpl';
+		$iNewsID=0;
+		if (isset($_GET['id'])) {
+            $iNewsID = (int) $_GET['id'];
+        }		
+
+		if(isset($_POST['OvalueTitle'])){
+			$cat_title = $_POST['OvalueTitle'];
+		} else {
+			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
+		}
+
+		if(isset($_POST['OvalueDesc'])){
+			$cat_description = $_POST['OvalueDesc'];
+		} else {
+			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
+		}
+
+		if ($iNewsID > 0) {
+			self::$db->Execute('UPDATE lttx1_news_categories
+                            SET
+                                title = ?,
+                                description = ?
+                            WHERE `id` = ?',
+                            array(
+                                $cat_title,
+                                $cat_description,
+                                $iNewsID
+                            ));
+		}else{
+			self::$db->Execute('insert into lttx1_news_categories 
+                             (newsLastDate,newsNum,title,description) values
+							 (?,?,?,?)',
+                            array(
+                                '0000-00-00 00:00:00',
+								0,
+								$cat_title,
+                                $cat_description,
+                            ));
+		
+		}
+	header('Location: index.php?package=acp_news&action=categories_list');
+	}	
+	
 	
 	public static function registerHooks(){
 		return true;

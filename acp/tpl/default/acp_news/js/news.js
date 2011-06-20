@@ -1,11 +1,43 @@
-
 var iLastUserTabIndex = 0;
+
+function editNews_cat(sTitle,iNewsId){
+
+	// Remove last User Edit Tab
+	if(iLastUserTabIndex > 0){
+		$('#acp_news_menue').tabs( "remove", iLastUserTabIndex );
+	}
+
+	$('#acp_news_menue').tabs("add","index.php?package=acp_news&action=categories_edit&id="+iNewsId, sTitle);
+	
+	var iIndex = $('#acp_news_menue').tabs( "length" );
+	iIndex = iIndex - 1;
+	
+	$('#acp_news_menue').tabs( "select", iIndex );
+
+	iLastUserTabIndex = iIndex;
+}
+
+// Delete NewsCategories if Confirmed
+function delNews_cat(NewsId){
+	var sParam = 'id='+NewsId;
+	if(confirm('Sind Sie sicher?')){
+		$.ajax({
+			type: "POST",
+			url: "index.php?package=acp_news&action=delete_cat",
+			data: sParam,
+			dataType: 'json',
+			success: function(aMsg){
+				$('#acp_news_menue').tabs( "load", 0 );
+			}
+		 });
+	}
+
+}
+
 
 // Delete News if Confirmed
 function delNews(NewsId){
-
 	var sParam = 'id='+NewsId;
-
 	if(confirm('Sind Sie sicher?')){
 		$.ajax({
 			type: "POST",
