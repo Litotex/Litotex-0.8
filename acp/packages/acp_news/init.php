@@ -13,6 +13,7 @@ class package_acp_news extends acpPackage{
 	* Init
 	*/
 	public function __action_main(){
+		
 		self::addJsFile('news.js', 'acp_news');
 		self::addCssFile('news.css', 'acp_news');
 		self::addJsFile('ckeditor/ckeditor.js',false);
@@ -35,6 +36,7 @@ class package_acp_news extends acpPackage{
 		$NewsText="";
 		$NewsComments="";
 		$iNewsId=0;
+		$Newscategory=0;
 		$FilemanagerFolder=package::getTplURL()."js/pdw_file_browser/";
 		$folder=package::getFilesDir('news');
 		// Create Session for Filemanger
@@ -53,12 +55,23 @@ class package_acp_news extends acpPackage{
 				throw new lttxError('LN_DB_ERRROR_1');
 				return true;
 		}
-				
+		
 			$NewsTitle =$result->fields['title'];
 			$NewsText =$result->fields['text'];
 			$NewsComments =$result->fields['allow_comments'];
+			$Newscategory =$result->fields['category'];
         }
 		
+		$cat_elements[]="";
+		$categories = package::$db->Execute("SELECT id,title FROM `lttx1_news_categories` order by title");
+		 while(!$categories->EOF) {
+			$cat_elements[$categories->fields['id']] = $categories->fields['title'];
+			$categories->MoveNext();
+			
+        }
+		
+		package::$tpl->assign('cat_options_sel', $Newscategory);
+		package::$tpl->assign('cat_options', $cat_elements);
 		package::$tpl->assign('News_Title', $NewsTitle );
 		package::$tpl->assign('News_Text', $NewsText );
 		package::$tpl->assign('News_Comments', $NewsComments);
@@ -242,6 +255,7 @@ class package_acp_news extends acpPackage{
 	
 	public function __action_categories_show_list(){
 		self::addJsFile('news.js', 'acp_news');
+				
 		$this->_theme = 'show_catlist.tpl';
 		$elements = array();
     	$searchResults =self::$db->Execute("SELECT * FROM `lttx1_news_categories` order by title");
@@ -258,6 +272,7 @@ class package_acp_news extends acpPackage{
 	
 
 	public function __action_categories_edit(){
+
 		$this->_theme = 'edit_cat.tpl';
 		
 		$iNewsId =0;

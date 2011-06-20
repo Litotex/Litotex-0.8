@@ -1,5 +1,7 @@
 {literal} 
+
 <script>
+	
 $.validator.setDefaults({
 	submitHandler: function() { form.submit() },
 	highlight: function(input) {
@@ -38,6 +40,8 @@ $.validator.setDefaults({
   });
   </script>
 {/literal} 
+<div class="edit_cats">
+
 
 <form class="cmxform" id="CatEditForm" method="post" action="index.php?package=acp_news&amp;action=categories_save&id={$edit_id}">
 	<fieldset class="ui-widget ui-widget-content ui-corner-all">
