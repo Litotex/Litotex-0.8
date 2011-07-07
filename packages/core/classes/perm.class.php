@@ -290,4 +290,10 @@ class perm {
 		}
 	}
 
+        public static function clearAvailableTable($packageDir, $type = 2){
+            package::$db->Execute("DELETE FROM `lttx_permissions_available` WHERE `type` = ? AND `packageDir` = ?", array($type, $packageDir));
+        }
+        public static function registerAvailable($name, $class, $function, $packageDir, $type = 2){
+            package::$db->Execute("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array($type, $name, $class, $function, $packageDir));
+        }
 }

@@ -150,7 +150,7 @@ class packages {
         $oldPM = package::$packages;
         package::setPackageManagerClass($this);
         $this->_tplModificationCache = array();
-        package::$db->Execute("DELETE FROM `lttx_permissions_available` WHERE `type` = ? AND `packageDir` = ?", array(2, $this->_packagePrefix));
+        perm::clearAvailableTable($this->_packagePrefix);
         if (!is_dir($this->_packagesDir))
             return false;
         $packages = opendir($this->_packagesDir);
@@ -330,7 +330,7 @@ class packages {
         }
         if (!method_exists($class, '__tpl_' . $function))
             return false;
-        package::$db->Execute("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(2, $packageName, $class, $function, $this->_packagePrefix));
+        perm::registerAvailable($packageName, $class, $function, $this->_packagePrefix);
         $this->_tplModificationCache[$class . ':' . $function] = array($class, $function, $file, $packageName, false);
         return true;
     }
@@ -477,7 +477,7 @@ class packages {
     public function generateDependencyCache() {
         $oldPM = package::$packages;
         package::setPackageManagerClass($this);
-        package::$db->Execute("DELETE FROM `lttx_permissions_available` WHERE `packageDir` = ? AND `type` = ?", array($this->_packagePrefix, 1));
+        perm::clearAvailableTable($this->_packagePrefix, 1);
         if (!is_dir($this->_packagesDir))
             return false;
         $packages = opendir($this->_packagesDir);
@@ -544,7 +544,7 @@ class packages {
         $pack = $this->loadPackage($path, false, false, false);
         $actions = $pack->getActions();
         foreach ($actions as $action) {
-            package::$db->Execute("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array(1, $path, $class, $action, $this->_packagePrefix));
+            perm::registerAvailable($path, $class, $action, $this->_packagePrefix, 1);
         }
         return true;
     }
