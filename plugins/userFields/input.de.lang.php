@@ -1,2 +1,2 @@
-#<?php die("Internal");
+#<?php die("Internal"); ?>
 typeName = "Textfeld"
