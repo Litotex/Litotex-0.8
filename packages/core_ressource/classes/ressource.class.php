@@ -84,7 +84,7 @@ class ressource{
 			$add .= ', `increaseFormula`';
 		if($limit)
 			$add .= ', `limit`';
-		$res = package::$db->Execute("SELECT `resID`, `resNum`" . $add . " FROM `lttx_" . $table . "Ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
+		$res = package::$db->Execute("SELECT `resID`, `resNum`" . $add . " FROM `lttx_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
 		if(!$res)
 			throw new Exception('Selected ressource table "' . $table . '" was not found or incompatible');
 		while(!$res->EOF){
