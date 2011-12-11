@@ -15,35 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with Litotex.  If not, see <http://www.gnu.org/licenses/>.
  */
-include_once('classes/building.class.php');
+include_once('classes/race.class.php');
 /**
- * This is just a dummy class to ensure the building class will be loaded...
+ * This is just a dummy class to ensure the race class will be loaded...
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  * @hooks: None as this class has no features to be serious
  */
-class package_core_buildings extends package{
-	protected $_availableActions = array('main');
+class package_core_reace extends package{
 	/**
 	 * Name of the module, please do not change this!
 	 * @var string
 	 */
-    protected $_packageName = 'core_buildings';
+    protected $_packageName = 'core_race';
     /**
-     * Dependencies, we need quite a lot of them ;)
+     * Dependencies, we only need the core package which will be loaded automaticly
      * @var array
      */
-    public static $dependency = array('core_ressource', 'core_territory', 'core_race');
+    public static $dependency = array();
     /**
-     * Only loads the building class
+     * Only loads the ressource class
      * @see packages/core/classes/package::__action_main()
      * @return bool
      */
 	public function __action_main(){
-		if(!package::$user)return false;
-		$territory = territory::getUserTerritories(package::$user);
-		self::$tpl->assign("buildings", $territory[0]->getBuildings());
-		$buildings = $territory[0]->getBuildings();
-		$territory[0]->increaseBuildingLevel(1);
 		return true;
 	}
 	/**
@@ -51,7 +45,6 @@ class package_core_buildings extends package{
 	 * @return bool
 	 */
 	public static function registerHooks(){
-//		self::_registerHook('plugin_buildingRessource', 'manipulateBuildingCost', 1, 'manipulateBuildingCost', LITO_PLUGIN_ROOT . 'buildings/buildingRessource.plugin.php', 'core_buildings');
 		return true;
 	}
 }

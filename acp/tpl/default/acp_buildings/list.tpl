@@ -29,7 +29,7 @@
 			{$building->getName()}
 		</td>
 		<td>
-			{$oTempUser->getCreateDate()}
+			{$building->getRace()->getName()}
 		</td>
 		<td>
 			{$oTempUser->getLastActive()}

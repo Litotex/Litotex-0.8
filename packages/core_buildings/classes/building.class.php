@@ -158,9 +158,8 @@ class building{
 	public function flush(){
 		
 	}
+	
+	public function getRace(){
+		return new race($this->data['race']);
+	}
 }
-//
-//$building = new building(1);
-//$cost = $building->getCost(1);
-//var_dump($cost);
-//new buildingPluginHandler();
