@@ -135,9 +135,16 @@ class building{
 	}
 	public static function getAllByRace($race){
 		$result = package::$db->Execute("SELECT `ID` FROM `lttx_buildings` WHERE `race` = ?", array($race));
+		return self::_getByQuery($result);
+	}
+	public static function getAll(){
+		$result = package::$db->Execute("SELECT `ID` FROM `lttx_buildings`");
+		return self::_getByQuery($result);
+	}
+	private static function _getByQuery($result){
 		$return = array();
 		if(!$result)
-			return false;
+		return false;
 		while(!$result->EOF){
 			$return[] = new building($result->fields[0]);
 			$result->MoveNext();
