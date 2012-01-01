@@ -26,7 +26,7 @@ abstract class package {
 
     /**
      * This will keep an instance of the database class for usage in extending classes
-     * @var ADODB_mysql
+     * @var PDO
      */
     public static $db;
     /**
