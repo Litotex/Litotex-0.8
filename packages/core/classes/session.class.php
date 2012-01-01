@@ -84,7 +84,8 @@ class session{
      * @param   string  $msg
      */
     public function addHistory($msg){
-        $result = package::$db->Execute("INSERT INTO `lttx".package::$dbn."_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)", array(hash('sha512', $this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
+        $result = package::$db->prepare("INSERT INTO `lttx".package::$dbn."_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)");
+        $result->execute(array(hash('sha512', $this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
     }
 
     /**

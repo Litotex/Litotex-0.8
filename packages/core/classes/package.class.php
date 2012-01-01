@@ -159,7 +159,6 @@ abstract class package {
      */
     public final function displayTpl() {
         if ($this->_tpl) {
-            package::$tpl->assign('queryCount', package::$db->count);
             if (file_exists(self::getTplDir($this->_packageName) . $this->_theme)) {
                 self::$tpl->display(self::getTplDir($this->_packageName) . $this->_theme);
             } else {
