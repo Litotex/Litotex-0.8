@@ -19,7 +19,7 @@ class lttxError extends Exception{
 }
 class lttxDBError extends lttxError{
 	public function __construct  (){
-		$sError = package::$db->ErrorMsg();
+		$sError = package::$db->errorCode();
 		parent::__construct($sError);
 	}
 }
@@ -47,11 +47,12 @@ class lttxLog{
 	public function debug($message = ''){
 		$message=mysql_real_escape_string($message);
 		$currentuser=0;
-		$curenttime=package::$db->DBTimeStamp(date("Y-m-d H:m:s", time()));
+		$currenttime = new Date(time());
+		$currenttime = $currenttime->getDbTime();
 		if(package::$user){
 			$currentuser=package::$user->getUserID();
 		}
-		package::$db->Execute("INSERT INTO `lttx_log` (`userid`, `logdate`, `message`) VALUES (".$currentuser.",".$curenttime.",'".$message."')");
+		package::$db->prepare("INSERT INTO `lttx_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $curenttime, $message));
 	}
 }
 
@@ -65,11 +66,11 @@ class lttxFatalError extends Exception{
 		$this->_log($message, $package);
 	}
 	private function _log($message, $package){
-		package::$db->Execute("INSERT INTO `lttx_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)", array($package, 1, '##' . $this->getFile() . '(' . $this->getLine() . '):' . $message . "\n" . $this->getTraceAsString()));
-		$this->_oID = package::$db->Insert_ID();
+		package::$db->prepare("INSERT INTO `lttx_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, '##' . $this->getFile() . '(' . $this->getLine() . '):' . $message . "\n" . $this->getTraceAsString()));
+		$this->_oID = package::$db->lastInsertId();
 	}
 	public function setTraced($option){
 		if(!$this->_oID)return false;
-		package::$db->Execute("UPDATE `lttx_error_log` SET `traced` = ? WHERE `ID` = ?", array($option, $this->_oID));
+		package::$db->prepare("UPDATE `lttx_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_oID));
 	}
 }
