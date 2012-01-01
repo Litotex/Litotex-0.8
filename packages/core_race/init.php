@@ -21,7 +21,7 @@ include_once('classes/race.class.php');
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  * @hooks: None as this class has no features to be serious
  */
-class package_core_reace extends package{
+class package_core_race extends package{
 	/**
 	 * Name of the module, please do not change this!
 	 * @var string

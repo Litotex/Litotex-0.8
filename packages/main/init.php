@@ -31,7 +31,7 @@ class package_main extends package{
      * No dependencies because they are loaded automatic by hook's
      * @var array
      */
-    public static $dependency = array('core_buildings');
+//     public static $dependency = array('core_buildings');
     protected $_availableActions = array('main');
 	public function __action_main(){
 		return true;
