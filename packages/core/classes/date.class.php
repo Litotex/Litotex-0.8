@@ -48,7 +48,8 @@ class Date {
      * @return <type>
      */
     public function getDbDate(){
-    	return str_replace("'", '', package::$db->DBDate($this->_timestamp));
+    	$dateTime = new DateTime('@'.$this->_timestamp);
+    	return $dateTime->format("Y-m-d H:i:s");
     }
 
     /**
@@ -56,14 +57,16 @@ class Date {
      * @return <type>
      */
     public function getDbTime(){
-    	return str_replace("'", '', package::$db->DBTimeStamp($this->_timestamp));
+    	$dateTime = new DateTime('@'.$this->_timestamp);
+    	return $dateTime->format("Y-m-d H:i:s");
     }
     
     public static function fromDbDate($date){
-    	return Date(package::$db->UnixDate($date));
+    	$dateTime = new DateTime($date);
+    	return Date($dateTime->getTimestamp());
     }
 
     public static function fromDbTime($time){
-    	return Date(package::$db->UnixTimeStamp($time));
-    }
+		$dateTime = new DateTime($date);
+    	return Date($dateTime->getTimestamp());    }
 }
