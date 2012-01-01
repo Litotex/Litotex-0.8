@@ -80,7 +80,7 @@ abstract class installer {
             if(in_array(md5($query), $blackList)) continue;
             if (packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 || packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 && $install) {
                 $this->addLog(sprintf(package::getLanguageVar('acp_packageManager_packageSqlQuery'), $query));
-                $result = package::$db->query($query);
+                $result = package::$db->query($query); //TODO Replace with $dbn
                 $errorMsg = $result->errorCode();
                 if ($errorMsg) {
                     $this->addLog(sprintf(package::getLanguageVar('acp_packageManager_packageSqlQueryReturn'), $errorMsg));

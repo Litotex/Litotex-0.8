@@ -130,7 +130,6 @@ try{
 
 	$packageManager->callHook('endCore', array());
 }catch (Exception $e){
-        package::$tpl->assign('queryCount', package::$db->count);
 	if(isset($package) && is_a($package, 'package'))
 	$package->setTemplatePolicy(false);
 	if(is_a($e, 'lttxFatalError'))
