@@ -40,11 +40,13 @@ class building{
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
 	public function __construct($buildingID){
-		$data = package::$db->Execute("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$dbn."_buildings` WHERE `ID` = ?", array($buildingID));
-		if(!isset($data->fields[0]))
+		$data = package::$db->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$dbn."_buildings` WHERE `ID` = ?");
+		$data->execute(array($buildingID));
+		if($data->rowCount() < 1)
 			throw new Exception('Building ' . $buildingID .' was not found');
-		$plugin = $data->fields[2];
-		$pluginPreferences = $data->fields[3];
+		$data = $data->fetch();
+		$plugin = $data[2];
+		$pluginPreferences = $data[3];
 		if(($plugin = unserialize($plugin)) === false)
 			return;
 		if(($pluginPreferences = unserialize($pluginPreferences)) === false)
@@ -55,13 +57,13 @@ class building{
 			$this->_plugins[$pluginName] = $pluginPreferences[$i];
 		}
 		$this->_initialized = true;
-		$this->_data['name'] = $data->fields[0];
-		$this->_data['race'] = $data->fields[1];
+		$this->_data['name'] = $data[0];
+		$this->_data['race'] = $data[1];
 		$this->_ID = $buildingID;
 		$this->_pluginHandler = new buildingPluginHandler();
 		$this->_dependencyPluginHandler = new buildingDependencyPluginHandler();
-		$this->_timeFormula = $data->fields[4];
-		$this->_pointsFormula = $data->fields[5];
+		$this->_timeFormula = $data[4];
+		$this->_pointsFormula = $data[5];
 	}
 	public function __destruct(){
 		$this->flush();
@@ -114,13 +116,12 @@ class building{
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$db->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$dbn."_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
+		$dep = package::$db->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$dbn."_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
+		$dep->execute(array($this->_ID, (int)$level));
 		$return = array();
-		if(!$dep)
-			return false;
-		while(!$dep->EOF){
-			$return[] = array($dep->fields[0], unserialize($dep->fields[1]));
-			$dep->MoveNext();
+		
+		foreach($dep as $building){
+			$return[] = array($building[0], unserialize($building[1]));
 		}
 		return $return;
 	}
@@ -134,20 +135,20 @@ class building{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = package::$db->Execute("SELECT `ID` FROM `lttx".package::$dbn."_buildings` WHERE `race` = ?", array($race));
+		$result = package::$db->prepare("SELECT `ID` FROM `lttx".package::$dbn."_buildings` WHERE `race` = ?");
+		$result->execute(array($race));
 		return self::_getByQuery($result);
 	}
 	public static function getAll(){
-		$result = package::$db->Execute("SELECT `ID` FROM `lttx".package::$dbn."_buildings`");
+		$result = package::$db->prepare("SELECT `ID` FROM `lttx".package::$dbn."_buildings`");
+		$result->execute();
 		return self::_getByQuery($result);
 	}
 	private static function _getByQuery($result){
 		$return = array();
-		if(!$result)
-		return false;
-		while(!$result->EOF){
-			$return[] = new building($result->fields[0]);
-			$result->MoveNext();
+		
+		foreach($result as $building){
+			$return[] = new building($building[0]);
 		}
 		return $return;
 		//TODO: Cache to make no extra Database connections
