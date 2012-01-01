@@ -104,7 +104,7 @@ class perm {
 						`associateID` = ? ";
 
 		$aSql = array($this->_iAssociateType, $this->_iAssociateID);
-		package::$db->Execute($sSql,$aSql);
+		package::$db->prepare($sSql)->execute($aSql);
 	}
 
 	/**
@@ -195,7 +195,7 @@ class perm {
 						$sClass
 					);
 	
-	   	package::$db->Execute($sSql, $aSql);
+	   	package::$db->prepare($sSql)->execute($aSql);
 
 		return true;
 
@@ -253,7 +253,11 @@ class perm {
 		}
 
 		$aSql = array($this->_iAssociateType, $this->_iAssociateID, $sPackage, $sFunction, $sClass);
-		$mPermissionLevel = package::$db->GetOne($sSql,$aSql);
+		$mPermissionQuery = package::$db->prepare($sSql)->execute($aSql);
+		if(!isset($mPermissionQuery[0]))
+			return false;
+		
+		$mPermissionLevel = $mPermissionQuery[0];
 
 		if($mPermissionLevel === NULL){
 			return false;
@@ -282,8 +286,8 @@ class perm {
 						`package`, `function`
 					";
 				
-			$aSql = array();
-			$aResult = package::$db->GetAssoc($sSql, $aSql);
+			$aSelect = package::$db->prepare($sSql);
+			$aResult = $aSelect->fetch(PDO::FETCH_ASSOC);
 			if(!empty($aResult)){
 				self::$_aAvailablePermissons = $aResult;
 			}
@@ -291,9 +295,11 @@ class perm {
 	}
 
         public static function clearAvailableTable($packageDir, $type = 2){
-            package::$db->Execute("DELETE FROM `lttx_permissions_available` WHERE `type` = ? AND `packageDir` = ?", array($type, $packageDir));
+        	$delete = package::$db->prepare("DELETE FROM `lttx_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
+            $delete->execute(array($type, $packageDir));
         }
         public static function registerAvailable($name, $class, $function, $packageDir, $type = 2){
-            package::$db->Execute("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)", array($type, $name, $class, $function, $packageDir));
+        	$insert = package::$db->prepare("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
+        	$insert->execute(array($type, $name, $class, $function, $packageDir));
         }
 }
