@@ -50,30 +50,30 @@ class package_projects extends package {
     	$xmlFile = new SimpleXMLElement('<litotex origin="updateServer" version="undefined" responsetype="packageList"/>');
     	$dataArea = $xmlFile->addChild('data');
     	$packageData = self::$db->Execute("SELECT
-    		`lttx_projects`.`ID` AS `projectID`,
-    		`lttx_projects`.`name`,
-    		`lttx_projects`.`description`,
-    		`lttx_projects`.`owner`,
-    		`lttx_projects`.`creationTime`,
-    		`lttx_projectReleases`.`ID` AS `releaseID`,
-    		`lttx_projectReleases`.`uploader`,
-    		`lttx_projectReleases`.`version`,
-    		`lttx_projectReleases`.`platform`,
-    		`lttx_projectReleases`.`dependencies`,
-    		`lttx_projectReleases`.`changelog`,
-    		`lttx_projectReleases`.`critupdate`,
-    		`lttx_projectReleases`.`time`,
-    		`lttx_projectReleases`.`file`,
-    		`lttx_projectReleases`.`downloads`,
-    		`lttx_projectSignes`.`ID` AS `certID`,
-    		`lttx_projectSignes`.`comment` AS `certComment`,
-    		`lttx_projectSignes`.`fullReview`
-    		FROM `lttx_projects`
-    		LEFT JOIN `lttx_projectReleases`
-	    	ON `lttx_projects`.`id` = `lttx_projectReleases`.`projectID`
-	    	LEFT JOIN `lttx_projectSignes`
-	    	ON `lttx_projectReleases`.`ID` = `lttx_projectSignes`.`releaseID`
-	    	WHERE `lttx_projectReleases`.`platform` = ?
+    		`lttx".package::$dbn."_projects`.`ID` AS `projectID`,
+    		`lttx".package::$dbn."_projects`.`name`,
+    		`lttx".package::$dbn."_projects`.`description`,
+    		`lttx".package::$dbn."_projects`.`owner`,
+    		`lttx".package::$dbn."_projects`.`creationTime`,
+    		`lttx".package::$dbn."_projectReleases`.`ID` AS `releaseID`,
+    		`lttx".package::$dbn."_projectReleases`.`uploader`,
+    		`lttx".package::$dbn."_projectReleases`.`version`,
+    		`lttx".package::$dbn."_projectReleases`.`platform`,
+    		`lttx".package::$dbn."_projectReleases`.`dependencies`,
+    		`lttx".package::$dbn."_projectReleases`.`changelog`,
+    		`lttx".package::$dbn."_projectReleases`.`critupdate`,
+    		`lttx".package::$dbn."_projectReleases`.`time`,
+    		`lttx".package::$dbn."_projectReleases`.`file`,
+    		`lttx".package::$dbn."_projectReleases`.`downloads`,
+    		`lttx".package::$dbn."_projectSignes`.`ID` AS `certID`,
+    		`lttx".package::$dbn."_projectSignes`.`comment` AS `certComment`,
+    		`lttx".package::$dbn."_projectSignes`.`fullReview`
+    		FROM `lttx".package::$dbn."_projects`
+    		LEFT JOIN `lttx".package::$dbn."_projectReleases`
+	    	ON `lttx".package::$dbn."_projects`.`id` = `lttx".package::$dbn."_projectReleases`.`projectID`
+	    	LEFT JOIN `lttx".package::$dbn."_projectSignes`
+	    	ON `lttx".package::$dbn."_projectReleases`.`ID` = `lttx".package::$dbn."_projectSignes`.`releaseID`
+	    	WHERE `lttx".package::$dbn."_projectReleases`.`platform` = ?
 	    	ORDER BY  `lttx1_projectReleases`.`version` DESC", array($platform));
     	self::$_packageCache = array();
     	while(!$packageData->EOF){

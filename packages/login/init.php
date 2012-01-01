@@ -87,7 +87,7 @@ class package_login extends package {
 		
 		$result = package::$db->Execute("
             SELECT *
-            FROM `lttx_users`
+            FROM `lttx".package::$dbn."_users`
             WHERE `email` = ?",
                 $email);
 		

@@ -33,7 +33,7 @@ class package_acp_options extends acpPackage {
             $iOptionID = (int) $_GET['id'];
         }
 
-		$result = package::$db->Execute("SELECT * FROM `lttx_options` WHERE `ID` = ?",$iOptionID);
+		$result = package::$db->Execute("SELECT * FROM `lttx".package::$dbn."_options` WHERE `ID` = ?",$iOptionID);
 		
 		
 		if(!$result || !$result->RecordCount() ){
@@ -86,7 +86,7 @@ class package_acp_options extends acpPackage {
         $this->_theme = 'main.tpl';
 		
 		
-		$result = package::$db->Execute("SELECT * FROM `lttx_options` WHERE `ID` = ?",$iOptionID);
+		$result = package::$db->Execute("SELECT * FROM `lttx".package::$dbn."_options` WHERE `ID` = ?",$iOptionID);
 		
 		
 		if(!$result || !$result->RecordCount() ){

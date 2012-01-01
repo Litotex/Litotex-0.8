@@ -37,7 +37,7 @@ class package_navigation extends package {
 			$menu_item=intval($_GET['menu']);
 		
 		$elements = array();
-        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$dbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
         while(!$data->EOF) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
 			if($data->fields[0] == $menu_item)
@@ -70,7 +70,7 @@ class package_navigation extends package {
 			$submenu_item=intval($_GET['submenu']);
 		
 		$elements = array();
-        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_navigation` WHERE `parent` =? ORDER BY `sort` ASC",$menu_item);
+        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$dbn."_navigation` WHERE `parent` =? ORDER BY `sort` ASC",$menu_item);
         while(!$data->EOF) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
 			if($data->fields[0] == $menu_item)

@@ -98,7 +98,7 @@ class perm {
 	 **/
 	public function deleteAllPerissions(){
 		$sSql = " DELETE FROM
-						`lttx_permissions` 
+						`lttx".package::$dbn."_permissions` 
 					WHERE
 						`associateType` = ? AND 
 						`associateID` = ? ";
@@ -161,7 +161,7 @@ class perm {
 
 			$sSql = "
 				INSERT INTO
-					`lttx_permissions`
+					`lttx".package::$dbn."_permissions`
 				SET
 			".$sSqlSetPart;
 
@@ -169,7 +169,7 @@ class perm {
 
 			$sSql = "
 				UPDATE
-					`lttx_permissions`
+					`lttx".package::$dbn."_permissions`
 				SET
 					".$sSqlSetPart."   
 				WHERE   
@@ -239,7 +239,7 @@ class perm {
 				SELECT 
 					`permissionLevel`
 				FROM 
-					`lttx_permissions`
+					`lttx".package::$dbn."_permissions`
 				WHERE 
 					`associateType` = ? AND 
 					`associateID` = ? AND 
@@ -281,7 +281,7 @@ class perm {
 					SELECT 
 						*
 					FROM 
-						`lttx_permissions_available`
+						`lttx".package::$dbn."_permissions_available`
 					ORDER BY
 						`package`, `function`
 					";
@@ -295,11 +295,11 @@ class perm {
 	}
 
         public static function clearAvailableTable($packageDir, $type = 2){
-        	$delete = package::$db->prepare("DELETE FROM `lttx_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
+        	$delete = package::$db->prepare("DELETE FROM `lttx".package::$dbn."_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
             $delete->execute(array($type, $packageDir));
         }
         public static function registerAvailable($name, $class, $function, $packageDir, $type = 2){
-        	$insert = package::$db->prepare("INSERT INTO `lttx_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
+        	$insert = package::$db->prepare("INSERT INTO `lttx".package::$dbn."_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
         	$insert->execute(array($type, $name, $class, $function, $packageDir));
         }
 }

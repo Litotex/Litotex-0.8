@@ -213,7 +213,7 @@ class comment {
                 return false;
         if(!is_a($writer, 'user'))
                 return false;
-        $result = package::$db->Execute("INSERT INTO `lttx_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?", array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
+        $result = package::$db->Execute("INSERT INTO `lttx".package::$dbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?", array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
         $news->increaseComments();
         return (!$result || package::$db->Affected_Rows() <= 0)?false:new comment(package::$db->Insert_ID());
     }
@@ -237,9 +237,9 @@ class comment {
             $offset = -1;
         }
         if($news)
-            $result = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx_news_comments` WHERE `news` = ? ORDER BY `date` DESC", $offset, $start, array($news->getID()));
+            $result = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$dbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC", $offset, $start, array($news->getID()));
         else
-            $result = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx_news_comments` ORDER BY `date` DESC", $offset, $start);
+            $result = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$dbn."_news_comments` ORDER BY `date` DESC", $offset, $start);
         if(!$result)
             return false;
         while(!$result->EOF){
@@ -253,9 +253,9 @@ class comment {
         if($news && !is_a($news, 'news'))
                 return false;
         if($news)
-            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx_news_comments` WHERE `news` = ?", array($news->getID()));
+            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$dbn."_news_comments` WHERE `news` = ?", array($news->getID()));
         else
-            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx_news_comments`");
+            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$dbn."_news_comments`");
         if(!$result)
             return false;
         return $result->fields[0]*1;
@@ -264,7 +264,7 @@ class comment {
         if($this->_getCommentCached($ID))
                 return true;
         $ID = (int)$ID;
-        $result = package::$db->Execute("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx_news_comments` WHERE `ID` = ?", array($ID));
+        $result = package::$db->Execute("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$dbn."_news_comments` WHERE `ID` = ?", array($ID));
         if(!$result || !$result->fields[0])
             return false;
         $this->_ID = $result->fields[0];

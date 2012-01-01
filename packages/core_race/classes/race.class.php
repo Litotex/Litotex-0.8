@@ -33,7 +33,7 @@ class race{
 		$this->_description = $description;
 	}
 	private function _getRaceData($raceID){
-		$result = package::$db->Execute("SELECT `id`, `name`, `image`, `description` FROM `lttx_races` WHERE `id` = ?", array($raceID));
+		$result = package::$db->Execute("SELECT `id`, `name`, `image`, `description` FROM `lttx".package::$dbn."_races` WHERE `id` = ?", array($raceID));
 		if(!isset($result->fields[0]))
 			throw new lttxError('E_race_not_found', $raceID);
 		$this->_id = $result->fields[0];

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package acp_navigation
- * @author Patrick König <koenig@mail-buero.de>
+ * @author Patrick Kï¿½nig <koenig@mail-buero.de>
  * @copyright: Copyright 2011 Litotex Team
  */
 class package_acp_navigation extends acpPackage {
@@ -30,10 +30,10 @@ class package_acp_navigation extends acpPackage {
         package::addJsFile('main.js','acp_navigation');
         //package::addJsFile('jquery.effects.core.min.js');
         $elements = array();
-        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx_acp_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
         while(!$data->EOF) {
             if(!isset($_GET['package'])) $_GET['package'] = 'main';
-            $res = package::$db->Execute("SELECT COUNT(*) FROM `lttx_acp_navigation` WHERE `parent` = ? AND `package` = ?", array($data->fields['ID'], $_GET['package']));
+            $res = package::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` = ? AND `package` = ?", array($data->fields['ID'], $_GET['package']));
             if($res->fields[0] >= 1)
                 $data->fields['active'] = true;
             else
@@ -46,16 +46,16 @@ class package_acp_navigation extends acpPackage {
     }
     public static function __tpl_displayAcpSubNavigation(){
         $counter=0;
-        $data = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx_acp_navigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
+        $data = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
         $elements = array();
         while(!$data->EOF) {
             $counter++;
-            $real = self::$db->Execute("SELECT COUNT(*) FROM `lttx_acp_navigation` WHERE `parent` IS NULL AND `ID` = ?", array($data->fields['parent']));
+            $real = self::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NULL AND `ID` = ?", array($data->fields['parent']));
             if($real->fields[0] < 1) {
                 $data->MoveNext();
                 continue;
             }
-            $sub = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx_acp_navigation` WHERE `parent` = ? ORDER BY `sort` ASC", array($data->fields['ID']));
+            $sub = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` = ? ORDER BY `sort` ASC", array($data->fields['ID']));
             if(!isset($elements[$data->fields['parent']]))
                 $elements[$data->fields['parent']] = array('active' => false);
                 $subElements = array();

@@ -5,7 +5,7 @@ class package_content extends package{
 	protected $_availableActions = array('main');
 	public function __action_main(){
 		$id = (isset($_GET['ID']))?$_GET['ID']:0;
-		$contentData = self::$db->Execute("SELECT `title`, `text`, `lastEdit`, `editUser` FROM `lttx_contents` WHERE `ID` = ?", array($id));
+		$contentData = self::$db->Execute("SELECT `title`, `text`, `lastEdit`, `editUser` FROM `lttx".package::$dbn."_contents` WHERE `ID` = ?", array($id));
 		if(!isset($contentData->fields[0])){
 			$error = self::$packages->loadPackage(LITO_ERROR_MODULE, true);
                         if(!$error){

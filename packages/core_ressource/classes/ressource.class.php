@@ -84,7 +84,7 @@ class ressource{
 			$add .= ', `increaseFormula`';
 		if($limit)
 			$add .= ', `limit`';
-		$res = package::$db->Execute("SELECT `resID`, `resNum`" . $add . " FROM `lttx_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
+		$res = package::$db->Execute("SELECT `resID`, `resNum`" . $add . " FROM `lttx".package::$dbn."_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
 		if(!$res)
 			throw new Exception('Selected ressource table "' . $table . '" was not found or incompatible');
 		while(!$res->EOF){
@@ -98,13 +98,13 @@ class ressource{
 			}
 			$res->MoveNext();
 		}
-		$checkRes = package::$db->Execute("SELECT `ID` FROM `lttx_ressources` WHERE `raceID` = ?", array($race));
+		$checkRes = package::$db->Execute("SELECT `ID` FROM `lttx".package::$dbn."_ressources` WHERE `raceID` = ?", array($race));
 		while(!$checkRes->EOF){
 			if(isset($this->_res[$checkRes->fields[0]])){
 				$checkRes->MoveNext();
 				continue;
 			}
-			package::$db->Execute("INSERT INTO `lttx_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)", array($checkRes->fields[0], $race, $id));
+			package::$db->Execute("INSERT INTO `lttx".package::$dbn."_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)", array($checkRes->fields[0], $race, $id));
 			$this->_res[$checkRes->fields[0]] = 0;
 			$checkRes->MoveNext();
 		}
@@ -214,7 +214,7 @@ class ressource{
 		if(!isset($this->_limit[$resID]))
 			return false;
 		$this->_limit[$resID] = $newValue;
-		package::$db->Execute("UPDATE `lttx_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?", array($newValue, $resID, $this->_race, $this->_src));
+		package::$db->Execute("UPDATE `lttx".package::$dbn."_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?", array($newValue, $resID, $this->_race, $this->_src));
 		return true;
 	}
 	/**
@@ -256,7 +256,7 @@ class ressource{
 	 * @return array
 	 */
 	public function getAllRessName(){
-		$names = package::$db->Execute("SELECT `ID`, `name` FROM `lttx_ressources` WHERE `raceID` = ?", $this->_race);
+		$names = package::$db->Execute("SELECT `ID`, `name` FROM `lttx".package::$dbn."_ressources` WHERE `raceID` = ?", $this->_race);
 		$return = array();
 		while(!$names->EOF){
 			$return[$names->fields[0]] = $names->fields[1];
@@ -288,7 +288,7 @@ class ressource{
 	 */
 	public function flush(){
 		foreach($this->_changed as $value){
-			package::$db->Execute('UPDATE `lttx_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?', array($this->_res[$value], $this->_src, $value, $this->_race));
+			package::$db->Execute('UPDATE `lttx".package::$dbn."_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?', array($this->_res[$value], $this->_src, $value, $this->_race));
 		}
 		$this->_changed = array();
 		return true;

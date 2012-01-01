@@ -133,7 +133,7 @@ class userGroup extends Basis_Entry {
         if($ID === false)
             return false;
         $result = package::$db->Execute("
-            DELETE FROM `lttx_userGroupConnections`
+            DELETE FROM `lttx".package::$dbn."_userGroupConnections`
             WHERE `userID` = ?
             AND `groupID` = ?",
                 array($ID, $this->ID));

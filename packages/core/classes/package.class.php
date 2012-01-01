@@ -29,6 +29,8 @@ abstract class package {
      * @var PDO
      */
     public static $db;
+    
+    public static $dbn = 1;
     /**
      * This will keep an instance of the template class Smarty for usage in extending classes
      * @var Smarty

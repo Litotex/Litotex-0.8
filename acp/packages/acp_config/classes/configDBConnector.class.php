@@ -26,7 +26,7 @@ class configDBConnector extends configConnector{
 		
 	}
 	private function _cacheData(){
-		$result = package::$db->Execute("SELECT * FROM `lttx_" . $this->_dbName . " WHERE `ID` = ? LIMIT 1", array($this->_elementID));
+		$result = package::$db->Execute("SELECT * FROM `lttx".package::$dbn."_" . $this->_dbName . " WHERE `ID` = ? LIMIT 1", array($this->_elementID));
 		if(!$result)
 			return false;
 		if(!isset($result->fields[0]))

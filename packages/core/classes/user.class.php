@@ -199,7 +199,7 @@ class user {
     	){
 
     		$sSql = " UPDATE
-    						`lttx_users`
+    						`lttx".package::$dbn."_users`
     					SET
     						".$sSqlSetPart."
     					WHERE
@@ -212,7 +212,7 @@ class user {
     	} else if($iUserId == 0){
     		    		
     		$sSql = " INSERT INTO 
-    						`lttx_users`
+    						`lttx".package::$dbn."_users`
     					SET
     					".$sSqlSetPart;
     		// Insert
@@ -249,7 +249,7 @@ class user {
             return -1;
         $result = package::$db->Execute("
             SELECT COUNT(`ID`)
-            FROM `lttx_users`
+            FROM `lttx".package::$dbn."_users`
             WHERE `email` = ?",
                 array($email));
         if(!$result) {
@@ -266,7 +266,7 @@ class user {
             $additionalDataColumns .= ', `' . $key . '`';
         }
         $result = package::$db->Execute("
-            INSERT INTO `lttx_users`
+            INSERT INTO `lttx".package::$dbn."_users`
             (`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
             VALUES
             (?, ?, ?, ?" . $additionalDataPointer . ")",
@@ -345,7 +345,7 @@ class user {
         }
         $result = package::$db->Execute("
             SELECT `ID`
-            FROM `lttx_users`
+            FROM `lttx".package::$dbn."_users`
             WHERE `username` = ?",
                 array($username));
         if(!$result)
@@ -377,7 +377,7 @@ class user {
         //Nothing was cached... read manually
         $result = package::$db->Execute("
             SELECT `" . $key . "`
-            FROM `lttx_users`
+            FROM `lttx".package::$dbn."_users`
             WHERE `id` = ?",
                 array($this->_currentID));
         if(!$result)
@@ -406,7 +406,7 @@ class user {
             return true;
         }
         $result = package::$db->Execute("
-            UPDATE `lttx_users`
+            UPDATE `lttx".package::$dbn."_users`
             SET `" . $key . "` = ?
             WHERE `ID` = ?",
                 array($newValue, $this->_currentID));
@@ -475,7 +475,7 @@ class user {
             
         $result = package::$db->Execute("
             SELECT *
-            FROM `lttx_users`
+            FROM `lttx".package::$dbn."_users`
             WHERE `id` = ?",
                 array($this->_currentID));
         foreach ((array)$result->fields as $key => $value) {
@@ -504,7 +504,7 @@ class user {
         }
         $result = package::$db->Execute("
             SELECT " . $fields . "
-            FROM `lttx_users`
+            FROM `lttx".package::$dbn."_users`
             WHERE `id` = ?",
                 array($this->_currentID));
         if(!$result)
@@ -523,7 +523,7 @@ class user {
             return false;
         if(count($this->_writeBuffer) <= 0)
             return true;
-        $queryString = 'UPDATE `lttx_users` SET ';
+        $queryString = 'UPDATE `lttx".package::$dbn."_users` SET ';
         $values = array();
         $i = 0;
         foreach($this->_writeBuffer as $key => $value) {
@@ -555,13 +555,13 @@ class user {
         if(is_int($user)) {
             $result = package::$db->Execute("
                 SELECT COUNT(`ID`)
-                FROM `lttx_users`
+                FROM `lttx".package::$dbn."_users`
                 WHERE `ID` = ?",
                     array($user));
         } else {
             $result = package::$db->Execute("
                 SELECT COUNT(`ID`)
-                FROM `lttx_users`
+                FROM `lttx".package::$dbn."_users`
                 WHERE `username` = ?",
                     array($user));
         }
@@ -764,7 +764,7 @@ class user {
      */
     public function setPassword($password){
     	$salted = $this->_saltString($password);
-    	package::$db->Execute("UPDATE `lttx_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?", array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
+    	package::$db->Execute("UPDATE `lttx".package::$dbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?", array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
     	return true;
     }
 
@@ -856,7 +856,7 @@ class user {
     	//We absolutly need to stop buffering every entry! This would be the perfect overkill
     	$return = array();
     	$match = array();
-    	$searchResults = package::$db->Execute("SELECT `ID`, `".$field."` FROM `lttx_users` WHERE `".$field."` LIKE ? AND `isActive` = 1", array('%' . $request . '%'));
+    	$searchResults = package::$db->Execute("SELECT `ID`, `".$field."` FROM `lttx".package::$dbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1", array('%' . $request . '%'));
 		if($searchResults === false){
 			throw new lttxDBError();
 		}
@@ -876,7 +876,7 @@ class user {
     }
 
 	public function saveUserFieldData($iFieldId, $mValue){
-		$sSql = " REPLACE INTO `lttx_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
+		$sSql = " REPLACE INTO `lttx".package::$dbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'), $mValue);
 		package::$db->Execute($sSql, $aSql);
 	}
@@ -889,7 +889,7 @@ class user {
         }
 
 	public function getUserFieldData($iFieldId){
-		$sSql = " SELECT `value` FROM `lttx_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
+		$sSql = " SELECT `value` FROM `lttx".package::$dbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'));
 		$mValue = package::$db->GetOne($sSql, $aSql);
 		return $mValue;
