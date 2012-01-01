@@ -15,7 +15,9 @@ class tplModSort extends Basis_Entry {
 		$sSql = " SELECT * FROM `".$oTemp->_sTableName."` WHERE `position` = ? ";
 		$aSql = array($sPosition);
 
-		$aResult = package::$db->GetAssoc($sSql, $aSql, true);
+		$aResult = package::$db->prepare($sSql);
+		$aResult->execute($aSql);
+		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
 		$aBack = array();
 		if(!empty($aResult)){
@@ -41,7 +43,10 @@ class tplModSort extends Basis_Entry {
 						`active` = ?";
 		$aSql = array($sClass, $sFuntion, 1 );
 
-		$iID = package::$db->GetOne($sSql, $aSql, true);
+		$iID = package::$db->prepare($sSql);
+		$iID->execute($aSql);
+		$iID = $iID->fetch();
+		$iID = $iID[0];
 
 		return $iID;
 
