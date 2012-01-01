@@ -15,7 +15,9 @@ class userField extends Basis_Entry {
 		$sSql = " SELECT * FROM `lttx".package::$dbn."_userfields` ORDER BY `position` ASC";
 		$aSql = array();
 		
-		$aResult = package::$db->GetAssoc($sSql, $aSql, true);
+		$aResult = package::$db->prepare($sSql);
+		$aResult->execute($aSql);
+		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
 		$aBack = array();
 		if(!empty($aResult)){
