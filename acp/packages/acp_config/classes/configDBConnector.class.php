@@ -26,12 +26,12 @@ class configDBConnector extends configConnector{
 		
 	}
 	private function _cacheData(){
-		$result = package::$db->Execute("SELECT * FROM `lttx".package::$dbn."_" . $this->_dbName . " WHERE `ID` = ? LIMIT 1", array($this->_elementID));
-		if(!$result)
+		$result = package::$db->prepare("SELECT * FROM `lttx".package::$dbn."_" . $this->_dbName . " WHERE `ID` = ? LIMIT 1");
+		$result->execute(array($this->_elementID));
+		if($result->rowCount() < 0)
 			return false;
-		if(!isset($result->fields[0]))
-			return false;
-		$this->_cache = $result->fields;
+		
+		$this->_cache = $result->fetch();
 		return true;
 	}
 	public function getData($key){
