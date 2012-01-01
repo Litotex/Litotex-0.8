@@ -75,17 +75,16 @@ class userGroup extends Basis_Entry {
      * @return array
      */
     public function getUsers(){
-        $result = package::$db->Execute("
+        $result = package::$db->prepare("
             SELECT `userID`
             FROM `lttx1_user_group_connections`
-            WHERE `groupID` = ?",
-                array($this->ID));
-        if(!$result)
+            WHERE `groupID` = ?");
+        $result->execute(array($this->ID));
+        if($result->rowCount() < 1)
             return false;
         $return = array();
-        while(!$result->EOF){
-            $return[] = new user($result->fields[0]);
-            $result->MoveNext();
+        foreach($result as $user){
+            $return[] = new user($user[0]);
         }
         return $return;
     }
@@ -102,24 +101,25 @@ class userGroup extends Basis_Entry {
         if($ID === false)
             return false;
         //Check if already in first...
-        $result = package::$db->Execute("
+        $result = package::$db->prepare("
             SELECT COUNT(`ID`)
             FROM  `lttx1_user_group_connections`
             WHERE `userID` = ?
-            AND `groupID` = ?",
-                array($ID, $this->ID));
-        if(!$result || !isset($result->fields[0]))
+            AND `groupID` = ?");
+        $result->execute(array($ID, $this->ID));
+        if($result->rowCount() < 1)
             return false;
-        if($result->fields[0] > 0)
+       	$result = $result->fetch();
+        if($result[0] > 0)
                 return true;
         //end check
-        $result = package::$db->Execute("
+        $result = package::$db->prepare("
             INSERT INTO `lttx1_user_group_connections`
             (`userID`, `groupID`)
             VALUES
-            (?, ?)",
-                array($ID, $this->ID));
-        if(!$result || package::$db->Affected_Rows() <= 0)
+            (?, ?)");
+        $result->execute(array($ID, $this->ID));
+        if($result->rowCount() < 1)
                 return false;
     }
 	
@@ -132,12 +132,12 @@ class userGroup extends Basis_Entry {
         $ID = $user->getUserID();
         if($ID === false)
             return false;
-        $result = package::$db->Execute("
+        $result = package::$db->prepare("
             DELETE FROM `lttx".package::$dbn."_userGroupConnections`
             WHERE `userID` = ?
-            AND `groupID` = ?",
-                array($ID, $this->ID));
-        if(!$result || package::$db->Affected_Rows() <= 0)
+            AND `groupID` = ?");
+		$result->execute(array($ID, $this->ID));
+        if($result->rowCount() < 1)
                 return false;
     }
 
@@ -157,10 +157,9 @@ class userGroup extends Basis_Entry {
 			return false;
 		}
 
-       package::$db->Execute("
+       package::$db->prepare("
             DELETE FROM `lttx1_user_group_connections`
-            WHERE `groupID` = ?",
-                array($this->ID));
+            WHERE `groupID` = ?")->execute(array($this->ID));
 
 		parent::delete();
 
@@ -169,17 +168,16 @@ class userGroup extends Basis_Entry {
 	
     public static function getDefault(){
     	$return = array();
-        $result = package::$db->Execute("
+        $result = package::$db->prepare("
             SELECT `ID`
             FROM `lttx1_user_groups`
-            WHERE `default` = ?",
-                array(1));
-                echo mysql_error();
-        if(!$result || !isset($result->fields[0]))
+            WHERE `default` = ?");
+        $result->execute(array(1));
+        
+        if($result->rowCount() < 1)
                 return false;
-        while(!$result->EOF){
-            $return[] = new userGroup($result->fields[0]);
-            $result->MoveNext();
+        foreach($result as $group){
+            $return[] = new userGroup($group[0]);
         }
         return $return;
     }
