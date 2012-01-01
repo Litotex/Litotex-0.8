@@ -26,7 +26,6 @@ require_once('classes/math.class.php');
 require_once('classes/package.class.php');
 require_once('classes/lttxError.class.php');
 require_once('classes/packagemanager.class.php');
-require_once('classes/AdoDB/adodb.inc.php');
 require_once('classes/plugin.class.php');
 require_once('classes/date.class.php');
 require_once('classes/Smarty/Smarty.class.php');
@@ -51,12 +50,10 @@ try{
 			trigger_error('No databasesettings saved at ' . DATABASE_CONFIG_FILE, E_USER_ERROR);
 			exit();
 		}
-		$db = NewADOConnection('mysql');
-		$db->charSet = 'utf8';
-		$db->connect($dbConfig['host'], $dbConfig['user'], $dbConfig['password'], $dbConfig['database']);
-		//mysql_set_charset('utf8');
-		if($db->ErrorMsg()) {
-			die('Database connection failed!');
+		try{
+			$db = new PDO('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
+		}catch(PDOException $e) {
+			die('Database connection failed! ' . $e->getMessage());
 		}
 		package::setDatabaseClass($db);
 	
