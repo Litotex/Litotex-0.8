@@ -63,7 +63,9 @@ class Basis_Entry {
 		$sSql = " SELECT * FROM `".$oTemp->_sTableName."` ";
 		$aSql = array();
 
-		$aResult = package::$db->GetAssoc($sSql, $aSql, true);
+		$aResult = package::$db->prepare($sSql);
+		$aResult->execute($aSql);
+		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
 		$aBack = array();
 		if(!empty($aResult)){
@@ -149,7 +151,7 @@ class Basis_Entry {
 				$aSql[] = (int)$this->ID;
 			}
 
-			package::$db->Execute($sSql, $aSql);
+			package::$db->prepare($sSql)->execute($aSql);
 
 			return true;
 
@@ -170,7 +172,7 @@ class Basis_Entry {
 		$sSql = " DELETE FROM `".$this->_sTableName."` WHERE `ID` = ?";
 		$aSql = array($this->ID);
 
-		package::$db->Execute($sSql, $aSql, true);
+		package::$db->prepare($sSql)->execute($aSql);
 	}
 
 	/**
@@ -183,9 +185,9 @@ class Basis_Entry {
 			$sSql = " SELECT * FROM `".$this->_sTableName."` WHERE ID = ? ";
 			$aSql = array($this->_aData['ID']);
 
-			package::$db->SetFetchMode(ADODB_FETCH_ASSOC);
-			$aResult = package::$db->GetRow($sSql, $aSql);
-			package::$db->SetFetchMode(ADODB_FETCH_DEFAULT);
+			$aResult = package::$db->prepare($sSql);
+			$aResult->execute($aSql);
+			$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
 			if($aResult === false){
 				throw new lttxDBError();
