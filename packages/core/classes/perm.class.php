@@ -253,7 +253,9 @@ class perm {
 		}
 
 		$aSql = array($this->_iAssociateType, $this->_iAssociateID, $sPackage, $sFunction, $sClass);
-		$mPermissionQuery = package::$db->prepare($sSql)->execute($aSql);
+		$mPermissionQuery = package::$db->prepare($sSql);
+		$mPermissionQuery->execute($aSql);
+		$mPermissionQuery = $mPermissionQuery->fetch();
 		if(!isset($mPermissionQuery[0]))
 			return false;
 		

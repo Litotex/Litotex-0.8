@@ -155,7 +155,7 @@ class user {
 	 * @param $aData
 	 */
 	public function update($aData){
-		 
+			
 		$iUserId = (int)$this->getData('ID');
 
 		// check for PW
@@ -172,15 +172,15 @@ class user {
 		){
 			unset($aData['password']);
 		}
-		 
+			
 		$sSql = "";
 		$aSql = "";
-		 
+			
 		$sSqlSetPart = "";
 
 		// write SET Part
 		foreach((array)$aData as $sField => $mValue){
-			 
+
 			$sSqlSetPart .= "`".$sField."` = ?, ";
 			$aSql[] = $mValue;
 			// cache
@@ -190,13 +190,10 @@ class user {
 
 		// remove last ","
 		$sSqlSetPart = rtrim($sSqlSetPart, ', ');
-		 
+			
 		$bSuccess = true;
-		 
-		if(
-		$iUserId > 0  &&
-		self::userExists($iUserId)
-		){
+			
+		if($iUserId > 0  &&	self::userExists($iUserId)){
 
 			$sSql = " UPDATE
     						`lttx".package::$dbn."_users`
@@ -232,7 +229,7 @@ class user {
 			$sDBError = package::$db->errorCode();
 			throw new lttxError($sDBError);
 		}
-		 
+			
 		return true;
 	}
 
@@ -464,7 +461,7 @@ class user {
 	 * @return bool
 	 */
 	private function _createFullBuffer() {
-		 
+			
 		if(!$this->_initialized)
 		return false;
 		if(!$this->_bufferActive)
