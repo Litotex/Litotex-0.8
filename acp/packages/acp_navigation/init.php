@@ -30,56 +30,58 @@ class package_acp_navigation extends acpPackage {
         package::addJsFile('main.js','acp_navigation');
         //package::addJsFile('jquery.effects.core.min.js');
         $elements = array();
-        $data = self::$db->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
-        while(!$data->EOF) {
+        $data = self::$db->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        foreach($data as $entry) {
             if(!isset($_GET['package'])) $_GET['package'] = 'main';
-            $res = package::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` = ? AND `package` = ?", array($data->fields['ID'], $_GET['package']));
-            if($res->fields[0] >= 1)
-                $data->fields['active'] = true;
+            $res = package::$db->prepare("SELECT COUNT(*) FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` = ? AND `package` = ?");
+            $res->execute(array($entry['ID'], $_GET['package']));
+            $res = $res->fetch();
+            
+            if($res[0] >= 1)
+                $entry['active'] = true;
             else
-                $data->fields['active'] = false;
-            $elements[] = $data->fields;
-            $data->MoveNext();
+                $entry['active'] = false;
+            $elements[] = $entry;
         }
         self::$tpl->assign('navigationItems', $elements);
         self::$tpl->display(self::getTplDir('acp_navigation') . 'topNavigation.tpl');
     }
     public static function __tpl_displayAcpSubNavigation(){
         $counter=0;
-        $data = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
+        $data = self::$db->query("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
         $elements = array();
-        while(!$data->EOF) {
+        foreach($data as $entry) {
             $counter++;
-            $real = self::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NULL AND `ID` = ?", array($data->fields['parent']));
-            if($real->fields[0] < 1) {
-                $data->MoveNext();
+            $real = self::$db->prepare("SELECT COUNT(*) FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` IS NULL AND `ID` = ?");
+            $real->execute(array($entry['parent']));
+            $real = $real->fetch();
+            if($real[0] < 1) {
                 continue;
             }
-            $sub = self::$db->Execute("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` = ? ORDER BY `sort` ASC", array($data->fields['ID']));
-            if(!isset($elements[$data->fields['parent']]))
-                $elements[$data->fields['parent']] = array('active' => false);
+            $sub = self::$db->prepare("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".package::$dbn."_acp_navigation` WHERE `parent` = ? ORDER BY `sort` ASC");
+            $sub->execute(array($entry['ID']));
+            if(!isset($elements[$entry['parent']]))
+                $elements[$entry['parent']] = array('active' => false);
                 $subElements = array();
                 $active = false;
                 
             if(!isset($_GET['package']))
                 $_GET['package'] = 'main';
-            if($data->fields['package'] == $_GET['package']){
+            if($entry['package'] == $_GET['package']){
                 $active = true;
             }
-            while(!$sub->EOF) {
-                $subElements[] = $sub->fields;
+            foreach($sub as $subEntry) {
+                $subElements[] = $subEntry;
                 if(!isset($_GET['package']))
                     $_GET['package'] = 'main';
-                if($sub->fields['package'] == $_GET['package']) {
+                if($subEntry['package'] == $_GET['package']) {
                     $active = true;
                 }
-                $sub->MoveNext();
             }
-            $data->fields['sub'] = $subElements;
-            $elements[$data->fields['parent']][] = $data->fields;
+            $entry['sub'] = $subElements;
+            $elements[$entry['parent']][] = $entry;
             if($active==true)
-                $elements[$data->fields['parent']]['active'] = true;
-                $data->MoveNext();
+                $elements[$entry['parent']]['active'] = true;
         }
         self::$tpl->assign('navigationItems', $elements);
         self::$tpl->display(self::getTplDir('acp_navigation') . 'subNavigation.tpl');
