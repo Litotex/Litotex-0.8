@@ -32,8 +32,9 @@ class package_acp_log_viewer extends acpPackage{
 		$sord = isset($_GET['sord'])?$_GET['sord']:"DESC";
 		
 	
-		$result =  package::$db->Execute("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='0' "); 
-		$count = $result->fields['count'];
+		$result =  package::$db->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='0' ");
+		$result = $result->fetch(); 
+		$count = $result['count'];
 		$limit=$count;
 		
 		
@@ -46,18 +47,17 @@ class package_acp_log_viewer extends acpPackage{
 		$start = $limit*$page - $limit; // do not put $limit*($page - 1) 
 	
 		$SQL = "SELECT lttx1_log.*, lttx1_users.username  FROM lttx1_log LEFT OUTER JOIN lttx1_users ON (lttx1_log.userid=lttx1_users.ID)  where log_type ='0' ORDER BY $sidx $sord LIMIT $start , $limit"; 
-		$result =  package::$db->Execute($SQL );
+		$result =  package::$db->query($SQL );
 		
 		$responce->page = $page; 
 		$responce->total = $total_pages; 
 		$responce->records = $count; 
 		
 		$i=0; 
-		while(!$result->EOF){
-			$responce->rows[$i]['id']=$result->fields['ID']; 
-			$responce->rows[$i]['cell']=array($result->fields['ID'],$result->fields['username'],$result->fields['logdate'],$result->fields['message']); 
+		foreach($result as $log){
+			$responce->rows[$i]['id']=$log['ID']; 
+			$responce->rows[$i]['cell']=array($log['ID'],$log['username'],$log['logdate'],$log['message']); 
 			$i++; 
-			$result->MoveNext();
 		} 
 		
 		 echo json_encode($responce);
@@ -81,8 +81,9 @@ class package_acp_log_viewer extends acpPackage{
 		$sord = isset($_GET['sord'])?$_GET['sord']:"DESC";
 		
 	
-		$result =  package::$db->Execute("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='1' "); 
-		$count = $result->fields['count'];
+		$result =  package::$db->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='1' ");
+		$result = $result->fetch(); 
+		$count = $result['count'];
 		$limit=$count;
 		
 		
@@ -95,18 +96,17 @@ class package_acp_log_viewer extends acpPackage{
 		$start = $limit*$page - $limit; // do not put $limit*($page - 1) 
 	
 		$SQL = "SELECT *  FROM lttx1_log  where log_type ='1' ORDER BY $sidx $sord LIMIT $start , $limit"; 
-		$result =  package::$db->Execute($SQL );
+		$result =  package::$db->query($SQL );
 		
 		$responce->page = $page; 
 		$responce->total = $total_pages; 
 		$responce->records = $count; 
 		
 		$i=0; 
-		while(!$result->EOF){
-			$responce->rows[$i]['id']=$result->fields['ID']; 
-			$responce->rows[$i]['cell']=array($result->fields['ID'],$result->fields['logdate'],$result->fields['message']); 
+		foreach($result as $log){
+			$responce->rows[$i]['id']=$log['ID']; 
+			$responce->rows[$i]['cell']=array($log['ID'],$log['logdate'],$log['message']); 
 			$i++; 
-			$result->MoveNext();
 		} 
 		
 		 echo json_encode($responce);
