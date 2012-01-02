@@ -163,7 +163,7 @@ class package_acp_news extends acpPackage{
 			return false;
 		}
 
-		$results =self::$db->Execute("delete from `lttx1_news` where id ='".$newsId."'");
+		$results =self::$db->query("delete from `lttx1_news` where id ='".$newsId."'");
 
 		return true;
 	}
