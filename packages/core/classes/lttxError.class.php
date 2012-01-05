@@ -41,11 +41,20 @@ class lttxError extends Exception{
 			$argstr = ',$args['.$i.']';
 		}
 		eval("\$this->message = sprintf(\$this->message$argstr);");
+		if(DEVDEBUG == true){
+			$this->message .= "<br /><b>DEVDEBUG active</b><br />";
+			foreach ($this->getTrace() as $trace){
+				@$this->message .= '<p>' . $trace['class'] . ':' . $trace['function'] . ': ' . $trace['file'] . ':' . $trace['line'] . '</p>';
+			}
+		}
 	}
 }
 class lttxDBError extends lttxError{
 	public function __construct  (){
-		$sError = package::$pdb->errorCode();
+		$code = package::$pdb->errorInfo();
+		$sError = 'No Error!';
+		if($code[2] != NULL)
+			$sError = $code[2];
 		parent::__construct($sError);
 	}
 }

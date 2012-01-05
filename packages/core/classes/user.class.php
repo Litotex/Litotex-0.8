@@ -277,7 +277,7 @@ class user {
             (`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
             VALUES
             (?, ?, ?, ?" . $additionalDataPointer . ")");
-		$result->execute(array($additionalData));
+		$result->execute($additionalData);
 		if($result->rowCount() < 1) {
 			return -3;
 		}

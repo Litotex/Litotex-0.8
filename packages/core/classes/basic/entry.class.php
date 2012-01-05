@@ -215,12 +215,7 @@ class Basis_Entry {
 			$aResult->execute($aSql);
 			$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
-			if($aResult === false){
-				throw new lttxDBError();
-			} else {
-				$this->_aData = $aResult;
-			}
-
+			$this->_aData = $aResult;
 		}
 
 	}
