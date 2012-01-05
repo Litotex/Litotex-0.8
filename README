@@ -1,27 +1,29 @@
-Litotex–Developer Preview Version
+Litotex-Developer Preview Version
 
-Diese Version der Litotex-Engine ist nur für Entwickler von eigenen Modulen / Templates gedacht.
+Diese Version der Litotex-Engine ist nur fÃ¼r Entwickler von eigenen Modulen / Templates gedacht.
 
-Wir übernehmen keine Haftung für Schäden, die durch den Einsatz entstehen.
+Wir Ã¼bernehmen keine Haftung fÃ¼r SchÃ¤den, die durch den Einsatz entstehen.
 
-Für weitere Fragen steht unser Forum unter http://www.litotex.de bereit.
+FÃ¼r weitere Fragen steht unser Forum unter http://www.litotex.de bereit.
 
 Das Litotex Team. 
 
 
 Installation:
 Hochladen der Dateien
-folgende Ordner benötigen Schreibrechte:
+folgende Ordner benÃ¶tigen Schreibrechte:
 packages\core\cache
 tpl_c
 
 Neue Datenbank anlegen aus dbUpdates
-litotex.sql in die Datenbank importieren
+litotex.sql sowie die litotex_new.sql in die Datenbank importieren
+
 
 unter packages\core\config
-in der Datei const.php
-den LITO_ROOT und LITO_URL ändern
+in der Datei path.php
+den LITO_ROOT und LITO_URL Ã¤ndern
 in der Datei database.conf.php
-SQl Einstellungen ändern.
+SQl Einstellungen Ã¤ndern.
+
 
 insert_sample aus dem Ordner dbUpdates importieren 
