@@ -51,11 +51,14 @@ class explore{
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
 	public function __construct($exploreID){
-		$data = package::$pdb->Execute("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$pdbn."_explores` WHERE `ID` = ?", array($exploreID));
-		if(!isset($data->fields[0]))
+		$data = package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$pdbn."_explores` WHERE `ID` = ?");
+		$data->execute(array($exploreID));
+		if($data->rowCount() < 1)
 			throw new Exception('Explore ' . $exploreID .' was not found');
-		$plugin = $data->fields[2];
-		$pluginPreferences = $data->fields[3];
+		
+		$data = $data->fetch();
+		$plugin = $data[2];
+		$pluginPreferences = $data[3];
 		if(($plugin = unserialize($plugin)) === false)
 			return;
 		if(($pluginPreferences = unserialize($pluginPreferences)) === false)
@@ -66,13 +69,13 @@ class explore{
 			$this->_plugins[$pluginName] = $pluginPreferences[$i];
 		}
 		$this->_initialized = true;
-		$this->_data['name'] = $data->fields[0];
-		$this->_data['race'] = $data->fields[1];
+		$this->_data['name'] = $data[0];
+		$this->_data['race'] = $data[1];
 		$this->_ID = $exploreID;
 		$this->_pluginHandler = new explorePluginHandler();
 		$this->_dependencyPluginHandler = new exploreDependencyPluginHandler();
-		$this->_timeFormula = $data->fields[4];
-		$this->_pointsFormula = $data->fields[5];
+		$this->_timeFormula = $data[4];
+		$this->_pointsFormula = $data[5];
 	}
 	public function __destruct(){
 		$this->flush();
@@ -125,13 +128,12 @@ class explore{
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$pdb->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$pdbn."_explore_dependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
+		$dep = package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$pdbn."_explore_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
+		$dep->execute(array($this->_ID, (int)$level));
 		$return = array();
-		if(!$dep)
-			return false;
-		while(!$dep->EOF){
-			$return[] = array($dep->fields[0], unserialize($dep->fields[1]));
-			$dep->MoveNext();
+
+		foreach($dep as $element){
+			$return[] = array($element[0], unserialize($element[1]));
 		}
 		return $return;
 	}
@@ -145,13 +147,12 @@ class explore{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_explores` WHERE `race` = ?", array($race));
+		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_explores` WHERE `race` = ?");
+		$result->execute(array($race));
 		$return = array();
-		if(!$result)
-			return false;
-		while(!$result->EOF){
-			$return[] = new explore($result->fields[0]);
-			$result->MoveNext();
+		
+		foreach($result as $element){
+			$return[] = new explore($element[0]);
 		}
 		return $return;
 		//TODO: Cache to make no extra Database connections

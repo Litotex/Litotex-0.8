@@ -46,19 +46,20 @@ class cron{
 		if(!is_array($params))
 		return false;
 		$params = serialize($params);
-		$result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?", array($textID));
-		package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_cron` SET `function` = ?, `params` = ?, `serialized` = ? WHERE `textID` = ?", array($function, $params, $object, $textID));
-		if($result->RecordCount() == 0)
+		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?");
+		$result->execute(array($textID));
+		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_cron` SET `function` = ?, `params` = ?, `serialized` = ? WHERE `textID` = ?")->execute(array($function, $params, $object, $textID));
+		if($result->rowCount() == 0)
 		return true;
-		while(!$result->EOF){
-			self::$_runtimeEdits[$result->fields[0]] = array('serialized' => $object, 'params' => unserialize($params), 'function' => $function);
-			$result->MoveNext();
+		foreach($result as $element){
+			self::$_runtimeEdits[$element[0]] = array('serialized' => $object, 'params' => unserialize($params), 'function' => $function);
 		}
 		return true;
 	}
 	public static function addIfNotExists($textID, $nextInt, $interval, $function, $params, $dependencies = array(), $user = false, $blockUser = false, $object = false){
-		$result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?", array($textID));
-		if($result->RecordCount() == 0)
+		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?");
+		$result->execute(array($textID));
+		if($result->rowCount() == 0)
 			return self::add($textID, $nextInt, $interval, $function, $params, $dependencies, $user, $blockUser, $object);
 		else 
 			return self::change($textID, $function, $params, $object);
@@ -102,26 +103,28 @@ class cron{
 		$paramsSubmit = serialize($params);
 		$nextInt *= 1;
 		$interval *= 1;
-		$result = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_cron` (`textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`)
+		$result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_cron` (`textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`)
 		VALUES
-		(?, ?, ?, ?, ?, ?, ?, ?, ?)", array($textID, $object, $function, $paramsSubmit, $nextInt, $interval, $user, $blockUserSubmit, $dependenciesSubmit));
-		if(package::$pdb->Affected_Rows() == 1){
-			$insertedID = package::$pdb->Insert_ID();
+		(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		$result->execute(array($textID, $object, $function, $paramsSubmit, $nextInt, $interval, $user, $blockUserSubmit, $dependenciesSubmit));
+		if($result->rowCount() == 1){
+			$insertedID = package::$pdb->lastInsertId();
 			self::$_runtimeAdditions[] = array('ID' => $insertedID, 'serialized' => $object, 'function' => $function, 'params' => $params, 'nextInt' => $nextInt, 'interval' => $interval, 'userID' => $user, 'blockUserID' => $blockUser, 'dependencies' => $dependencies);
 			return true;
 		}
 		return false;
 	}
 	public static function remove($textID){
-		$toDelete = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?", array($textID));
-		if($toDelete->RecordCount() == 0)
+		$toDelete = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?");
+		$toDelete->execute(array($textID));
+		if($toDelete->rowCount() == 0)
 		return true;
-		while(!$toDelete->EOF){
-			self::$_runtimeEdits[$toDelete->fields[0]] = array('serialized' => '', 'function' => '', 'params' => array(), 'nextInt' => 0, 'interval' => 0, 'userID' => '', 'blockUserID' => array(), 'dependencies' => array(), 'ID' => $toDelete->fields[0]);
-			$toDelete->MoveNext();
+		foreach($toDelete as $element){
+			self::$_runtimeEdits[$element[0]] = array('serialized' => '', 'function' => '', 'params' => array(), 'nextInt' => 0, 'interval' => 0, 'userID' => '', 'blockUserID' => array(), 'dependencies' => array(), 'ID' => $element[0]);
 		}
-		$result = package::$pdb->Execute("DELETE FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?", array($textID));
-		if(package::$pdb->Affected_Rows() == 0)
+		$result = package::$pdb->prepare("DELETE FROM `lttx".package::$pdbn."_cron` WHERE `textID` = ?");
+		$result->execute(array($textID));
+		if($result->rowCount() == 0)
 		return false;
 		return true;
 	}
@@ -130,12 +133,12 @@ class cron{
 		$list = $this->_getActionList($limit);
 		$blocks = self::_generateBlockIndex($list);
 		$list = $this->_splitByBlocks($list, $blocks);
-		package::$pdb->Execute("DELETE FROM `lttx".package::$pdbn."_cron` WHERE `interval` = 0 AND `nextInt` <= ?", array($this->_now));
+		package::$pdb->prepare("DELETE FROM `lttx".package::$pdbn."_cron` WHERE `interval` = 0 AND `nextInt` <= ?")->execute(array($this->_now));
 		$this->_upDateDB();
 		return (is_array($list))?$this->_doActions($list):true;
 	}
 	private function _upDateDB(){
-		package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_cron` SET `nextInt` = `nextInt` + CEIL((?-`nextInt`)/`interval`+1) * `interval` WHERE `nextInt` <= ?", array($this->_now, $this->_now));
+		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_cron` SET `nextInt` = `nextInt` + CEIL((?-`nextInt`)/`interval`+1) * `interval` WHERE `nextInt` <= ?")->execute(array($this->_now, $this->_now));
 	}
 	private function _doActions($actions){
 		foreach($actions as $action){
@@ -188,13 +191,13 @@ class cron{
 			return 0;
 			$this->_now = (int)$data->fields[9];
 		} else {
-			$data = package::$pdb->Execute("SELECT `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`, `ID` FROM `lttx".package::$pdbn."_cron` WHERE `nextInt` <= ?", array($this->_now));
-			if($data->RecordCount() == 0)
+			$data = package::$pdb->prepare("SELECT `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies`, `ID` FROM `lttx".package::$pdbn."_cron` WHERE `nextInt` <= ?");
+			$data->execute(array($this->_now));
+			if($data->rowCount() == 0)
 			return 0;
 		}
-		while(!$data->EOF){
-			$list[] = array('serialized' => $data->fields[0], 'function' => $data->fields[1], 'params' => unserialize($data->fields[2]), 'nextInt' => $data->fields[3], 'interval' => $data->fields[4], 'userID' => $data->fields[5], 'blockUserID' => unserialize($data->fields[6]), 'dependencies' => unserialize($data->fields[7]), 'ID' => $data->fields[8]);
-			$data->MoveNext();
+		foreach($data as $element){
+			$list[] = array('serialized' => $element[0], 'function' => $element[1], 'params' => unserialize($element[2]), 'nextInt' => $element[3], 'interval' => $element[4], 'userID' => $element[5], 'blockUserID' => unserialize($element[6]), 'dependencies' => unserialize($element[7]), 'ID' => $element[8]);
 		}
 		if(!$this->_sortActionList($list))
 		return false;
@@ -282,12 +285,12 @@ class cron{
 	}
 	public static function searchByTextID($textID){
 		$return = array();
-		$result = package::$pdb->Execute("SELECT `ID`, `textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies` FROM `lttx".package::$pdbn."_cron` WHERE `textID` LIKE ?", array($textID));
-		if($result->RecordCount() == 0)
+		$result = package::$pdb->prepare("SELECT `ID`, `textID`, `serialized`, `function`, `params`, `nextInt`, `interval`, `userID`, `blockUserID`, `dependencies` FROM `lttx".package::$pdbn."_cron` WHERE `textID` LIKE ?");
+		$result->execute(array($textID));
+		if($result->rowCount() == 0)
 			return false;
-		while(!$result->EOF){
-			$return[] = $result->fields;
-			$result->MoveNext();
+		foreach($result as $element){
+			$return[] = $element;
 		}
 		return $return;
 	}
