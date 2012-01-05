@@ -21,7 +21,7 @@ litotex.sql sowie die litotex_new.sql in die Datenbank importieren
 
 unter packages\core\config
 in der Datei path.php
-den LITO_ROOT und LITO_URL �ndern
+den LITO_ROOT und LITO_URL ändern
 in der Datei database.conf.php
 SQl Einstellungen ändern.
 
