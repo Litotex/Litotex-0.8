@@ -224,9 +224,10 @@ class comment {
                 return false;
         if(!is_a($writer, 'user'))
                 return false;
-        $result = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?", array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
+        $result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?");
+        $result->execute(array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
         $news->increaseComments();
-        return (!$result || package::$pdb->Affected_Rows() <= 0)?false:new comment(package::$pdb->Insert_ID());
+        return ($result->rowCount() <= 0)?false:new comment(package::$pdb->lastInsertId());
     }
     /**
      * This will return all the comments sorted by news
@@ -263,32 +264,39 @@ class comment {
     public static function getNumber($news = false){
         if($news && !is_a($news, 'news'))
                 return false;
-        if($news)
-            $result = package::$pdb->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?", array($news->getID()));
-        else
-            $result = package::$pdb->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments`");
-        if(!$result)
+        if($news){
+            $result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?");
+            $result->execute(array($news->getID()));
+        }else{
+            $result = package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments`");
+        }
+        if($result->rowCount() < 1)
             return false;
-        return $result->fields[0]*1;
+        
+        $result = $result->fetch();
+        return $result[0]*1;
     }
     private function _get($ID) {
         if($this->_getCommentCached($ID))
                 return true;
         $ID = (int)$ID;
-        $result = package::$pdb->Execute("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `ID` = ?", array($ID));
-        if(!$result || !$result->fields[0])
+        $result = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `ID` = ?");
+        $result->execute(array($ID));
+        if($result->rowCount() < 1)
             return false;
-        $this->_ID = $result->fields[0];
-        $this->_title = $result->fields[1];
-        $this->_text = $result->fields[2];
-        $this->_date = new Date(package::$pdb->UnixTimeStamp($result->fields[3]));
-        if(($this->_news = $this->_getNewsCached($result->fields[4])) === false){
-            $this->_news = new news($result->fields[4]);
+        
+        $result = $result->fetch();
+        $this->_ID = $result[0];
+        $this->_title = $result[1];
+        $this->_text = $result[2];
+        $this->_date = new Date(package::$pdb->UnixTimeStamp($result[3]));
+        if(($this->_news = $this->_getNewsCached($result[4])) === false){
+            $this->_news = new news($result[4]);
             $this->_writeNewsCache($this->_news);
         }
-        $this->_writer = new user($result->fields[5]);
+        $this->_writer = new user($result[5]);
         $this->_writer->setLocalBufferPolicy(false);
-        $this->_IP = $result->fields[6];
+        $this->_IP = $result[6];
         $this->_writeCache($this->_ID, $this->_title, $this->_text, $this->_date, $this->_news, $this->_writer, $this->_IP);
         return true;
     }

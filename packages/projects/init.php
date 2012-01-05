@@ -75,7 +75,7 @@ class package_projects extends package {
     public static function generateCacheFile($platform) {
     	$xmlFile = new SimpleXMLElement('<litotex origin="updateServer" version="undefined" responsetype="packageList"/>');
     	$dataArea = $xmlFile->addChild('data');
-    	$packageData = self::$pdb->Execute("SELECT
+    	$packageData = self::$pdb->prepare("SELECT
     		`lttx".package::$pdbn."_projects`.`ID` AS `projectID`,
     		`lttx".package::$pdbn."_projects`.`name`,
     		`lttx".package::$pdbn."_projects`.`description`,
@@ -100,22 +100,22 @@ class package_projects extends package {
 	    	LEFT JOIN `lttx".package::$pdbn."_projectSignes`
 	    	ON `lttx".package::$pdbn."_projectReleases`.`ID` = `lttx".package::$pdbn."_projectSignes`.`releaseID`
 	    	WHERE `lttx".package::$pdbn."_projectReleases`.`platform` = ?
-	    	ORDER BY  `lttx1_projectReleases`.`version` DESC", array($platform));
+	    	ORDER BY  `lttx1_projectReleases`.`version` DESC");
+    	$packageData->execute(array($platform));
     	self::$_packageCache = array();
-    	while(!$packageData->EOF){
-    		if(isset(self::$_packageCache[$packageData->fields['name']])){
-    			if(isset(self::$_packageCache[$packageData->fields['name']]['releases'][$packageData->fields['releaseID']])){
-    				self::_addCert($packageData->fields['name'], $packageData->fields['releaseID'], $packageData->fields['fullReview'], $packageData->fields['certComment']);
+    	foreach($packageData as $item){
+    		if(isset(self::$_packageCache[$item['name']])){
+    			if(isset(self::$_packageCache[$item['name']]['releases'][$item['releaseID']])){
+    				self::_addCert($item['name'], $item['releaseID'], $item['fullReview'], $item['certComment']);
     			} else {
-    				self::_addRelease($packageData->fields['name'], $packageData->fields['releaseID'], $packageData->fields);
-    				self::_addCert($packageData->fields['name'], $packageData->fields['releaseID'], $packageData->fields['fullReview'], $packageData->fields['certComment']);
+    				self::_addRelease($item['name'], $item['releaseID'], $item);
+    				self::_addCert($item['name'], $item['releaseID'], $item['fullReview'], $item['certComment']);
     			}
     		} else {
-    			self::_addPackage($packageData->fields['name'], $packageData->fields);
-    			self::_addRelease($packageData->fields['name'], $packageData->fields['releaseID'], $packageData->fields);
-    			self::_addCert($packageData->fields['name'], $packageData->fields['releaseID'], $packageData->fields['fullReview'], $packageData->fields['certComment']);
+    			self::_addPackage($item['name'], $item);
+    			self::_addRelease($item['name'], $item['releaseID'], $item);
+    			self::_addCert($item['name'], $item['releaseID'], $item['fullReview'], $item['certComment']);
     		}
-    		$packageData->MoveNext();
     	}
     	foreach(self::$_packageCache as $name => $data){
     		$package = $dataArea->addChild('package');

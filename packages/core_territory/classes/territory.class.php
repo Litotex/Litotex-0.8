@@ -41,43 +41,46 @@ class territory{
 		return;
 	}
 	public static function getUserTerritories(user $user){
-		$result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_territory` WHERE `userID` = ?", array($user->getUserID()));
-		if(!$result)
-		return false;
+		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_territory` WHERE `userID` = ?");
+		$result->execute(array($user->getUserID()));
+		
+		
 		$return = array();
-		while(!$result->EOF){
-			$return[] = new territory($result->fields[0]);
-			$result->MoveNext();
+		foreach($result as $territory){
+			$return[] = new territory($territory[0]);
 		}
 		return $return;
 	}
 	private function _getData(){
 		if($this->_getCachedData())
 			return true;
-		$result = package::$pdb->Execute("SELECT `userID`, `name` FROM `lttx".package::$pdbn."_territory` WHERE `ID` = ?", array($this->_ID));
-		if($result->RecordCount() == 0)
+		$result = package::$pdb->prepare("SELECT `userID`, `name` FROM `lttx".package::$pdbn."_territory` WHERE `ID` = ?");
+		$result->execute(array($this->_ID));
+		if($result->rowCount() == 0)
 			return false;
-		$this->_data['name'] = $result->fields[1];
-		$buildings = package::$pdb->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$pdbn."_territory_buildings` WHERE `territoryID` = ?", array($this->_ID));
-		while(!$buildings->EOF){
+		
+		$result = $result->fetch();
+		$this->_data['name'] = $result[1];
+		$buildings = package::$pdb->prepare("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$pdbn."_territory_buildings` WHERE `territoryID` = ?");
+		$buildings->execute(array($this->_ID));
+		foreach($buildings as $building){
 			try {
-				$this->_data['buildings'][$buildings->fields[0]] = array($buildings->fields[2], new building($buildings->fields[1]));
+				$this->_data['buildings'][$building[0]] = array($building[2], new building($building[1]));
 			} catch (Exception $e) {
 				//TODO: Debug...
 			}
-			$buildings->MoveNext();
 		}
-		$explores = package::$pdb->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$pdbn."_territory_explores` WHERE `territoryID` = ?", array($this->_ID));
-		while(!$explores->EOF){
+		$explores = package::$pdb->prepare("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$pdbn."_territory_explores` WHERE `territoryID` = ?");
+		$explores->execute(array($this->_ID));
+		foreach($explores as $explore){
 			try {
-				$this->_data['explores'][$explores->fields[0]] = array($explores->fields[2], new building($explores->fields[1]));
+				$this->_data['explores'][$explore[0]] = array($explore[2], new building($explore[1]));
 			} catch (Exception $e) {
 				//TODO: Debug...
 			}
-			$explores->MoveNext();
 		}
 		try {
-			$user = new user($result->fields[0]);
+			$user = new user($result[0]);
 			$this->_data['user'] = $user;
 		} catch (Exception $e){
 			throw new Exception('The territory ' . $this->_ID . ' does not exist, the player wich is connected to it was not found');
@@ -100,7 +103,7 @@ class territory{
 	public function setName($newName){
 		if(strlen($newName) > 100)
 			throw new Exception('The new name has too many signs, the limit is 100');
-		package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_territory` SET `name` = ? WHERE `ID` = ?", array($newName, $this->_ID));
+		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_territory` SET `name` = ? WHERE `ID` = ?")->execute(array($newName, $this->_ID));
 		$this->_data['name'] = $newName;
 		self::$_cache[$this->_ID]['name'] = $newName;
 		return true;		
@@ -194,9 +197,9 @@ class territory{
 			$building = $this->_data['buildings'][$buildingID][1];
 		$building->increaseBuildingLevel($newLevel, $this);
 		if($new){
-			$result = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_territory_buildings` (`territoryID`, `buildingID`, `level`) VALUES (?, ?, ?)", array($this->_ID, $buildingID, $newLevel));
+			$result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_territory_buildings` (`territoryID`, `buildingID`, `level`) VALUES (?, ?, ?)")->execute(array($this->_ID, $buildingID, $newLevel));
 		}else{
-			$result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_territory_buildings` SET `level` = ? WHERE `territoryID` = ? AND `buildingID` = ?", array($newLevel, $this->_ID, $buildingID));
+			$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_territory_buildings` SET `level` = ? WHERE `territoryID` = ? AND `buildingID` = ?")->execute(array($newLevel, $this->_ID, $buildingID));
 		}
 		unset(self::$_cache[$this->_ID]);
 		$this->_getData();

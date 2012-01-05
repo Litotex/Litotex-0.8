@@ -79,12 +79,9 @@ class category {
      */
     private function exists($ID) {
         $ID *= 1;
-        $result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?", array($ID));
-        if(!$result)
-            return false;
-        if(!isset($result->fields[0]) || !$result->fields[0])
-            return false;
-        return true;
+        $result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $result->execute(array($ID));
+        return ($result->rowCount() > 0)?true:false;
     }
     /**
      * This checks if there is a category named as the one to search for here
@@ -92,8 +89,9 @@ class category {
      * @return bool
      */
     public static function titleExists($title){
-        $result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_news_categories` WHERE `title` = ?", array($title));
-        return(!$result)?false:(bool)(1^$result->EOF);
+        $result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_news_categories` WHERE `title` = ?");
+        $result->execute(array($title));
+        return($result->rowCount() > 0)?true:false;
     }
     /**
      * This creates a new category
@@ -104,8 +102,9 @@ class category {
     public static function create($title, $description) {
         if(self::titleExists($title))
             return false;
-        $result = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_news_categories` (`title`, `description`, `newsNum`, `newsLastDate`) VALUES (?, ?, ?, ".package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).")", array($title, $description, 0));
-        return (package::$pdb->Affected_Rows() <= 0)?false:new category($db->Insert_ID());
+        $result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news_categories` (`title`, `description`, `newsNum`, `newsLastDate`) VALUES (?, ?, ?, ".package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).")");
+        $result->execute(array($title, $description, 0));
+        return ($result->rowCount() <= 0)?false:new category(package::$pdb->lastInsertId());
     }
     /**
      * This will delete the active category from database
@@ -114,9 +113,10 @@ class category {
     public function delete() {
         if(!$this->_initialized)
                 return false;
-        $result = package::$pdb->Execute("DELETE FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?", array($this->_ID));
+        $result = package::$pdb->prepare("DELETE FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $result->execute(array($this->_ID));
         $this->_initialized = false;
-        return (package::$pdb->Affected_Rows() <= 0)?false:true;
+        return ($result->rowCount() <= 0)?false:true;
     }
     /**
      * This collects all categories and returns them in an array
@@ -124,10 +124,9 @@ class category {
      */
     public static function getAll() {
         $return = array();
-        $categories = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_news_categories`");
-        while(!$categories->EOF) {
-            $return[] = new category($categories->fields[0]);
-            $categories->MoveNext();
+        $categories = package::$pdb->query("SELECT `ID` FROM `lttx".package::$pdbn."_news_categories`");
+        foreach($categories as $item) {
+            $return[] = new category($item[0]);
         }
         return $return;
     }
@@ -145,12 +144,13 @@ class category {
     public function getDescription() {
         if(!$this->_initialized)
             return false;
-        $desc = package::$pdb->Execute("SELECT `description` FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?", array($this->_ID));
-        if(!$desc)
+        $desc = package::$pdb->prepare("SELECT `description` FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $desc->execute(array($this->_ID));
+        if($desc->rowCount() < 1)
             return false;
-        if(!isset($desc->fields[0]) || !$desc->fields[0])
-            return false;
-        return $desc->fields[0];
+        
+        $desc = $desc->fetch();
+        return $desc[0];
     }
     /**
      * This will return the current ID
@@ -168,20 +168,23 @@ class category {
     public function getTitle() {
         if(!$this->_initialized)
             return false;
-        $title = package::$pdb->Execute("SELECT `title` FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?", array($this->_ID));
-        if(!$title)
+        $title = package::$pdb->prepare("SELECT `title` FROM `lttx".package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $title->execute(array($this->_ID));
+
+        if($title->rowCount() < 1)
             return false;
-        if(!isset($title->fields[0]) || !$title->fields[0])
-            return false;
-        return $title->fields[0];
+        
+        $title = $title->fetch();
+        return $title[0];
     }
     /**
      * Sets this time as last news date
      * @return bool
      */
     public function updateTimestamp(){
-        $result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_news_categories` SET `newsLastDate` = " . package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())) . " WHERE `ID` = ?", array($this->_ID));
-        return (package::$pdb->Affected_Rows() <= 0)?false:true;
+        $result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_news_categories` SET `newsLastDate` = " . package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())) . " WHERE `ID` = ?");
+        $result->execute(array($this->_ID));
+        return ($result->rowCount() <= 0)?false:true;
     }
 }
 ?>

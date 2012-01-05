@@ -111,25 +111,26 @@ class package_login extends package {
 				exit();
 			}
 		
-		$result = package::$pdb->Execute("
+		$result = package::$pdb->prepare("
             SELECT *
             FROM `lttx".package::$pdbn."_users`
-            WHERE `email` = ?",
-                $email);
+            WHERE `email` = ?");
+		$result->execute($email);
 		
 		
-		if(!$result || !$result->RecordCount() ){
+		if($result->rowCount() < 1){
 				throw new lttxError('LN_LOGIN_FORGET_ERROR_1');
 				return true;
 		}
 		
-		if ($result->RecordCount() > 1 ){
+		if ($result->rowCount() > 1 ){
 			throw new lttxError('LN_LOGIN_FORGET_ERROR');
 			return true;
 		}
 		
-		$forgetUsername =$result->fields['username'];
-		$forgetUserID =$result->fields['ID'];
+		$result = $result->fetch();
+		$forgetUsername =$result['username'];
+		$forgetUserID =$result['ID'];
 		
 		$password="";
 		$pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

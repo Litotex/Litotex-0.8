@@ -63,20 +63,19 @@ class package_navigation extends package {
 			$menu_item=intval($_GET['menu']);
 		
 		$elements = array();
-        $data = self::$pdb->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
-        while(!$data->EOF) {
+        $element = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        foreach($data as $element) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
-			if($data->fields[0] == $menu_item)
-				$data->fields['active'] = true;
+			if($element[0] == $menu_item)
+				$element['active'] = true;
 			else
 				$data->fields['active'] = false;
 		
-			$package_name=$data->fields['package'];
+			$package_name=$element['package'];
 			if ($package_name =="") $package_name="main"; 
-			$data->fields['link'] = "index.php?package=".$package_name."&menu=".$data->fields['ID'];
+			$element['link'] = "index.php?package=".$package_name."&menu=".$element['ID'];
 			
-			$elements[] = $data->fields;
-            $data->MoveNext();
+			$elements[] = $element;
         }
 		
 		 self::$tpl->assign('navigationItems', $elements);
@@ -96,27 +95,27 @@ class package_navigation extends package {
 			$submenu_item=intval($_GET['submenu']);
 		
 		$elements = array();
-        $data = self::$pdb->Execute("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` =? ORDER BY `sort` ASC",$menu_item);
-        while(!$data->EOF) {
+        $data = self::$pdb->prepare("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` =? ORDER BY `sort` ASC");
+        $data->execute($menu_item);
+        foreach($data as $element) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
-			if($data->fields[0] == $menu_item)
-				$data->fields['active'] = true;
+			if($element[0] == $menu_item)
+				$element['active'] = true;
 			else
-				$data->fields['active'] = false;
+				$element['active'] = false;
 		
-			$package_name=$data->fields['package'];
-			$action_name=$data->fields['action'];
+			$package_name=$element['package'];
+			$action_name=$element['action'];
 			if ($package_name =="") $package_name="main"; 
 			if ($action_name =="") $action_name="main"; 
 			
-			$data->fields['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$data->fields['ID']."&action=".$action_name;
-			if($data->fields[0] == $submenu_item)
-				$data->fields['active'] = true;
+			$element['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$element['ID']."&action=".$action_name;
+			if($element[0] == $submenu_item)
+				$element['active'] = true;
 			else
-				$data->fields['active'] = false;
+				$element['active'] = false;
 			
-			$elements[] = $data->fields;
-            $data->MoveNext();
+			$elements[] = $element;
         }
 		
 		 self::$tpl->assign('navigationItems', $elements);

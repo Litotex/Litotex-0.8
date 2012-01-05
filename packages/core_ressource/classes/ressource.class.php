@@ -95,29 +95,28 @@ class ressource{
 			$add .= ', `increaseFormula`';
 		if($limit)
 			$add .= ', `limit`';
-		$res = package::$pdb->Execute("SELECT `resID`, `resNum`" . $add . " FROM `lttx".package::$pdbn."_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?", array($id, $race));
-		if(!$res)
+		$res = package::$pdb->prepare("SELECT `resID`, `resNum`" . $add . " FROM `lttx".package::$pdbn."_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?");
+		$res->execute(array($id, $race));
+		if($res->rowCount() < 1)
 			throw new Exception('Selected ressource table "' . $table . '" was not found or incompatible');
-		while(!$res->EOF){
+		foreach($res as $element){
 			$i = 2;
-			$this->_res[$res->fields[0]] = (float)$res->fields[1];
+			$this->_res[$element[0]] = (float)$element[1];
 			if($increaseFormula){
-				$this->_resFormula[$res->fields[0]] = $res->fields[$i++];
+				$this->_resFormula[$element[0]] = $element[$i++];
 			}
 			if($limit){
-				$this->_limit[$res->fields[0]] = $res->fields[$i++];
+				$this->_limit[$element[0]] = $element[$i++];
 			}
-			$res->MoveNext();
 		}
-		$checkRes = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_ressources` WHERE `raceID` = ?", array($race));
-		while(!$checkRes->EOF){
-			if(isset($this->_res[$checkRes->fields[0]])){
-				$checkRes->MoveNext();
+		$checkRes = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_ressources` WHERE `raceID` = ?");
+		$checkRes->execute(array($race));
+		foreach($checkRes as $element){
+			if(isset($this->_res[$element[0]])){
 				continue;
 			}
-			package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)", array($checkRes->fields[0], $race, $id));
-			$this->_res[$checkRes->fields[0]] = 0;
-			$checkRes->MoveNext();
+			package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)")->execute(array($element[0], $race, $id));
+			$this->_res[$element[0]] = 0;
 		}
 		$this->_race = $race;
 		$this->_src = $id;
@@ -225,7 +224,7 @@ class ressource{
 		if(!isset($this->_limit[$resID]))
 			return false;
 		$this->_limit[$resID] = $newValue;
-		package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?", array($newValue, $resID, $this->_race, $this->_src));
+		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?")->execute(array($newValue, $resID, $this->_race, $this->_src));
 		return true;
 	}
 	/**
@@ -267,12 +266,12 @@ class ressource{
 	 * @return array
 	 */
 	public function getAllRessName(){
-		$names = package::$pdb->Execute("SELECT `ID`, `name` FROM `lttx".package::$pdbn."_ressources` WHERE `raceID` = ?", $this->_race);
+		$names = package::$pdb->prepare("SELECT `ID`, `name` FROM `lttx".package::$pdbn."_ressources` WHERE `raceID` = ?");
+		$names->execute(array($this->_race));
 		$return = array();
-		while(!$names->EOF){
-			$return[$names->fields[0]] = $names->fields[1];
-			self::$_nameCache[$this->_race . '.' . $names->fields[0]] = $names->fields[1];
-			$names->MoveNext();
+		foreach($names as $name){
+			$return[$name[0]] = $name[1];
+			self::$_nameCache[$this->_race . '.' . $name[0]] = $name[1];
 		}
 		$this->_ressNameFetched = true;
 		return $return;
@@ -299,7 +298,7 @@ class ressource{
 	 */
 	public function flush(){
 		foreach($this->_changed as $value){
-			package::$pdb->Execute('UPDATE `lttx".package::$pdbn."_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?', array($this->_res[$value], $this->_src, $value, $this->_race));
+			package::$pdb->prepare('UPDATE `lttx".package::$pdbn."_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?')->execute(array($this->_res[$value], $this->_src, $value, $this->_race));
 		}
 		$this->_changed = array();
 		return true;

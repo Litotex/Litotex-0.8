@@ -59,12 +59,15 @@ class race{
 		$this->_description = $description;
 	}
 	private function _getRaceData($raceID){
-		$result = package::$pdb->Execute("SELECT `id`, `name`, `image`, `description` FROM `lttx".package::$pdbn."_races` WHERE `id` = ?", array($raceID));
-		if(!isset($result->fields[0]))
+		$result = package::$pdb->prepare("SELECT `id`, `name`, `image`, `description` FROM `lttx".package::$pdbn."_races` WHERE `id` = ?");
+		$result->execute(array($raceID));
+		if($result->rowCount() < 1)
 			throw new lttxError('E_race_not_found', $raceID);
-		$this->_id = $result->fields[0];
-		$this->_name = $result->fields[1];
-		$this->_image = $result->fields[2];
-		$this->_description = $result->fields[3];
+		
+		$result = $result->fetch();
+		$this->_id = $result[0];
+		$this->_name = $result[1];
+		$this->_image = $result[2];
+		$this->_description = $result[3];
 	}
 }
