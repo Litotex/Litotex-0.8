@@ -1,4 +1,30 @@
 <?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 /*
  * This file is part of Litotex | Open Source Browsergame Engine.
@@ -122,7 +148,33 @@ class packages {
         if (!file_exists($this->_tplModificationCacheFile))
             return false;
         $cacheContents = file_get_contents($this->_tplModificationCacheFile);
-        $cacheContents = str_replace('<?php die(); ?>', '', $cacheContents);
+        $cacheContents = str_replace('<?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */ die(); ?>', '', $cacheContents);
         $cacheContents = explode('%', $cacheContents);
         if (!$this->_checkTplModificationCacheExpire($cacheContents[0]))
             return false;
@@ -181,7 +233,33 @@ class packages {
      * @return bool
      */
     private function _writeTplModificationCache() {
-        $newfile = '<?php die(); ?>' . time() . '%' . serialize($this->_tplModificationCache);
+        $newfile = '<?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */ die(); ?>' . time() . '%' . serialize($this->_tplModificationCache);
         $file = fopen($this->_tplModificationCacheFile, 'w');
         if (!$file)
             return false;
@@ -206,7 +284,33 @@ class packages {
         if (!file_exists($this->_hookCacheFile))
             return false;
         $cacheContents = file_get_contents($this->_hookCacheFile);
-        $cacheContents = str_replace('<?php die(); ?>', '', $cacheContents);
+        $cacheContents = str_replace('<?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */ die(); ?>', '', $cacheContents);
         $cacheContents = explode('%', $cacheContents);
         if (!$this->_checkHookCacheExpire($cacheContents[0]))
             return false;
@@ -289,7 +393,33 @@ class packages {
      * @return bool
      */
     private function _writeHookCache() {
-        $newfile = '<?php die(); ?>' . time() . '%' . serialize($this->_hookCache);
+        $newfile = '<?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */ die(); ?>' . time() . '%' . serialize($this->_hookCache);
         $file = fopen($this->_hookCacheFile, 'w');
         if (!$file)
             return false;
@@ -449,7 +579,33 @@ class packages {
         if (!file_exists($this->_dependencyCacheFile))
             return false;
         $cacheContents = file_get_contents($this->_dependencyCacheFile);
-        $cacheContents = str_replace('<?php die(); ?>', '', $cacheContents);
+        $cacheContents = str_replace('<?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */ die(); ?>', '', $cacheContents);
         $cacheContents = explode('%', $cacheContents);
         if (!$this->_checkDependencyCacheExpire($cacheContents[0]))
             return false;
@@ -554,7 +710,33 @@ class packages {
      * @return bool
      */
     private function _writeDependencyCache() {
-        $newfile = '<?php die(); ?>' . time() . '%' . serialize($this->_dependencyCache);
+        $newfile = '<?php
+/*
+ * Copyright (c) 2010 Litotex
+ * 
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"),
+ * to deal in the Software without restriction,
+ * including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */ die(); ?>' . time() . '%' . serialize($this->_dependencyCache);
         $file = fopen($this->_dependencyCacheFile, 'w');
         if (!$file)
             return false;
