@@ -59,19 +59,20 @@ class package_acp_options extends acpPackage {
             $iOptionID = (int) $_GET['id'];
         }
 
-		$result = package::$pdb->Execute("SELECT * FROM `lttx".package::$pdbn."_options` WHERE `ID` = ?",$iOptionID);
+		$result = package::$pdb->prepare("SELECT * FROM `lttx".package::$pdbn."_options` WHERE `ID` = ?");
+		$result->execute(array($iOptionID));
 		
 		
-		if(!$result || !$result->RecordCount() ){
+		if($result->rowCount() < 1){
 				throw new lttxError('LN_DB_ERRROR_1');
 				return true;
 		}
-		
+		$result = $result->fetch();
 				
-		$Option_package =$result->fields['package'];
-		$Option_key =$result->fields['key'];
-		$Option_value =$result->fields['value'];
-		$Option_default =$result->fields['default'];
+		$Option_package =$result['package'];
+		$Option_key =$result['key'];
+		$Option_value =$result['value'];
+		$Option_default =$result['default'];
 
 		package::$tpl->assign('Option_package', $Option_package);
 		package::$tpl->assign('Option_key', $Option_key);
@@ -86,15 +87,10 @@ class package_acp_options extends acpPackage {
 
         $this->_theme = 'list.tpl';
 		$elements = array();
-    	$searchResults =self::$db->Execute("SELECT * FROM `lttx1_options` order by package");
-		if($searchResults == false){
-			throw new lttxDBError();
-		}
+    	$searchResults =self::$pdb->query("SELECT * FROM `lttx1_options` order by package");
     	
-		 while(!$searchResults->EOF) {
-			$elements[] = $searchResults->fields;
-			
-            $searchResults->MoveNext();
+		 foreach($searchResults as $element) {
+			$elements[] = $element;
         }
         self::$tpl->assign('aOptions', $elements);
 
@@ -112,16 +108,19 @@ class package_acp_options extends acpPackage {
         $this->_theme = 'main.tpl';
 		
 		
-		$result = package::$pdb->Execute("SELECT * FROM `lttx".package::$pdbn."_options` WHERE `ID` = ?",$iOptionID);
+		$result = package::$pdb->prepare("SELECT * FROM `lttx".package::$pdbn."_options` WHERE `ID` = ?");
+		$result->execute(array($iOptionID));
 		
 		
-		if(!$result || !$result->RecordCount() ){
+		if($result->rowCount() < 1){
 				throw new lttxError('LN_DB_ERRROR_1');
 				return true;
 		}
 		
-		$Option_package =$result->fields['package'];
-		$Option_key =$result->fields['key'];
+		$result = $result->fetch();
+		
+		$Option_package =$result['package'];
+		$Option_key =$result['key'];
 		
         if (isset($_POST['Ovalue'])) {
             $aPackageValue = $_POST['Ovalue'];

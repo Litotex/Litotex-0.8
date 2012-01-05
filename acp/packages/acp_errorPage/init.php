@@ -63,7 +63,7 @@ class package_acp_errorPage extends package{
         public static function __hook_AdoDBResult(ADOConnection $result, $sql){
             $msg = $result->ErrorMsg();
             if($msg && !in_array($msg, self::$_sqlErrors)){
-                    self::$db->prepare("INSERT INTO `lttx".package::$pdbn."_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)")->execute(array((self::$user)?self::$user->getUserID ():0, $msg . "\nquery was:\n" . $sql, 1));
+                    self::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)")->execute(array((self::$user)?self::$user->getUserID ():0, $msg . "\nquery was:\n" . $sql, 1));
                     self::$_sqlErrors[] = $msg;
             }
         }

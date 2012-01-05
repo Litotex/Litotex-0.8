@@ -75,7 +75,7 @@ class package_projects extends package {
     public static function generateCacheFile($platform) {
     	$xmlFile = new SimpleXMLElement('<litotex origin="updateServer" version="undefined" responsetype="packageList"/>');
     	$dataArea = $xmlFile->addChild('data');
-    	$packageData = self::$db->Execute("SELECT
+    	$packageData = self::$pdb->Execute("SELECT
     		`lttx".package::$pdbn."_projects`.`ID` AS `projectID`,
     		`lttx".package::$pdbn."_projects`.`name`,
     		`lttx".package::$pdbn."_projects`.`description`,

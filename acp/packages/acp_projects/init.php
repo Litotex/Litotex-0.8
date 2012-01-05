@@ -72,7 +72,7 @@ class package_acp_projects extends acpPackage {
         self::$tpl->assign('releaseCount', $releaseCount);
 
         // get from db
-        $result = self::$db->Execute('SELECT id, name, owner, downloads FROM lttx1_projects');
+        $result = self::$pdb->Execute('SELECT id, name, owner, downloads FROM lttx1_projects');
 
         $i = 0;
         $var = array();
@@ -123,7 +123,7 @@ class package_acp_projects extends acpPackage {
             throw new lttxError('formNotComplete');
 
         // write to db
-        self::$db->Execute('INSERT INTO lttx1_projects
+        self::$pdb->Execute('INSERT INTO lttx1_projects
                             SET
                                 name = ?,
                                 owner = ?,
@@ -153,7 +153,7 @@ class package_acp_projects extends acpPackage {
             $projectID = $_GET['projectID'];
 
         // get project info
-        $project = self::$db->Execute('SELECT name, description, owner FROM lttx1_projects WHERE id = ?', array($projectID));
+        $project = self::$pdb->Execute('SELECT name, description, owner FROM lttx1_projects WHERE id = ?', array($projectID));
 		try {
 	        $user = new user($project->fields[2]);
 	        $owner = $user->getData('username');
@@ -168,7 +168,7 @@ class package_acp_projects extends acpPackage {
         self::$tpl->assign('projectOwner', $owner);
 
         // get all project releases
-        $result = self::$db->Execute('SELECT uploader, version, platform, changelog, downloads, time, id FROM lttx1_projects_releases WHERE projectID = ?', array($projectID));
+        $result = self::$pdb->Execute('SELECT uploader, version, platform, changelog, downloads, time, id FROM lttx1_projects_releases WHERE projectID = ?', array($projectID));
 
         $i = 0;
         while(!$result->EOF) {
@@ -213,7 +213,7 @@ class package_acp_projects extends acpPackage {
             throw new lttxError('formNotComplete');
 
         // write to db
-        self::$db->Execute('UPDATE lttx1_projects
+        self::$pdb->Execute('UPDATE lttx1_projects
                             SET
                                 name = ?,
                                 owner = ?,
@@ -256,7 +256,7 @@ class package_acp_projects extends acpPackage {
         else
             $projectID = $_GET['projectID'];
         
-        self::$db->Execute('DELETE FROM lttx1_projects WHERE id = ?', array($projectID));
+        self::$pdb->Execute('DELETE FROM lttx1_projects WHERE id = ?', array($projectID));
         header('Location: index.php?package=acp_projects&action=projects');
     }
 
@@ -309,7 +309,7 @@ class package_acp_projects extends acpPackage {
             move_uploaded_file($package['tmp_name'], '../'.$filename);
 
         // write to db
-        self::$db->Execute('INSERT INTO lttx1_projects_releases
+        self::$pdb->Execute('INSERT INTO lttx1_projects_releases
                             SET
                                 projectID = ?,
                                 uploader  = ?,

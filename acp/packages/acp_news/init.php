@@ -120,7 +120,7 @@ class package_acp_news extends acpPackage{
 			return false;
 		}
 
-		$searchResults =self::$db->query("update `lttx1_news` set active=1 where id ='".$newsId."'");
+		$searchResults =self::$pdb->query("update `lttx1_news` set active=1 where id ='".$newsId."'");
 		return true;
 	}
 
@@ -138,7 +138,7 @@ class package_acp_news extends acpPackage{
 			return false;
 		}
 
-		$results =self::$db->query("update `lttx1_news` set active=0 where id ='".$newsId."'");
+		$results =self::$pdb->query("update `lttx1_news` set active=0 where id ='".$newsId."'");
 		return true;
 	}
 
@@ -156,7 +156,7 @@ class package_acp_news extends acpPackage{
 			return false;
 		}
 
-		$results =self::$db->query("update `lttx1_news` set allow_comments=1 where id ='".$newsId."'");
+		$results =self::$pdb->query("update `lttx1_news` set allow_comments=1 where id ='".$newsId."'");
 		return true;
 	}
 
@@ -171,7 +171,7 @@ class package_acp_news extends acpPackage{
 			return false;
 		}
 
-		$results =self::$db->query("update `lttx1_news` set allow_comments=0 where id ='".$newsId."'");
+		$results =self::$pdb->query("update `lttx1_news` set allow_comments=0 where id ='".$newsId."'");
 		return true;
 	}
 
@@ -189,7 +189,7 @@ class package_acp_news extends acpPackage{
 			return false;
 		}
 
-		$results =self::$db->query("delete from `lttx1_news` where id ='".$newsId."'");
+		$results =self::$pdb->query("delete from `lttx1_news` where id ='".$newsId."'");
 
 		return true;
 	}
@@ -198,7 +198,7 @@ class package_acp_news extends acpPackage{
 
 		$this->_theme = 'list.tpl';
 		$elements = array();
-		$searchResults =self::$db->query("SELECT * FROM `lttx1_news` order by date");
+		$searchResults =self::$pdb->query("SELECT * FROM `lttx1_news` order by date");
 		if($searchResults == false){
 			throw new lttxDBError();
 		}
@@ -237,7 +237,7 @@ class package_acp_news extends acpPackage{
 		}
 		if ($iNewsID > 0) {
 
-			self::$db->prepare('UPDATE lttx1_news
+			self::$pdb->prepare('UPDATE lttx1_news
                             SET
                                 title = ?,
                                 text = ?,
@@ -250,7 +250,7 @@ class package_acp_news extends acpPackage{
 			$iNewsID
 			));
 		}else{
-			self::$db->prepare('INSERT into lttx1_news
+			self::$pdb->prepare('INSERT into lttx1_news
                             (title,text,date,commentNum,writtenBy,active,allow_comments,category)
 							 values
 							 (?,?,?,?,?,?,?,?)')->execute(
@@ -284,7 +284,7 @@ class package_acp_news extends acpPackage{
 
 		$this->_theme = 'show_catlist.tpl';
 		$elements = array();
-		$searchResults =self::$db->query("SELECT * FROM `lttx1_news_categories` order by title");
+		$searchResults =self::$pdb->query("SELECT * FROM `lttx1_news_categories` order by title");
 		foreach($searchResults as $element) {
 			$elements[] = $element;
 		}
@@ -345,7 +345,7 @@ class package_acp_news extends acpPackage{
 		}
 
 		if ($iNewsID > 0) {
-			self::$db->prepare('UPDATE lttx1_news_categories
+			self::$pdb->prepare('UPDATE lttx1_news_categories
                             SET
                                 title = ?,
                                 description = ?
@@ -356,7 +356,7 @@ class package_acp_news extends acpPackage{
 			$iNewsID
 			));
 		}else{
-			self::$db->prepare('insert into lttx1_news_categories
+			self::$pdb->prepare('insert into lttx1_news_categories
                              (newsLastDate,newsNum,title,description) values
 							 (?,?,?,?)')->execute(
 			array(

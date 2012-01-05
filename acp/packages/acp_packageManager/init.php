@@ -64,11 +64,10 @@ class package_acp_packageManager extends acpPackage {
     public function __action_listUpdates() {
         self::addJsFile('checkbox.js', $this->_packageName);
         $packages = array();
-        $result = self::$db->Execute("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `update` = 1");
-        while (!$result->EOF) {
-            $result->fields['changelog'] = unserialize($result->fields['changelog']);
-            $packages[] = $result->fields;
-            $result->MoveNext();
+        $result = self::$pdb->query("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `update` = 1");
+        foreach ($result as $element) {
+            $element['changelog'] = unserialize($element['changelog']);
+            $packages[] = $element;
         }
         self::$tpl->assign('updates', $packages);
         $this->_theme = 'updateList.tpl';
@@ -87,8 +86,10 @@ class package_acp_packageManager extends acpPackage {
             header("Location: index.php?package=acp_packageManager&action=listUpdates");
         foreach ($_POST['update'] as $i => $update) {
             $_POST['update'][$i] = (int) $update;
-            $exists = self::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ? AND `update` = 1", array($_POST['update'][$i]));
-            if (!$exists || $exists->fields[0] == 0)
+            $exists = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ? AND `update` = 1");
+            $exists->execute(array($_POST['update'][$i]));
+            $exists = $exists->fetch();
+            if ($exists[0] == 0)
                 throw new lttxError('E_updateIDNotFound');
             $this->_addInstallItem($items, $_POST['update'][$i]);
         }
@@ -99,21 +100,26 @@ class package_acp_packageManager extends acpPackage {
     private function _addInstallItem(&$items, $newItem) {
         if (in_array($newItem, $items))
             return true;
-        $data = self::$db->Execute("SELECT `dependencies`, `name` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?", array($newItem));
-        if (!$data || !isset($data->fields[0]))
+        $data = self::$pdb->prepare("SELECT `dependencies`, `name` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?");
+        $data->execute(array($newItem));
+        if ($data->rowCount() < 1)
             return false;
-        $dep = unserialize($data->fields[0]);
+        
+        $data = $data->fetch();
+        $dep = unserialize($data[0]);
         foreach ($dep as $depItem) {
             if ($depItem['installed'] >= 1)
                 continue;
-            $itemID = self::$db->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_package_list` WHERE `name` = ?", array($depItem['name']));
-            if (!$itemID || !isset($itemID->fields[0]))
+            $itemID = self::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_package_list` WHERE `name` = ?");
+            $itemID->execute(array($depItem['name']));
+            if ($itemID->rowCount() < 1)
                 return false;
-            if (!$this->_addInstallItem($items, $itemID->fields[0]))
+            $itemID = $itemID->fetch();
+            if (!$this->_addInstallItem($items, $itemID[0]))
                 return false;
         }
         $items[] = (int) $newItem;
-        self::$packages->copyRemotePackage($data->fields[1], '0.8.x');
+        self::$packages->copyRemotePackage($data[1], '0.8.x');
         return true;
     }
 
@@ -166,62 +172,64 @@ class package_acp_packageManager extends acpPackage {
         foreach ($_SESSION['updateQueue'] as $installItem) {
             $tplFiles = array();
             $packageFiles = array();
-            $data = self::$db->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?", array($installItem));
-            if (!$data || !isset($data->fields[0]))
+            $data = self::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?");
+            $data->execute(array($installItem));
+            if ($data->rowCount() < 1)
                 throw new lttxError('E_updateIDNotFound');
-            require_once(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/installer.php');
-            $installerName = 'installer_' . $data->fields['name'];
+            $data = $data->fetch();
+            require_once(LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/installer.php');
+            $installerName = 'installer_' . $data['name'];
             if (!class_exists($installerName))
                 throw new lttxError('E_couldNotLoadInstallerPackage');
-            if ($data->fields['prefix'] === '') {
+            if ($data['prefix'] === '') {
                 $pm = $this->_frontendPackages;
                 $root = LITO_FRONTEND_ROOT;
             } else {
                 $pm = self::$packages;
                 $root = LITO_ROOT;
             }
-            $installData = new $installerName(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache', $data->fields['name'], $pm);
-            $data->fields['dependencies'] = unserialize($data->fields['dependencies']);
-            $data->fields['changelog'] = unserialize($data->fields['changelog']);
-            $data->fields['signInfo'] = unserialize($data->fields['signInfo']);
-            $data->fields['packageFiles'] = $installData->getFileList();
-            $data->fields['error'] = false;
-            foreach ($data->fields['packageFiles']['tpl'] as $tplFile) {
-                if (is_dir(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/template/' . $tplFile))
+            $installData = new $installerName(LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache', $data['name'], $pm);
+            $data['dependencies'] = unserialize($data['dependencies']);
+            $data['changelog'] = unserialize($data['changelog']);
+            $data['signInfo'] = unserialize($data['signInfo']);
+            $data['packageFiles'] = $installData->getFileList();
+            $data['error'] = false;
+            foreach ($data['packageFiles']['tpl'] as $tplFile) {
+                if (is_dir(LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/template/' . $tplFile))
                     continue;
-                if (!file_exists($root . TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile)) {
+                if (!file_exists($root . TPL_DIR . 'default/' . $data['name'] . '/' . $tplFile)) {
                     $tplFiles[] = array(0, $tplFile);
                     continue;
                 }
-                if ($pm->compareFileHash(TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile))
-                    $tplFiles[] = array(1, $tplFile, $root . TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/template/' . $tplFile);
+                if ($pm->compareFileHash(TPL_DIR . 'default/' . $data['name'] . '/' . $tplFile))
+                    $tplFiles[] = array(1, $tplFile, $root . TPL_DIR . 'default/' . $data['name'] . '/' . $tplFile, LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/template/' . $tplFile);
                 else {
-                    $tplFiles[] = array(-1, $tplFile, $root . TPL_DIR . 'default/' . $data->fields['name'] . '/' . $tplFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/template/' . $tplFile);
-                    $data->fields['error'] = true;
+                    $tplFiles[] = array(-1, $tplFile, $root . TPL_DIR . 'default/' . $data['name'] . '/' . $tplFile, LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/template/' . $tplFile);
+                    $data['error'] = true;
                 }
             }
-            foreach ($data->fields['packageFiles']['package'] as $packageFile) {
-                if (is_dir(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/packages/' . $packageFile))
+            foreach ($data['packageFiles']['package'] as $packageFile) {
+                if (is_dir(LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/packages/' . $packageFile))
                     continue;
-                if (!file_exists($root . 'packages/' . $data->fields['name'] . '/' . $packageFile)) {
+                if (!file_exists($root . 'packages/' . $data['name'] . '/' . $packageFile)) {
                     $packageFiles[] = array(0, $packageFile);
                     continue;
                 }
-                if ($pm->compareFileHash('packages/' . $data->fields['name'] . '/' . $packageFile))
-                    $packageFiles[] = array(1, $packageFile, $root . 'packages/' . $data->fields['name'] . '/' . $packageFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/package/' . $packageFile);
+                if ($pm->compareFileHash('packages/' . $data['name'] . '/' . $packageFile))
+                    $packageFiles[] = array(1, $packageFile, $root . 'packages/' . $data['name'] . '/' . $packageFile, LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/package/' . $packageFile);
                 else {
-                    $packageFiles[] = array(-1, $packageFile, $root . 'packages/' . $data->fields['name'] . '/' . $packageFile, LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/package/' . $packageFile);
-                    $data->fields['error'] = true;
+                    $packageFiles[] = array(-1, $packageFile, $root . 'packages/' . $data['name'] . '/' . $packageFile, LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/package/' . $packageFile);
+                    $data['error'] = true;
                 }
             }
-            $data->fields['tplFilesChecked'] = $tplFiles;
-            $data->fields['packageFilesChecked'] = $packageFiles;
-            if ($data->fields['error'])
+            $data['tplFilesChecked'] = $tplFiles;
+            $data['packageFilesChecked'] = $packageFiles;
+            if ($data['error'])
                 $error = true;
             $querys = array();
             $queryList = $installData->getQueryList();
-            $data->fields['queryList'] = $queryList;
-            $installItems[] = $data->fields;
+            $data['queryList'] = $queryList;
+            $installItems[] = $data;
         }
         self::$tpl->assign('error', $error);
         self::$tpl->assign('installQueue', $installItems);
@@ -256,13 +264,16 @@ class package_acp_packageManager extends acpPackage {
         }
         $packages = array();
         foreach ($_POST['update'] as $item) {
-            $data = package::$pdb->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?", array($item));
-            if (!$data || !isset($data->fields[0]))
+            $data = package::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?");
+            $data->execute(array($item));
+            if ($data->rowCount() < 1)
                 continue;
-            $data->fields['signInfo'] = unserialize($data->fields['signInfo']);
-            $data->fields['dependencies'] = unserialize($data->fields['dependencies']);
-            $data->fields['changelog'] = unserialize($data->fields['changelog']);
-            $packages[$data->fields['name']] = $data->fields;
+            
+            $data = $data->fetch();
+            $data['signInfo'] = unserialize($data['signInfo']);
+            $data['dependencies'] = unserialize($data['dependencies']);
+            $data['changelog'] = unserialize($data['changelog']);
+            $packages[$data['name']] = $data;
         }
         foreach ($packages as $item) {
             $pm = ($item['prefix'] == '') ? $this->_frontendPackages : package::$packages;
