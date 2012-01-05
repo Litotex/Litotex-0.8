@@ -64,7 +64,7 @@ class package_acp_packageManager extends acpPackage {
     public function __action_listUpdates() {
         self::addJsFile('checkbox.js', $this->_packageName);
         $packages = array();
-        $result = self::$db->Execute("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".package::$dbn."_package_list` WHERE `update` = 1");
+        $result = self::$db->Execute("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `update` = 1");
         while (!$result->EOF) {
             $result->fields['changelog'] = unserialize($result->fields['changelog']);
             $packages[] = $result->fields;
@@ -87,7 +87,7 @@ class package_acp_packageManager extends acpPackage {
             header("Location: index.php?package=acp_packageManager&action=listUpdates");
         foreach ($_POST['update'] as $i => $update) {
             $_POST['update'][$i] = (int) $update;
-            $exists = self::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$dbn."_package_list` WHERE `ID` = ? AND `update` = 1", array($_POST['update'][$i]));
+            $exists = self::$db->Execute("SELECT COUNT(*) FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ? AND `update` = 1", array($_POST['update'][$i]));
             if (!$exists || $exists->fields[0] == 0)
                 throw new lttxError('E_updateIDNotFound');
             $this->_addInstallItem($items, $_POST['update'][$i]);
@@ -99,14 +99,14 @@ class package_acp_packageManager extends acpPackage {
     private function _addInstallItem(&$items, $newItem) {
         if (in_array($newItem, $items))
             return true;
-        $data = self::$db->Execute("SELECT `dependencies`, `name` FROM `lttx".package::$dbn."_package_list` WHERE `ID` = ?", array($newItem));
+        $data = self::$db->Execute("SELECT `dependencies`, `name` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?", array($newItem));
         if (!$data || !isset($data->fields[0]))
             return false;
         $dep = unserialize($data->fields[0]);
         foreach ($dep as $depItem) {
             if ($depItem['installed'] >= 1)
                 continue;
-            $itemID = self::$db->Execute("SELECT `ID` FROM `lttx".package::$dbn."_package_list` WHERE `name` = ?", array($depItem['name']));
+            $itemID = self::$db->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_package_list` WHERE `name` = ?", array($depItem['name']));
             if (!$itemID || !isset($itemID->fields[0]))
                 return false;
             if (!$this->_addInstallItem($items, $itemID->fields[0]))
@@ -166,7 +166,7 @@ class package_acp_packageManager extends acpPackage {
         foreach ($_SESSION['updateQueue'] as $installItem) {
             $tplFiles = array();
             $packageFiles = array();
-            $data = self::$db->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$dbn."_package_list` WHERE `ID` = ?", array($installItem));
+            $data = self::$db->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?", array($installItem));
             if (!$data || !isset($data->fields[0]))
                 throw new lttxError('E_updateIDNotFound');
             require_once(LITO_ROOT . 'files/cache/' . $data->fields['name'] . '.' . $data->fields['version'] . '.0.8.x.cache/installer.php');
@@ -256,7 +256,7 @@ class package_acp_packageManager extends acpPackage {
         }
         $packages = array();
         foreach ($_POST['update'] as $item) {
-            $data = package::$db->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$dbn."_package_list` WHERE `ID` = ?", array($item));
+            $data = package::$pdb->Execute("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?", array($item));
             if (!$data || !isset($data->fields[0]))
                 continue;
             $data->fields['signInfo'] = unserialize($data->fields['signInfo']);

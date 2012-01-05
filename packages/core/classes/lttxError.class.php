@@ -45,7 +45,7 @@ class lttxError extends Exception{
 }
 class lttxDBError extends lttxError{
 	public function __construct  (){
-		$sError = package::$db->errorCode();
+		$sError = package::$pdb->errorCode();
 		parent::__construct($sError);
 	}
 }
@@ -78,7 +78,7 @@ class lttxLog{
 		if(package::$user){
 			$currentuser=package::$user->getUserID();
 		}
-		package::$db->prepare("INSERT INTO `lttx".package::$dbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $curenttime, $message));
+		package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $curenttime, $message));
 	}
 }
 
@@ -92,11 +92,11 @@ class lttxFatalError extends Exception{
 		$this->_log($message, $package);
 	}
 	private function _log($message, $package){
-		package::$db->prepare("INSERT INTO `lttx".package::$dbn."_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, '##' . $this->getFile() . '(' . $this->getLine() . '):' . $message . "\n" . $this->getTraceAsString()));
-		$this->_oID = package::$db->lastInsertId();
+		package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, '##' . $this->getFile() . '(' . $this->getLine() . '):' . $message . "\n" . $this->getTraceAsString()));
+		$this->_oID = package::$pdb->lastInsertId();
 	}
 	public function setTraced($option){
 		if(!$this->_oID)return false;
-		package::$db->prepare("UPDATE `lttx".package::$dbn."_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_oID));
+		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_oID));
 	}
 }

@@ -41,7 +41,7 @@ class territory{
 		return;
 	}
 	public static function getUserTerritories(user $user){
-		$result = package::$db->Execute("SELECT `ID` FROM `lttx".package::$dbn."_territory` WHERE `userID` = ?", array($user->getUserID()));
+		$result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_territory` WHERE `userID` = ?", array($user->getUserID()));
 		if(!$result)
 		return false;
 		$return = array();
@@ -54,11 +54,11 @@ class territory{
 	private function _getData(){
 		if($this->_getCachedData())
 			return true;
-		$result = package::$db->Execute("SELECT `userID`, `name` FROM `lttx".package::$dbn."_territory` WHERE `ID` = ?", array($this->_ID));
+		$result = package::$pdb->Execute("SELECT `userID`, `name` FROM `lttx".package::$pdbn."_territory` WHERE `ID` = ?", array($this->_ID));
 		if($result->RecordCount() == 0)
 			return false;
 		$this->_data['name'] = $result->fields[1];
-		$buildings = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$dbn."_territory_buildings` WHERE `territoryID` = ?", array($this->_ID));
+		$buildings = package::$pdb->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$pdbn."_territory_buildings` WHERE `territoryID` = ?", array($this->_ID));
 		while(!$buildings->EOF){
 			try {
 				$this->_data['buildings'][$buildings->fields[0]] = array($buildings->fields[2], new building($buildings->fields[1]));
@@ -67,7 +67,7 @@ class territory{
 			}
 			$buildings->MoveNext();
 		}
-		$explores = package::$db->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$dbn."_territory_explores` WHERE `territoryID` = ?", array($this->_ID));
+		$explores = package::$pdb->Execute("SELECT `ID`, `buildingID`, `level` FROM `lttx".package::$pdbn."_territory_explores` WHERE `territoryID` = ?", array($this->_ID));
 		while(!$explores->EOF){
 			try {
 				$this->_data['explores'][$explores->fields[0]] = array($explores->fields[2], new building($explores->fields[1]));
@@ -100,7 +100,7 @@ class territory{
 	public function setName($newName){
 		if(strlen($newName) > 100)
 			throw new Exception('The new name has too many signs, the limit is 100');
-		package::$db->Execute("UPDATE `lttx".package::$dbn."_territory` SET `name` = ? WHERE `ID` = ?", array($newName, $this->_ID));
+		package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_territory` SET `name` = ? WHERE `ID` = ?", array($newName, $this->_ID));
 		$this->_data['name'] = $newName;
 		self::$_cache[$this->_ID]['name'] = $newName;
 		return true;		
@@ -194,9 +194,9 @@ class territory{
 			$building = $this->_data['buildings'][$buildingID][1];
 		$building->increaseBuildingLevel($newLevel, $this);
 		if($new){
-			$result = package::$db->Execute("INSERT INTO `lttx".package::$dbn."_territory_buildings` (`territoryID`, `buildingID`, `level`) VALUES (?, ?, ?)", array($this->_ID, $buildingID, $newLevel));
+			$result = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_territory_buildings` (`territoryID`, `buildingID`, `level`) VALUES (?, ?, ?)", array($this->_ID, $buildingID, $newLevel));
 		}else{
-			$result = package::$db->Execute("UPDATE `lttx".package::$dbn."_territory_buildings` SET `level` = ? WHERE `territoryID` = ? AND `buildingID` = ?", array($newLevel, $this->_ID, $buildingID));
+			$result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_territory_buildings` SET `level` = ? WHERE `territoryID` = ? AND `buildingID` = ?", array($newLevel, $this->_ID, $buildingID));
 		}
 		unset(self::$_cache[$this->_ID]);
 		$this->_getData();

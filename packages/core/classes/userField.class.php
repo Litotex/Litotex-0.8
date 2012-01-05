@@ -38,10 +38,10 @@ class userField extends Basis_Entry {
 	
 	public static function getList(){
 
-		$sSql = " SELECT * FROM `lttx".package::$dbn."_userfields` ORDER BY `position` ASC";
+		$sSql = " SELECT * FROM `lttx".package::$pdbn."_userfields` ORDER BY `position` ASC";
 		$aSql = array();
 		
-		$aResult = package::$db->prepare($sSql);
+		$aResult = package::$pdb->prepare($sSql);
 		$aResult->execute($aSql);
 		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 

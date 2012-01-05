@@ -60,7 +60,7 @@ class option{
 		if(!package::$packages->exists($package) && !($allowOtherPackageSpace && $otherSpace->exists($package)))
 		return false;
 		$this->_package = $package;
-		$cache = package::$db->prepare("SELECT `key`, `value`, `default` FROM `lttx".package::$dbn."_options` WHERE `package` = ?");
+		$cache = package::$pdb->prepare("SELECT `key`, `value`, `default` FROM `lttx".package::$pdbn."_options` WHERE `package` = ?");
 		$cache->execute(array($package));
 		if($cache->rowCount() < 1){
 			throw new lttxFatalError('Options of ' . $package . ' could not be found');
@@ -92,7 +92,7 @@ class option{
 	public function set($key, $value){
 		if(!isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = package::$db->prepare("UPDATE `lttx".package::$dbn."_options` SET `value` = ? WHERE `package` = ? AND `key` = ?");
+		$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_options` SET `value` = ? WHERE `package` = ? AND `key` = ?");
 		$result->execute(array($value, $this->_package, $key));
 		if($result->rowCount() <= 0){
 			return false;
@@ -110,7 +110,7 @@ class option{
 	public function add($key, $value, $default){
 		if(isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = package::$db->prepare("INSERT INTO `lttx".package::$dbn."_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)");
+		$result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)");
 		$result->execute(array($this->_package, $key, $value, $default));
 		if($result->rowCount() <= 0){
 			return false;
@@ -127,7 +127,7 @@ class option{
 	public function reset($key){
 		if(!isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = package::$db->prepare("UPDATE `lttx".package::$dbn."_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?");
+		$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?");
 		$result->execute(array($this->_package, $key));
 		if($result->rowCount() <= 0)
 		return false;

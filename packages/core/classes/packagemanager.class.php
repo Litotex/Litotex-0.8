@@ -179,7 +179,7 @@ class packages {
 		if (!$this->_orderTplModificationCache()) {
 			throw new lttxFatalError("Could not fetch tplMod settings, this might be a serious database issue!");
 		}
-		package::$db->prepare("DELETE FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ?")->execute(array($this->_packagePrefix));
+		package::$pdb->prepare("DELETE FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ?")->execute(array($this->_packagePrefix));
 		closedir($packages);
 		package::setPackageManagerClass($oldPM);
 		return $this->_writeTplModificationCache();
@@ -200,7 +200,7 @@ class packages {
 		foreach ($this->_tplModificationCache as $position => $list) {
 			$n = 0;
 			foreach ($list as $item) {
-				package::$db->prepare("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
+				package::$pdb->prepare("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
 				$n++;
 			}
 		}
@@ -267,7 +267,7 @@ class packages {
 	 * @return bool
 	 */
 	private function _orderTplModificationCache() {
-		$database = package::$db->prepare("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ? ORDER BY `sort` ASC");
+		$database = package::$pdb->prepare("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ? ORDER BY `sort` ASC");
 		$database->execute(array($this->_packagePrefix));
 
 		$cache = array();
@@ -639,7 +639,7 @@ class packages {
 		}
 		//Every check passed :)
 		//after this we can delete the old database tables...
-		package::$db->query("TRUNCATE TABLE `lttx".package::$dbn."_package_list`");
+		package::$pdb->query("TRUNCATE TABLE `lttx".package::$pdbn."_package_list`");
 		$dataSection = $xmlData->data;
 		foreach ($dataSection->children() as $package) {
 			$packageAttributes = $package->attributes();
@@ -710,7 +710,7 @@ class packages {
 				$dependency[] = array('name' => (string) $dependencyAttributes['name'], 'minVersion' => (string) $dependencyAttributes['minVersion'], 'installed' => $installedDep);
 			}
 			//Now we have to write all this to the database :)
-			package::$db->prepare("INSERT INTO  `lttx".package::$dbn."_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
+			package::$pdb->prepare("INSERT INTO  `lttx".package::$pdbn."_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
 				VALUES (NULL ,  ?, ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?, ?);")->execute(
 			array($name, $prefix, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
 		}
@@ -945,10 +945,10 @@ class packages {
 			if(file_exists($destination))
 			unlink($destination);
 			copy($source, $destination);
-			$result = package::$db->prepare("UPDATE `lttx".package::$dbn."_file_hash` SET `hash` = ? WHERE `file` = ?");
+			$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_file_hash` SET `hash` = ? WHERE `file` = ?");
 			$result->execute(array(md5_file($source), $destination));
 			if($result->rowCount() <= 0)
-			package::$db->prepare("INSERT INTO `lttx".package::$dbn."_file_hash` (`hash`, `file`) VALUES (?, ?)")->execute(array(md5_file($source), $destination));
+			package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_file_hash` (`hash`, `file`) VALUES (?, ?)")->execute(array(md5_file($source), $destination));
 			return true;
 		} else if (!is_dir($destination)) {
 			mkdir($destination);
@@ -964,7 +964,7 @@ class packages {
 	public static final function reloadFileHashTable() {
 		$startdir = LITO_FRONTEND_ROOT;
 		//First clear old storage, we will completly rewrite it thought
-		package::$db->query("TRUNCATE TABLE `lttx".package::$dbn."_file_hash`");
+		package::$pdb->query("TRUNCATE TABLE `lttx".package::$pdbn."_file_hash`");
 		//Done... write the new data
 		self::_insertFileHashReq($startdir);
 	}
@@ -973,7 +973,7 @@ class packages {
 		if (!file_exists($file))
 		return false;
 		if (!is_dir($file)) {
-			package::$db->prepare("INSERT INTO `lttx".package::$dbn."_file_hash` (`file`, `hash`) VALUES (?, ?)")->execute(array(str_replace('//', '/', $file), md5_file($file)));
+			package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_file_hash` (`file`, `hash`) VALUES (?, ?)")->execute(array(str_replace('//', '/', $file), md5_file($file)));
 			return true;
 		}
 		$dir = opendir($file);
@@ -989,7 +989,7 @@ class packages {
 		if (!file_exists(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName) || is_dir(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName))
 		return true;
 		//The file exists, check if its original
-		$result = package::$db->prepare("SELECT `hash` FROM `lttx".package::$dbn."_file_hash` WHERE `file` = ?");
+		$result = package::$pdb->prepare("SELECT `hash` FROM `lttx".package::$pdbn."_file_hash` WHERE `file` = ?");
 		$result->execute(array(str_replace('//', '/', LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName)));
 		if ($result->rowCount() < 1 || !isset($result[0]))
 		return false;

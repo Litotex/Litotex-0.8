@@ -47,19 +47,19 @@ class race{
 	}
 	
 	public function setName($name){
-		package::$db->AutoExecute('lttx_races', array('name' => $name), 'UPDATE', '`id` = ' . $this->getID());
+		package::$pdb->AutoExecute('lttx_races', array('name' => $name), 'UPDATE', '`id` = ' . $this->getID());
 		$this->_name = $name;
 	}
 	public function setImage($image){
-		package::$db->AutoExecute('lttx_races', array('image' => $image), 'UPDATE', '`id` = ' . $this->getID());
+		package::$pdb->AutoExecute('lttx_races', array('image' => $image), 'UPDATE', '`id` = ' . $this->getID());
 		$this->_image = $image;
 	}
 	public function setDescription($description){
-		package::$db->AutoExecute('lttx_races', array('description' => $description), 'UPDATE', '`id` = ' . $this->getID());
+		package::$pdb->AutoExecute('lttx_races', array('description' => $description), 'UPDATE', '`id` = ' . $this->getID());
 		$this->_description = $description;
 	}
 	private function _getRaceData($raceID){
-		$result = package::$db->Execute("SELECT `id`, `name`, `image`, `description` FROM `lttx".package::$dbn."_races` WHERE `id` = ?", array($raceID));
+		$result = package::$pdb->Execute("SELECT `id`, `name`, `image`, `description` FROM `lttx".package::$pdbn."_races` WHERE `id` = ?", array($raceID));
 		if(!isset($result->fields[0]))
 			throw new lttxError('E_race_not_found', $raceID);
 		$this->_id = $result->fields[0];

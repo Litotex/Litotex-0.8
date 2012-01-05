@@ -86,7 +86,7 @@ class userGroup extends Basis_Entry {
      * @return array
      */
     public function getUsers(){
-        $result = package::$db->prepare("
+        $result = package::$pdb->prepare("
             SELECT `userID`
             FROM `lttx1_user_group_connections`
             WHERE `groupID` = ?");
@@ -112,7 +112,7 @@ class userGroup extends Basis_Entry {
         if($ID === false)
             return false;
         //Check if already in first...
-        $result = package::$db->prepare("
+        $result = package::$pdb->prepare("
             SELECT COUNT(`ID`)
             FROM  `lttx1_user_group_connections`
             WHERE `userID` = ?
@@ -124,7 +124,7 @@ class userGroup extends Basis_Entry {
         if($result[0] > 0)
                 return true;
         //end check
-        $result = package::$db->prepare("
+        $result = package::$pdb->prepare("
             INSERT INTO `lttx1_user_group_connections`
             (`userID`, `groupID`)
             VALUES
@@ -143,8 +143,8 @@ class userGroup extends Basis_Entry {
         $ID = $user->getUserID();
         if($ID === false)
             return false;
-        $result = package::$db->prepare("
-            DELETE FROM `lttx".package::$dbn."_userGroupConnections`
+        $result = package::$pdb->prepare("
+            DELETE FROM `lttx".package::$pdbn."_userGroupConnections`
             WHERE `userID` = ?
             AND `groupID` = ?");
 		$result->execute(array($ID, $this->ID));
@@ -168,7 +168,7 @@ class userGroup extends Basis_Entry {
 			return false;
 		}
 
-       package::$db->prepare("
+       package::$pdb->prepare("
             DELETE FROM `lttx1_user_group_connections`
             WHERE `groupID` = ?")->execute(array($this->ID));
 
@@ -179,7 +179,7 @@ class userGroup extends Basis_Entry {
 	
     public static function getDefault(){
     	$return = array();
-        $result = package::$db->prepare("
+        $result = package::$pdb->prepare("
             SELECT `ID`
             FROM `lttx1_user_groups`
             WHERE `default` = ?");

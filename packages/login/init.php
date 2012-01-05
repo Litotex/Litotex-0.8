@@ -111,9 +111,9 @@ class package_login extends package {
 				exit();
 			}
 		
-		$result = package::$db->Execute("
+		$result = package::$pdb->Execute("
             SELECT *
-            FROM `lttx".package::$dbn."_users`
+            FROM `lttx".package::$pdbn."_users`
             WHERE `email` = ?",
                 $email);
 		

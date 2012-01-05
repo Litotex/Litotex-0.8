@@ -89,7 +89,7 @@ class Basis_Entry {
 		$sSql = " SELECT * FROM `".$oTemp->_sTableName."` ";
 		$aSql = array();
 
-		$aResult = package::$db->prepare($sSql);
+		$aResult = package::$pdb->prepare($sSql);
 		$aResult->execute($aSql);
 		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
@@ -177,7 +177,7 @@ class Basis_Entry {
 				$aSql[] = (int)$this->ID;
 			}
 
-			package::$db->prepare($sSql)->execute($aSql);
+			package::$pdb->prepare($sSql)->execute($aSql);
 
 			return true;
 
@@ -198,7 +198,7 @@ class Basis_Entry {
 		$sSql = " DELETE FROM `".$this->_sTableName."` WHERE `ID` = ?";
 		$aSql = array($this->ID);
 
-		package::$db->prepare($sSql)->execute($aSql);
+		package::$pdb->prepare($sSql)->execute($aSql);
 	}
 
 	/**
@@ -211,7 +211,7 @@ class Basis_Entry {
 			$sSql = " SELECT * FROM `".$this->_sTableName."` WHERE ID = ? ";
 			$aSql = array($this->_aData['ID']);
 
-			$aResult = package::$db->prepare($sSql);
+			$aResult = package::$pdb->prepare($sSql);
 			$aResult->execute($aSql);
 			$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 

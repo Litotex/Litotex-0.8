@@ -205,7 +205,7 @@ class user {
 		if($iUserId > 0  &&	self::userExists($iUserId)){
 
 			$sSql = " UPDATE
-    						`lttx".package::$dbn."_users`
+    						`lttx".package::$pdbn."_users`
     					SET
     						".$sSqlSetPart."
     					WHERE
@@ -213,19 +213,19 @@ class user {
     				";
 			$aSql[] = $iUserId;
 			// Update
-			$bSuccess = package::$db->prepare($sSql)->execute($aSql);
+			$bSuccess = package::$pdb->prepare($sSql)->execute($aSql);
 
 		} else if($iUserId == 0){
 
 			$sSql = " INSERT INTO
-    						`lttx".package::$dbn."_users`
+    						`lttx".package::$pdbn."_users`
     					SET
     					".$sSqlSetPart;
 			// Insert
 
-			$bSuccess = package::$db->prepare($sSql)->execute($aSql);
+			$bSuccess = package::$pdb->prepare($sSql)->execute($aSql);
 			// get ID
-			$iUserId = package::$db->lastInsertId();
+			$iUserId = package::$pdb->lastInsertId();
 
 			// set New ID
 			$this->_currentID = $iUserId;
@@ -235,7 +235,7 @@ class user {
 		}
 
 		if($bSuccess === false){
-			$sDBError = package::$db->errorCode();
+			$sDBError = package::$pdb->errorCode();
 			throw new lttxError($sDBError);
 		}
 			
@@ -253,9 +253,9 @@ class user {
 		$passwordSalted = self::_saltString($password);
 		if(self::userExists($username))
 		return -1;
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             SELECT COUNT(`ID`)
-            FROM `lttx".package::$dbn."_users`
+            FROM `lttx".package::$pdbn."_users`
             WHERE `email` = ?");
 		$result->execute(array($email));
 		if($result->rowCount() < 1) {
@@ -272,8 +272,8 @@ class user {
 			$additionalDataPointer .= ', ?';
 			$additionalDataColumns .= ', `' . $key . '`';
 		}
-		$result = package::$db->prepare("
-            INSERT INTO `lttx".package::$dbn."_users`
+		$result = package::$pdb->prepare("
+            INSERT INTO `lttx".package::$pdbn."_users`
             (`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
             VALUES
             (?, ?, ?, ?" . $additionalDataPointer . ")");
@@ -281,7 +281,7 @@ class user {
 		if($result->rowCount() < 1) {
 			return -3;
 		}
-		return new user(package::$db->lastInsertId());
+		return new user(package::$pdb->lastInsertId());
 	}
 
 	/**
@@ -348,9 +348,9 @@ class user {
 		if(isset(self::$_usernames[$username])) {
 			return new user(self::$_usernames[$username]);
 		}
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             SELECT `ID`
-            FROM `lttx".package::$dbn."_users`
+            FROM `lttx".package::$pdbn."_users`
             WHERE `username` = ?");
 		$result->execute(array($username));
 		if($result->rowCount() < 0)
@@ -381,9 +381,9 @@ class user {
 			return $this->getData($key, $cached, false);
 		}
 		//Nothing was cached... read manually
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             SELECT `" . $key . "`
-            FROM `lttx".package::$dbn."_users`
+            FROM `lttx".package::$pdbn."_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -412,8 +412,8 @@ class user {
 			$this->_writeBuffer[$key] = $newValue;
 			return true;
 		}
-		$result = package::$db->prepare("
-            UPDATE `lttx".package::$dbn."_users`
+		$result = package::$pdb->prepare("
+            UPDATE `lttx".package::$pdbn."_users`
             SET `" . $key . "` = ?
             WHERE `ID` = ?");
 		$result->execute(array($newValue, $this->_currentID));
@@ -478,9 +478,9 @@ class user {
 		if($this->getUserID() == 0)
 		return false;
 
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             SELECT *
-            FROM `lttx".package::$dbn."_users`
+            FROM `lttx".package::$pdbn."_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		$result = $result->fetch();
@@ -508,9 +508,9 @@ class user {
 			}
 			$fields .= ', `' . $buffered[$i] . '`';
 		}
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             SELECT " . $fields . "
-            FROM `lttx".package::$dbn."_users`
+            FROM `lttx".package::$pdbn."_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -530,7 +530,7 @@ class user {
 		return false;
 		if(count($this->_writeBuffer) <= 0)
 		return true;
-		$queryString = 'UPDATE `lttx".package::$dbn."_users` SET ';
+		$queryString = 'UPDATE `lttx".package::$pdbn."_users` SET ';
 		$values = array();
 		$i = 0;
 		foreach($this->_writeBuffer as $key => $value) {
@@ -543,7 +543,7 @@ class user {
 		}
 		$queryString .= ' WHERE `ID` = ?';
 		$values[] = $this->_currentID;
-		$result = package::$db->prepare($queryString);
+		$result = package::$pdb->prepare($queryString);
 		$result->execute($values);
 		if($result->rowCount() < 1)
 		return false;
@@ -557,15 +557,15 @@ class user {
 	 */
 	public static function userExists($user) {
 		if(is_int($user)) {
-			$result = package::$db->prepare("
+			$result = package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".package::$dbn."_users`
+                FROM `lttx".package::$pdbn."_users`
                 WHERE `ID` = ?");
 			$result->execute(array($user));
 		} else {
-			$result = package::$db->prepare("
+			$result = package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".package::$dbn."_users`
+                FROM `lttx".package::$pdbn."_users`
                 WHERE `username` = ?");
 			$result->execute(array($user));
 		}
@@ -720,7 +720,7 @@ class user {
 		}
 
 		$aGroups = array();
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             SELECT `groupID`
             FROM `lttx1_user_group_connections`
             WHERE `userID` = ?");
@@ -768,7 +768,7 @@ class user {
 	 */
 	public function setPassword($password){
 		$salted = $this->_saltString($password);
-		package::$db->prepare("UPDATE `lttx".package::$dbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
+		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
 		return true;
 	}
 
@@ -860,7 +860,7 @@ class user {
 		//We absolutly need to stop buffering every entry! This would be the perfect overkill
 		$return = array();
 		$match = array();
-		$searchResults = package::$db->prepare("SELECT `ID`, `".$field."` FROM `lttx".package::$dbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
+		$searchResults = package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx".package::$pdbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
 		$searchResults->execute(array('%' . $request . '%'));
 		if($searchResults->errorCode()){
 			throw new lttxDBError();
@@ -880,9 +880,9 @@ class user {
 	}
 
 	public function saveUserFieldData($iFieldId, $mValue){
-		$sSql = " REPLACE INTO `lttx".package::$dbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
+		$sSql = " REPLACE INTO `lttx".package::$pdbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'), $mValue);
-		package::$db->prepare($sSql)->execute($aSql);
+		package::$pdb->prepare($sSql)->execute($aSql);
 	}
 
 	public function validateFieldData($iFieldId, $mValue){
@@ -893,9 +893,9 @@ class user {
 	}
 
 	public function getUserFieldData($iFieldId){
-		$sSql = " SELECT `value` FROM `lttx".package::$dbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
+		$sSql = " SELECT `value` FROM `lttx".package::$pdbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'));
-		$mValue = package::$db->prepare($sSql);
+		$mValue = package::$pdb->prepare($sSql);
 		$mValue->execute($aSql);
 		$mValue = $mValue->fetch();
 		$mValue = $mValue[0];
@@ -903,7 +903,7 @@ class user {
 	}
 
 	public function deleteAllGroups(){
-		$result = package::$db->prepare("
+		$result = package::$pdb->prepare("
             DELETE FROM `lttx1_user_group_connections`
             WHERE `userID` = ?")
 		->execute(array($this->getUserID()));

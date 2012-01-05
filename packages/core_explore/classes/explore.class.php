@@ -51,7 +51,7 @@ class explore{
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
 	public function __construct($exploreID){
-		$data = package::$db->Execute("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$dbn."_explores` WHERE `ID` = ?", array($exploreID));
+		$data = package::$pdb->Execute("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$pdbn."_explores` WHERE `ID` = ?", array($exploreID));
 		if(!isset($data->fields[0]))
 			throw new Exception('Explore ' . $exploreID .' was not found');
 		$plugin = $data->fields[2];
@@ -125,7 +125,7 @@ class explore{
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$db->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$dbn."_explore_dependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
+		$dep = package::$pdb->Execute("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$pdbn."_explore_dependencies` WHERE `sourceID` = ? AND `level` <= ?", array($this->_ID, (int)$level));
 		$return = array();
 		if(!$dep)
 			return false;
@@ -145,7 +145,7 @@ class explore{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = package::$db->Execute("SELECT `ID` FROM `lttx".package::$dbn."_explores` WHERE `race` = ?", array($race));
+		$result = package::$pdb->Execute("SELECT `ID` FROM `lttx".package::$pdbn."_explores` WHERE `race` = ?", array($race));
 		$return = array();
 		if(!$result)
 			return false;

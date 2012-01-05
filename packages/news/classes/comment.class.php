@@ -224,9 +224,9 @@ class comment {
                 return false;
         if(!is_a($writer, 'user'))
                 return false;
-        $result = package::$db->Execute("INSERT INTO `lttx".package::$dbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?", array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
+        $result = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?", array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
         $news->increaseComments();
-        return (!$result || package::$db->Affected_Rows() <= 0)?false:new comment(package::$db->Insert_ID());
+        return (!$result || package::$pdb->Affected_Rows() <= 0)?false:new comment(package::$pdb->Insert_ID());
     }
     /**
      * This will return all the comments sorted by news
@@ -248,13 +248,13 @@ class comment {
             $offset = -1;
         }
         if($news)
-            $result = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$dbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC", $offset, $start, array($news->getID()));
+            $result = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC", $offset, $start, array($news->getID()));
         else
-            $result = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$dbn."_news_comments` ORDER BY `date` DESC", $offset, $start);
+            $result = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` ORDER BY `date` DESC", $offset, $start);
         if(!$result)
             return false;
         while(!$result->EOF){
-            self::_writeCache($result->fields[0], $result->fields[1], $result->fields[2], new Date(package::$db->UnixTimeStamp($result->fields[3])), new news($result->fields[4]), new user($result->fields[5]), $result->fields[6]);
+            self::_writeCache($result->fields[0], $result->fields[1], $result->fields[2], new Date(package::$pdb->UnixTimeStamp($result->fields[3])), new news($result->fields[4]), new user($result->fields[5]), $result->fields[6]);
             $return[] = new comment($result->fields[0]);
             $result->MoveNext();
         }
@@ -264,9 +264,9 @@ class comment {
         if($news && !is_a($news, 'news'))
                 return false;
         if($news)
-            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$dbn."_news_comments` WHERE `news` = ?", array($news->getID()));
+            $result = package::$pdb->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?", array($news->getID()));
         else
-            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$dbn."_news_comments`");
+            $result = package::$pdb->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments`");
         if(!$result)
             return false;
         return $result->fields[0]*1;
@@ -275,13 +275,13 @@ class comment {
         if($this->_getCommentCached($ID))
                 return true;
         $ID = (int)$ID;
-        $result = package::$db->Execute("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$dbn."_news_comments` WHERE `ID` = ?", array($ID));
+        $result = package::$pdb->Execute("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `ID` = ?", array($ID));
         if(!$result || !$result->fields[0])
             return false;
         $this->_ID = $result->fields[0];
         $this->_title = $result->fields[1];
         $this->_text = $result->fields[2];
-        $this->_date = new Date(package::$db->UnixTimeStamp($result->fields[3]));
+        $this->_date = new Date(package::$pdb->UnixTimeStamp($result->fields[3]));
         if(($this->_news = $this->_getNewsCached($result->fields[4])) === false){
             $this->_news = new news($result->fields[4]);
             $this->_writeNewsCache($this->_news);

@@ -60,11 +60,11 @@ class package_acp_projects extends acpPackage {
      */
     public function __action_main() {
         // count projects
-        $result = package::$db->Execute('SELECT id FROM lttx1_projects');
+        $result = package::$pdb->Execute('SELECT id FROM lttx1_projects');
         $projectCount = $result->NumRows();
 
         // count releases
-        $result = package::$db->Execute('SELECT id FROM lttx1_projects_releases');
+        $result = package::$pdb->Execute('SELECT id FROM lttx1_projects_releases');
         $releaseCount = $result->NumRows();
 
         // assign new vars to template
@@ -363,7 +363,7 @@ class package_acp_projects extends acpPackage {
         else
             $releaseID = $_GET['releaseID'];
 
-        package::$db->Execute('DELETE FROM lttx1_projects_releases WHERE id = ?', array($releaseID));
+        package::$pdb->Execute('DELETE FROM lttx1_projects_releases WHERE id = ?', array($releaseID));
         header('Location: index.php?package=acp_projects&action=editProject&projectID='.$_GET['projectID']);
     }
 }

@@ -125,9 +125,9 @@ class news{
         if(!is_a($category, 'category'))
                 return false;
         $title = htmlspecialchars($title);
-        $insert = package::$db->Execute("INSERT INTO `lttx".package::$dbn."_news` (`title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`) VALUES (?, ?, ?, ".package::$db->DBTimeStamp(date("Y-m-d H:m:s", time())).", ?, ?, ?)", array($title, $text, $category->getID(), 0, (package::$user)?package::$user->getID():false, (bool)$active));
+        $insert = package::$pdb->Execute("INSERT INTO `lttx".package::$pdbn."_news` (`title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`) VALUES (?, ?, ?, ".package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).", ?, ?, ?)", array($title, $text, $category->getID(), 0, (package::$user)?package::$user->getID():false, (bool)$active));
         $category->updateTimestamp();
-        return (!$insert)?false:new news(package::$db->Insert_ID());
+        return (!$insert)?false:new news(package::$pdb->Insert_ID());
     }
     /**
      * Returns an array of all news based on category if set
@@ -152,11 +152,11 @@ class news{
         }
         $return = array();
         if($category)
-            $news = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$dbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC", $offset, $start, array($category->getID(), true));
+            $news = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC", $offset, $start, array($category->getID(), true));
         else
-            $news = package::$db->SelectLimit("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$dbn."_news` WHERE `active` = ? ORDER BY `date` DESC", $offset, $start, array(true));
+            $news = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC", $offset, $start, array(true));
         while(!$news->EOF) {
-            self::_writeCache($news->fields[0], $news->fields[1], $news->fields[2], $category, new Date(package::$db->UnixTimeStamp($news->fields[4])), $news->fields[5], new user($news->fields[6]), $news->fields[7]);
+            self::_writeCache($news->fields[0], $news->fields[1], $news->fields[2], $category, new Date(package::$pdb->UnixTimeStamp($news->fields[4])), $news->fields[5], new user($news->fields[6]), $news->fields[7]);
             $return[] = new news($news->fields[0]);
             $news->MoveNext();
         }
@@ -166,9 +166,9 @@ class news{
         if($category && !is_a($category, 'category'))
                 return false;
         if($category)
-            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$dbn."_news` WHERE `category` = ? AND `active` = ?", array($category->getID(), true));
+            $result = package::$pdb->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ?", array($category->getID(), true));
         else
-            $result = package::$db->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$dbn."_news` WHERE `active` = ?", array(true));
+            $result = package::$pdb->Execute("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news` WHERE `active` = ?", array(true));
         if(!$result)
             return false;
         return $result->fields[0]*1;
@@ -290,7 +290,7 @@ class news{
         if(!$this->_initialized)
                 return false;
         $value = (bool)$value;
-        $result = package::$db->Execute("UPDATE `lttx".package::$dbn."_news` SET `active` = ? WHERE `ID` = ?", array($value, $this->_ID));
+        $result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_news` SET `active` = ? WHERE `ID` = ?", array($value, $this->_ID));
         if(!$result)
             return false;
         $this->_active = $value;
@@ -312,8 +312,8 @@ class news{
     public function delete(){
         if(!$this->_initialized)
                 return false;
-        $result = package::$db->Execute("DELETE FROM `lttx".package::$dbn."_news` WHERE `ID` = ?", array($this->_ID));
-        return (package::$db->Affected_Rows() <= 0)?false:true;
+        $result = package::$pdb->Execute("DELETE FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?", array($this->_ID));
+        return (package::$pdb->Affected_Rows() <= 0)?false:true;
     }
     /**
      * This sends an email when a new message was written
@@ -373,14 +373,14 @@ class news{
     private function _get($ID){
         if($this->_getCache($ID))
                 return true;
-        $news = package::$db->Execute("SELECT `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$dbn."_news` WHERE `ID` = ?", array($ID));
+        $news = package::$pdb->Execute("SELECT `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?", array($ID));
         if(!$news || !isset($news->fields[0]))
             return false;
         $this->_ID = $ID;
         $this->_title = $news->fields[0];
         $this->_text = $news->fields[1];
         $this->_category = new category($news->fields[2]);
-        $this->_date = new Date(package::$db->UnixTimeStamp($news->fields[3]));
+        $this->_date = new Date(package::$pdb->UnixTimeStamp($news->fields[3]));
         $this->_commentNum = $news->fields[4];
         $this->_writtenBy = new user($news->fields[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
@@ -446,7 +446,7 @@ class news{
     public function regenerateCommentsNumCache(){
         $comments = comment::getAll($this);
         $n = count($comments);
-        $result = package::$db->Execute("UPDATE `lttx".package::$dbn."_news` SET `commentNum` = ? WHERE `ID` = ?", array($n, $this->_ID));
+        $result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_news` SET `commentNum` = ? WHERE `ID` = ?", array($n, $this->_ID));
         if(!$result)
             return false;
         return true;
@@ -456,7 +456,7 @@ class news{
      * @return bool
      */
     public function increaseComments(){
-        $result = package::$db->Execute("UPDATE `lttx".package::$dbn."_news` SET `commentNum` = `commentNum` + 1 WHERE `ID` = ?", array($n, $this->_ID));
+        $result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_news` SET `commentNum` = `commentNum` + 1 WHERE `ID` = ?", array($n, $this->_ID));
         if(!$result)
             return false;
         return true;
@@ -466,7 +466,7 @@ class news{
      * @return bool
      */
     public function decreaseComments(){
-        $result = package::$db->Execute("UPDATE `lttx".package::$dbn."_news` SET `commentNum` = `commentNum` - 1 WHERE `ID` = ?", array($n, $this->_ID));
+        $result = package::$pdb->Execute("UPDATE `lttx".package::$pdbn."_news` SET `commentNum` = `commentNum` - 1 WHERE `ID` = ?", array($n, $this->_ID));
         if(!$result)
             return false;
         return true;

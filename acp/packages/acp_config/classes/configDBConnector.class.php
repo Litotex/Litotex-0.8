@@ -52,7 +52,7 @@ class configDBConnector extends configConnector{
 		
 	}
 	private function _cacheData(){
-		$result = package::$db->prepare("SELECT * FROM `lttx".package::$dbn."_" . $this->_dbName . " WHERE `ID` = ? LIMIT 1");
+		$result = package::$pdb->prepare("SELECT * FROM `lttx".package::$pdbn."_" . $this->_dbName . " WHERE `ID` = ? LIMIT 1");
 		$result->execute(array($this->_elementID));
 		if($result->rowCount() < 0)
 			return false;

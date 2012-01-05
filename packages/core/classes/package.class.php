@@ -39,9 +39,9 @@ abstract class package {
      * This will keep an instance of the database class for usage in extending classes
      * @var PDO
      */
-    public static $db;
+    public static $pdb;
     
-    public static $dbn = 1;
+    public static $pdbn = 1;
     /**
      * This will keep an instance of the template class Smarty for usage in extending classes
      * @var Smarty
@@ -293,7 +293,7 @@ abstract class package {
     static public final function setDatabaseClass($db) {
         if (__CLASS__ != 'package')
             return false;
-        package::$db = $db;
+        package::$pdb = $db;
         return true;
     }
 

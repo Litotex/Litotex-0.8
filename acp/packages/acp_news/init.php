@@ -76,7 +76,7 @@ class package_acp_news extends acpPackage{
 		if ($iNewsId > 0) {
 
 
-			$result = package::$db->prepare("SELECT * FROM `lttx1_news` WHERE `id` = ?");
+			$result = package::$pdb->prepare("SELECT * FROM `lttx1_news` WHERE `id` = ?");
 			$result->execute(array($iNewsId));
 			if($result->rowCount() < 1){
 				throw new lttxError('LN_DB_ERRROR_1');
@@ -91,7 +91,7 @@ class package_acp_news extends acpPackage{
 		}
 
 		$cat_elements[]="";
-		$categories = package::$db->query("SELECT id,title FROM `lttx1_news_categories` order by title");
+		$categories = package::$pdb->query("SELECT id,title FROM `lttx1_news_categories` order by title");
 		foreach($categories as $category) {
 			$cat_elements[$category['id']] = $category['title'];				
 		}
@@ -306,7 +306,7 @@ class package_acp_news extends acpPackage{
 		if ($iNewsId > 0) {
 
 
-			$result = package::$db->prepare("SELECT * FROM `lttx1_news_categories` WHERE `id` = ?");
+			$result = package::$pdb->prepare("SELECT * FROM `lttx1_news_categories` WHERE `id` = ?");
 			$result->execute($iNewsId);
 			if($result->rowCount() < 1){
 				throw new lttxError('LN_DB_ERRROR_1');
