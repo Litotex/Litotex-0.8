@@ -24,6 +24,8 @@ in der Datei path.php
 den LITO_ROOT und LITO_URL ändern
 in der Datei database.conf.php
 SQl Einstellungen ändern.
+Ebenso ist die const.php.dist umzubenennen in 
+const.php
 
 
 insert_sample aus dem Ordner dbUpdates importieren 
