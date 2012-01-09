@@ -400,7 +400,7 @@ class news{
         $this->_title = $news[0];
         $this->_text = $news[1];
         $this->_category = new category($news[2]);
-        //$this->_date = new Date(package::$pdb->UnixTimeStamp($news[3]));
+        $this->_date = new Date(package::$pdb->UnixTimeStamp($news[3]));
         $this->_commentNum = $news[4];
         $this->_writtenBy = new user($news[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
