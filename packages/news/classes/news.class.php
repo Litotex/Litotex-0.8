@@ -152,14 +152,23 @@ class news{
             $offset = -1;
         }
         $return = array();
-        if($category)
-            $news = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC", $offset, $start, array($category->getID(), true));
-        else
-            $news = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC", $offset, $start, array(true));
-        while(!$news->EOF) {
-            self::_writeCache($news->fields[0], $news->fields[1], $news->fields[2], $category, new Date(package::$pdb->UnixTimeStamp($news->fields[4])), $news->fields[5], new user($news->fields[6]), $news->fields[7]);
-            $return[] = new news($news->fields[0]);
-            $news->MoveNext();
+        if($category){
+			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
+			$news->bindParam(':offset', $start, PDO::PARAM_INT);
+			$news->bindParam(':max', $offset, PDO::PARAM_INT);
+			$news->execute(array($category->getID(), true));
+
+			}
+		else{
+			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
+			$news->bindParam(':offset', $start, PDO::PARAM_INT);
+			$news->bindParam(':max', $offset, PDO::PARAM_INT);
+			$news->execute(array(true));
+	   }
+	   
+	   foreach($news as $rows){
+            self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $rows[5], new user($rows[6]), $rows[7]);
+			$return[] = new news($rows[0]);
         }
         return $return;
     }
@@ -241,7 +250,7 @@ class news{
         if(!$this->_initialized)
                 return false;
         return $this->_date->formatDate();
-    }
+	}
     /**
      * This will return the news title
      * @return string
@@ -391,7 +400,7 @@ class news{
         $this->_title = $news[0];
         $this->_text = $news[1];
         $this->_category = new category($news[2]);
-        $this->_date = new Date(package::$pdb->UnixTimeStamp($news[3]));
+        //$this->_date = new Date(package::$pdb->UnixTimeStamp($news[3]));
         $this->_commentNum = $news[4];
         $this->_writtenBy = new user($news[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
