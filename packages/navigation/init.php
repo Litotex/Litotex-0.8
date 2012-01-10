@@ -63,13 +63,13 @@ class package_navigation extends package {
 			$menu_item=intval($_GET['menu']);
 		
 		$elements = array();
-        $element = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        $data = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
         foreach($data as $element) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
 			if($element[0] == $menu_item)
 				$element['active'] = true;
 			else
-				$data->fields['active'] = false;
+				$element['active'] = false;
 		
 			$package_name=$element['package'];
 			if ($package_name =="") $package_name="main"; 
@@ -96,7 +96,7 @@ class package_navigation extends package {
 		
 		$elements = array();
         $data = self::$pdb->prepare("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` =? ORDER BY `sort` ASC");
-        $data->execute($menu_item);
+        $data->execute(array($menu_item));
         foreach($data as $element) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
 			if($element[0] == $menu_item)
