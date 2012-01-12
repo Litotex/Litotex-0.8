@@ -248,16 +248,22 @@ class comment {
             $start = 0;
             $offset = -1;
         }
-        if($news)
-            $result = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC", $offset, $start, array($news->getID()));
-        else
-            $result = package::$pdb->SelectLimit("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` ORDER BY `date` DESC", $offset, $start);
-        if(!$result)
+        if($news){
+            $result = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC");
+			$result->bindParam(':offset', $start, PDO::PARAM_INT);
+			$result->bindParam(':max', $offset, PDO::PARAM_INT);
+			$result->execute(array($news->getID()));
+		}else{
+            $result = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` ORDER BY `date` DESC");
+			$result->bindParam(':offset', $start, PDO::PARAM_INT);
+			$result->bindParam(':max', $offset, PDO::PARAM_INT);
+		}
+		
+		if(!$result)
             return false;
-        while(!$result->EOF){
-            self::_writeCache($result->fields[0], $result->fields[1], $result->fields[2], new Date(package::$pdb->UnixTimeStamp($result->fields[3])), new news($result->fields[4]), new user($result->fields[5]), $result->fields[6]);
-            $return[] = new comment($result->fields[0]);
-            $result->MoveNext();
+		foreach($result as $comments){
+            self::_writeCache($comments[0], $comments[1], $comments[2], $comments[3], new news($comments[4]), new user($comments[5]), $comments[6]);
+            $return[] = new comment($comments[0]);
         }
         return $return;
     }

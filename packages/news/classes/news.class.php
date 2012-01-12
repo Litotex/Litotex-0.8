@@ -62,7 +62,12 @@ class news{
      */
     private $_date = false;
     /**
-     * Number of comments
+     * allow comments
+     * @var int
+     */
+	private $_allow_comments =0;
+    /**
+     * num of  comments
      * @var int
      */
     private $_commentNum = false;
@@ -153,21 +158,21 @@ class news{
         }
         $return = array();
         if($category){
-			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
+			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
 			$news->bindParam(':offset', $start, PDO::PARAM_INT);
 			$news->bindParam(':max', $offset, PDO::PARAM_INT);
 			$news->execute(array($category->getID(), true));
 
 			}
 		else{
-			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
+			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
 			$news->bindParam(':offset', $start, PDO::PARAM_INT);
 			$news->bindParam(':max', $offset, PDO::PARAM_INT);
 			$news->execute(array(true));
 	   }
 	   
 	   foreach($news as $rows){
-            self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $rows[5], new user($rows[6]), $rows[7]);
+            self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $rows[5], new user($rows[6]), $rows[7], $rows[8]);
 			$return[] = new news($rows[0]);
         }
         return $return;
@@ -205,6 +210,15 @@ class news{
         if(!$this->_initialized)
                 return false;
         return $this->_category;
+    }
+    /**
+     * This will return allow comments
+     * @return category
+     */
+    public function getAllowComments(){
+        if(!$this->_initialized)
+                return false;
+        return $this->_allow_comments;
     }
     /**
      * This will return the name of the category
@@ -390,7 +404,7 @@ class news{
     private function _get($ID){
         if($this->_getCache($ID))
                 return true;
-        $news = package::$pdb->prepare("SELECT `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active` FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?");
+        $news = package::$pdb->prepare("SELECT `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?");
         $news->execute(array($ID));
         if($news->rowCount() < 1)
             return false;
@@ -406,7 +420,8 @@ class news{
         $this->_writtenBy = new user($news[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
         $this->_active = $news[6];
-        self::_writeCache($ID, $this->_title, $this->_text, $this->_category, $this->_date, $this->_commentNum, $this->_writtenBy, $this->_active);
+		$this->_allow_comments = $news[7];
+        self::_writeCache($ID, $this->_title, $this->_text, $this->_category, $this->_date, $this->_commentNum, $this->_writtenBy, $this->_active,$this->_allow_comments);
         return true;
     }
     /**
@@ -425,6 +440,7 @@ class news{
         $this->_commentNum = self::$_newsCache[$ID]['commentNum'];
         $this->_writtenBy = self::$_newsCache[$ID]['writtenBy'];
         $this->_active = self::$_newsCache[$ID]['active'];
+		$this->_allow_comments = self::$_newsCache[$ID]['allow_comments'];
         return true;
     }
     /**
@@ -437,9 +453,10 @@ class news{
      * @param int $commentNum
      * @param user $writtenBy
      * @param bool $active
-     * @return bool
+     * @param bool $allow_comments
+	 * @return bool
      */
-    private static function _writeCache($ID, $title, $text, $category, $date, $commentNum, $writtenBy, $active){
+    private static function _writeCache($ID, $title, $text, $category, $date, $commentNum, $writtenBy, $active,$allow_comments){
         $ID *= 1;
         if(!is_a($category, 'category'))
                 return false;
@@ -457,7 +474,8 @@ class news{
             'date'      => $date,
             'commentNum'=> $commentNum,
             'writtenBy' => $writtenBy,
-            'active'    => $active);
+            'active' 	=> $active,
+			'allow_comments' => $allow_comments);
         return true;
     }
     /**

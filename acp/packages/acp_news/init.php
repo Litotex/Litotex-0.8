@@ -198,7 +198,7 @@ class package_acp_news extends acpPackage{
 
 		$this->_theme = 'list.tpl';
 		$elements = array();
-		$searchResults =self::$pdb->query("SELECT * FROM `lttx1_news` order by date");
+		$searchResults =self::$pdb->query("SELECT * FROM `lttx1_news` order by date DESC");
 		
 		if($searchResults == false){
 			throw new lttxDBError();
