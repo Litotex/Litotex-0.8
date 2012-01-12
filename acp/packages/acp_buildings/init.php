@@ -29,7 +29,6 @@ class package_acp_buildings extends acpPackage{
 	protected $_availableActions = array('main', 'list');
 	protected $_packageName = 'acp_buildings';
 	protected $_theme = 'main.tpl';
-	public static $dependency = array('core_buildings');
 	
 	public function __action_main(){
 		return true;
