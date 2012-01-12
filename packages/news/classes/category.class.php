@@ -51,10 +51,9 @@ class category {
      * @return void
      */
     public function  __construct($ID) {
-        if(!self::exists($ID)){
-            throw new Exception('Category item ' . $ID . ' could not be found');
-            return;
-        }
+        if(!self::exists($ID))
+               return;
+        
         $this->_ID = $ID;
         $this->_initialized = true;
     }

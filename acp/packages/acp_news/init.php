@@ -199,14 +199,12 @@ class package_acp_news extends acpPackage{
 		$this->_theme = 'list.tpl';
 		$elements = array();
 		$searchResults =self::$pdb->query("SELECT * FROM `lttx1_news` order by date");
+		
 		if($searchResults == false){
 			throw new lttxDBError();
 		}
-		 
-		while(!$searchResults->EOF) {
-			$elements[] = $searchResults->fields;
-				
-			$searchResults->MoveNext();
+		foreach($searchResults as $result){		
+			$elements[] = $result;
 		}
 		self::$tpl->assign('aOptions', $elements);
 
@@ -216,6 +214,7 @@ class package_acp_news extends acpPackage{
 	public function __action_save(){
 		$this->_theme = 'empty.tpl';
 		$iNewsID=0;
+		$category=0;
 		$saveDate=date("Y-m-d H:m:s", time());
 
 		$saveUserID=package::$user->getUserID();
@@ -225,7 +224,10 @@ class package_acp_news extends acpPackage{
 		} else {
 			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
 		}
-
+		if(isset($_POST['categories_id'])){
+			$category=$_POST['categories_id'];
+		} 
+		
 		if(isset($_POST['news_over'])){
 			$news_title = htmlspecialchars($_POST['news_over']);
 		} else {
@@ -236,17 +238,18 @@ class package_acp_news extends acpPackage{
 			$iNewsID = (int) $_GET['id'];
 		}
 		if ($iNewsID > 0) {
-
 			self::$pdb->prepare('UPDATE lttx1_news
                             SET
-                                title = ?,
+                                category=?,
+								title = ?,
                                 text = ?,
                                 allow_comments = ?
                             WHERE `id` = ?')->execute(
 			array(
+			$category,
 			$news_title,
 			$news_text,
-                                '0',
+            '0',
 			$iNewsID
 			));
 		}else{
