@@ -268,7 +268,7 @@ class user {
 		return -2;
 		$additionalDataColumns = '';
 		$additionalDataPointer = '';
-		$additionalData = array($username, $email, hash('sha512', $passwordSalted[1]), $passwordSalted[0]);
+		$additionalData = array('',0,0,$username, $email, hash('sha512', $passwordSalted[1]), $passwordSalted[0]);
 		foreach($data as $key => $value) {
 			$additionalData[] = $value;
 			$additionalDataPointer .= ', ?';
@@ -276,9 +276,9 @@ class user {
 		}
 		$result = package::$pdb->prepare("
             INSERT INTO `lttx".package::$pdbn."_users`
-            (`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
+            (`bannedReason`,`userGroup`,`serverAdmin`,`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
             VALUES
-            (?, ?, ?, ?" . $additionalDataPointer . ")");
+            (? ,? ,? ,?, ?, ?, ?" . $additionalDataPointer . ")");
 		$result->execute($additionalData);
 		if($result->rowCount() < 1) {
 			return -3;
@@ -561,7 +561,7 @@ class user {
 	public static function userExists($user) {
 		if(is_int($user)) {
 			if (intval($user) ==0)
-				return false;
+			return false;
 			
 			$result = package::$pdb->prepare("
                 SELECT COUNT(`ID`)
