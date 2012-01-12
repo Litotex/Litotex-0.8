@@ -3,53 +3,52 @@
 }
 .NewsPostHeader {
 	position:relative;
-	margin-bottom:10px;
     background-color:#eeeeee;
 	}
-.NewsPostTitle {
-	width:600px;
-	margin-left:30px;
-	font-size:16px;
-	min-height:24px;
-	padding:1px 0;
-	position:relative;
-	background-color:#ff0000;
-
-
-}
 .NewsPostHeader a,
 .NewsPostHeader a:visited,
 .NewsPostHeader a:hover {
 	text-decoration:none;
 	color:#000;
 	padding-left:10px;
-	position:relative;
-	line-height:24px;
+font-size:16px;
+
+}
+.NewsPostTitleDate{
+	float: left;
+}
+.NewsPostTitle {
+	margin-left:100px;
+	margin-right:100px;
+	
+}
+.NewsPostKat{
+	font-size:8px;
+	text-align:right;
+	float: right;
+}
+.NewsPostKat a,
+.NewsPostKat a:visited,
+.NewsPostKat a:hover {
+	text-decoration:none;
+	color:#000;
+	font-size:12px;
+
 }
 
 .NewsPostTitle a,
 .NewsPostTitle a:visited,
 .NewsPostTitle a:hover {
 	text-decoration:none;
-	color:#000;
-	padding-left:10px;
-	position:relative;
-	display:block;
-	line-height:24px;
+	color:#ff00;
+	
 }
 .NewsPostCategories {
 	float:right;
 	padding:3px 0 3px 25px;
 	font-size:11px;
-	
-	
-	}
-.NewsPostSubTitle{
-	text-align:right;
-	padding-right:10px;
-	font-size:11px;
-	overflow:hidden;
 }
+
 .NewsPostContent {
 	font-family:Verdana,"BitStream vera Sans",Helvetica,Sans-serif;
 	font-size:12px;
@@ -64,12 +63,10 @@
 		
 	}
 
-	.NewsPostComments {
+.NewsPostComments {
 	float:left;
-	width:95px;
-	padding:2px 0 3px 25px;
 	font-size:11px;
-	color:#aaa;
+	color:#ff0000;
 }
 .NewsPostTags {
 	float:left;
@@ -84,19 +81,22 @@
 	font-style:italic;
 }
 .NewsPostReadMore {
-	display:block;
 	float:right;
-	width:100px;
 	outline:none;
-
+	font-size:11px;
 	}
+.NewsPostReadMore a,
+.NewsPostReadMore a:visited,
+.NewsPostReadMore a:hover {
+	text-decoration:none;
+	color:#000;
+	
+}	
 .NewsPostFooter a,
 .NewsPostFooter a:visited,
 .NewsPostFooter a:hover {
 	text-decoration:none;
 	color:#000;
-	padding-left:10px;
-	position:relative;
-	line-height:24px;
+	
 }
 	
