@@ -25,7 +25,7 @@
 {foreach from=$aOptions item=oTempOptions}
 	<tr>
 		<td>
-			{$oTempOptions.title}
+			{$oTempOptions.title} 
 		</td>
 		<td>
 			{$oTempOptions.date}
@@ -42,7 +42,7 @@
 					<img src="{$IMG_URL}stop.png" title="{#LN_OPTION_NOCOMMENTS#}" alt="{#LN_OPTION_NOCOMMENTS#}"/>
 				</a>
 			{/if}
-			{$oTempOptions.commentNum}
+			{$oTempOptions.commentcount}
 		</td>		
 
 		<td>

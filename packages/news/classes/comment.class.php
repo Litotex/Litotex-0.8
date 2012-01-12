@@ -226,7 +226,6 @@ class comment {
                 return false;
         $result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?");
         $result->execute(array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
-        $news->increaseComments();
         return ($result->rowCount() <= 0)?false:new comment(package::$pdb->lastInsertId());
     }
     /**

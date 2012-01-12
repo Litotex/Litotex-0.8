@@ -204,7 +204,9 @@ class package_acp_news extends acpPackage{
 			throw new lttxDBError();
 		}
 		foreach($searchResults as $result){		
+			$result['commentcount']=self::_getCommentCount($result[0]);
 			$elements[] = $result;
+			
 		}
 		self::$tpl->assign('aOptions', $elements);
 
@@ -254,14 +256,13 @@ class package_acp_news extends acpPackage{
 			));
 		}else{
 			self::$pdb->prepare('INSERT into lttx1_news
-                            (title,text,date,commentNum,writtenBy,active,allow_comments,category)
+                            (title,text,date,writtenBy,active,allow_comments,category)
 							 values
-							 (?,?,?,?,?,?,?,?)')->execute(
+							 (?,?,?,?,?,?,?)')->execute(
 			array(
 			$news_title,
 			$news_text,
 			$saveDate,
-                                '0',
 			$saveUserID,
                                 '0',
 								'0',
@@ -377,4 +378,18 @@ class package_acp_news extends acpPackage{
 	public static function registerHooks(){
 		return true;
 	}
+/**
+* Returns numbers of comments
+* @return int
+*/
+	private function _getCommentCount($ID){
+		$result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?");	
+		$result->execute(array($ID));
+		if($result->rowCount() < 1)
+            return 0;
+		$result = $result->fetch();
+		return $result[0];
+	}
+ 
+	
 }
