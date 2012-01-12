@@ -131,6 +131,8 @@ class user {
 	public function __construct($userID) {
 		//if($userID == 0)
 		//	return;
+
+
 		$userID = intval($userID);
 		if(!self::userExists($userID) && $userID > 0)
 		throw new lttxFatalError('User ' . $userID . ' was not found');
@@ -214,7 +216,7 @@ class user {
 			$aSql[] = $iUserId;
 			// Update
 			$bSuccess = package::$pdb->prepare($sSql)->execute($aSql);
-
+			
 		} else if($iUserId == 0){
 
 			$sSql = " INSERT INTO
@@ -353,11 +355,12 @@ class user {
             FROM `lttx".package::$pdbn."_users`
             WHERE `username` = ?");
 		$result->execute(array($username));
+		
 		if($result->rowCount() < 0)
 		return false;
 		$result = $result->fetch();
 		if($result[0] != 0) {
-			self::$_usernames[$username] = $result[0];
+			//self::$_usernames[$username] = $result[0];
 			return new user($result[0]);
 		}
 		return false;
@@ -557,6 +560,9 @@ class user {
 	 */
 	public static function userExists($user) {
 		if(is_int($user)) {
+			if (intval($user) ==0)
+				return false;
+			
 			$result = package::$pdb->prepare("
                 SELECT COUNT(`ID`)
                 FROM `lttx".package::$pdbn."_users`
@@ -569,7 +575,7 @@ class user {
                 WHERE `username` = ?");
 			$result->execute(array($user));
 		}
-		if($result->rowCount() < 1) {
+		if($result->rowCount() < 0) {
 			die('Database failure!');
 			return false;
 		}
