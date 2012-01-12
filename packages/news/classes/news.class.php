@@ -67,11 +67,6 @@ class news{
      */
 	private $_allow_comments =0;
     /**
-     * num of  comments
-     * @var int
-     */
-    private $_commentNum = false;
-    /**
      * Writer
      * @var user
      */
@@ -130,8 +125,8 @@ class news{
         if(!is_a($category, 'category'))
                 return false;
         $title = htmlspecialchars($title);
-        $insert = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news` (`title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`) VALUES (?, ?, ?, ".package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).", ?, ?, ?)");
-        $insert->execute(array($title, $text, $category->getID(), 0, (package::$user)?package::$user->getID():false, (bool)$active));
+        $insert = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news` (`title`, `text`, `category`, `date`, `writtenBy`, `active`) VALUES (?, ?, ?, ".package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).", ?, ?)");
+        $insert->execute(array($title, $text, $category->getID(), (package::$user)?package::$user->getID():false, (bool)$active));
         $category->updateTimestamp();
         return ($insert->rowCount() < 1)?false:new news(package::$pdb->lastInsertId());
     }
@@ -157,22 +152,24 @@ class news{
             $offset = -1;
         }
         $return = array();
-        if($category){
-			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
+        
+		if($category){
+			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
 			$news->bindParam(':offset', $start, PDO::PARAM_INT);
 			$news->bindParam(':max', $offset, PDO::PARAM_INT);
 			$news->execute(array($category->getID(), true));
 
 			}
 		else{
-			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
+			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
 			$news->bindParam(':offset', $start, PDO::PARAM_INT);
 			$news->bindParam(':max', $offset, PDO::PARAM_INT);
 			$news->execute(array(true));
 	   }
 	   
 	   foreach($news as $rows){
-            self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $rows[5], new user($rows[6]), $rows[7], $rows[8]);
+			$CommentsCount=self::_getCommentCount($rows[0]);
+			self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $CommentsCount, new user($rows[5]), $rows[6], $rows[7]);
 			$return[] = new news($rows[0]);
         }
         return $return;
@@ -404,7 +401,8 @@ class news{
     private function _get($ID){
         if($this->_getCache($ID))
                 return true;
-        $news = package::$pdb->prepare("SELECT `title`, `text`, `category`, `date`, `commentNum`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?");
+				
+        $news = package::$pdb->prepare("SELECT `title`, `text`, `category`, `date`,`writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?");
         $news->execute(array($ID));
         if($news->rowCount() < 1)
             return false;
@@ -415,12 +413,11 @@ class news{
         $this->_text = $news[1];
         $this->_category = new category($news[2]);
         $this->_date= new Date(Date::fromDbDate($news[3]));
-		
-		$this->_commentNum = $news[4];
+		$this->_commentNum = self::_getCommentCount($ID);
         $this->_writtenBy = new user($news[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
-        $this->_active = $news[6];
-		$this->_allow_comments = $news[7];
+        $this->_active = $news[5];
+		$this->_allow_comments = $news[6];
         self::_writeCache($ID, $this->_title, $this->_text, $this->_category, $this->_date, $this->_commentNum, $this->_writtenBy, $this->_active,$this->_allow_comments);
         return true;
     }
@@ -462,8 +459,8 @@ class news{
                 return false;
         if(!is_a($date, 'Date'))
                 return false;
-        $commentNum *= 1;
-        if(!is_a($writtenBy, 'user'))
+        //$commentNum *= 1;
+		if(!is_a($writtenBy, 'user'))
                 return false;
         $active = (bool)$active;
         $writtenBy->setLocalBufferPolicy(false);
@@ -479,40 +476,17 @@ class news{
         return true;
     }
     /**
-     * This Will generate the number of comments for an article and store it into the database
-     * @return bool
+     * Returns numbers of comments
+     * @return int
      */
-    public function regenerateCommentsNumCache(){
-        $comments = comment::getAll($this);
-        $n = count($comments);
-        $result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_news` SET `commentNum` = ? WHERE `ID` = ?");
-        $result->execute(array($n, $this->_ID));
-        if($result->rowCount() < 1)
-            return false;
-        return true;
-    }
-    /**
-     * This increases the number of comments by one
-     * @return bool
-     */
-    public function increaseComments(){
-        $result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_news` SET `commentNum` = `commentNum` + 1 WHERE `ID` = ?");
-        $result->execute(array($n, $this->_ID));
-        if($result->rowCount() < 1)
-            return false;
-        return true;
-    }
-    /**
-     * This decreases the number of comments by one
-     * @return bool
-     */
-    public function decreaseComments(){
-        $result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_news` SET `commentNum` = `commentNum` - 1 WHERE `ID` = ?");
-        $result->execute(array($n, $this->_ID));
-        if($result->rowCount() < 1)
-            return false;
-        return true;
-    }
+	private function _getCommentCount($ID){
+		$result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?");	
+		$result->execute(array($ID));
+		if($result->rowCount() < 1)
+            return 0;
+		$result = $result->fetch();
+		return $result[0];
+	}
     /**
      * Returns options element of news
      * @return option

@@ -258,7 +258,6 @@ class comment {
 			$result->bindParam(':offset', $start, PDO::PARAM_INT);
 			$result->bindParam(':max', $offset, PDO::PARAM_INT);
 		}
-		
 		if(!$result)
             return false;
 		foreach($result as $comments){
@@ -295,8 +294,9 @@ class comment {
         $this->_ID = $result[0];
         $this->_title = $result[1];
         $this->_text = $result[2];
-        $this->_date = new Date(package::$pdb->UnixTimeStamp($result[3]));
-        if(($this->_news = $this->_getNewsCached($result[4])) === false){
+        $this->_date= new Date(Date::fromDbDate($result[3]));        
+		
+		if(($this->_news = $this->_getNewsCached($result[4])) === false){
             $this->_news = new news($result[4]);
             $this->_writeNewsCache($this->_news);
         }
