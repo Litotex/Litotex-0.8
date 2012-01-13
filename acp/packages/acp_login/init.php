@@ -53,9 +53,11 @@ class package_acp_login extends acpPackage {
     	if(!(isset($_POST['username']) && isset($_POST['password']) && $_POST['username'] && $_POST['password']))
     		throw new lttxInfo('acp_login_UsernamePasswordMissing');
     	$controllUser = user::login($_POST['username'], $_POST['password']);
-    	if(!$controllUser || !user::compare(package::$user, $controllUser)){
+
+       	if(!$controllUser || !user::compare(package::$user, $controllUser)){
     		throw new lttxInfo('acp_login_UsernamePasswordWrong');
     	}
+
     	package::$user->setAcpLogin();
     	header('Location:index.php');
     	exit();

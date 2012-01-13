@@ -239,7 +239,7 @@ class perm {
 		$sPackage = $mPackage;
 
 		if(is_object($mPackage)){
-			if(get_parent_class($mPackage) != 'package'){
+			if(!in_array(get_parent_class($mPackage), array('acpPackage', 'package'))){
 				return false;
 			} else {
 				$sPackage = $mPackage->getPackageName();
