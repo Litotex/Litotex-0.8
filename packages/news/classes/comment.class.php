@@ -166,19 +166,19 @@ class comment {
     }
 
     /**
-     * Returns the writer
+     * Returns the Author
      * @return user
      */
-    public function getWriter() {
+    public function getAuthor() {
         if(!$this->_initialized)
             return false;
         return $this->_writer;
     }
     /**
-     * Returns the user name of the writer
+     * Returns the user name of the Author
      * @return string
      */
-    public function getWriterName() {
+    public function getAuthorName() {
         if(!$this->_initialized)
             return false;
         return $this->_writer->getUsername();
@@ -193,7 +193,7 @@ class comment {
         return $this->_ID;
     }
     /**
-     * Returns the IP the writer used
+     * Returns the IP the Author used
      * @return string
      */
     public function getIP(){

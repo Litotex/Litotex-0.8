@@ -73,8 +73,6 @@ class package_news extends package {
     	return true;
     }
 	
-
-	
     public function __action_showComments() {
         
 		if(!isset($_GET['id']))

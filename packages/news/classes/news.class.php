@@ -67,7 +67,7 @@ class news{
      */
 	private $_allow_comments =0;
     /**
-     * Writer
+     * Author
      * @var user
      */
     private $_writtenBy = false;
@@ -284,25 +284,25 @@ class news{
      * This will return the user object
      * @return user
      */
-    public function getWriter(){
+    public function getAuthor(){
         if(!$this->_initialized)
                 return false;
         return $this->_writtenBy;
     }
     /**
-     * This will return the writer's ID
+     * This will return the Authors's ID
      * @return int
      */
-    public function getWriterID(){
+    public function getAuthorID(){
         if(!$this->_initialized)
                 return false;
         return $this->_writtenBy->getUserID();
     }
     /**
-     * This will return the writer's username
+     * This will return the Authors's username
      * @return string
      */
-    public function getWriterName(){
+    public function getAuthorName(){
         if(!$this->_initialized)
                 return false;
         return $this->_writtenBy->getUserName();

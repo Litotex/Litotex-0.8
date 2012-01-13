@@ -17,7 +17,7 @@
 </table>
 <p>{$newsItem->getText()}</p>
 <p>{$newsItem->getCommentNum()} <a href="{make_link package=news action=showComments id=$newsItem->getID()}">Kommentare</a></p>
-<p align="right">By {$newsItem->getWriterName()}</p>
+<p align="right">By {$newsItem->getAuthorName()}</p>
 {/foreach}
          </div>
 {include file=$FOOTER}
