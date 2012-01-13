@@ -99,4 +99,63 @@ font-size:16px;
 	color:#000;
 	
 }
+
+.NewsCommentList {
+	border-top:1px solid #ddd;
+
+	padding:10px 20px 0;
+}
+
+li.NewsComment {
+	overflow:hidden;
+}
+li.NewsComment .avatar {
+	margin-left:5px;
+	width:60px;
+}
+
+li.NewsComment .author {
+	float:left;
+	width:80px;
 	
+	
+}
+li.NewsComment .author .name {
+	text-align:left;
+	font-size:11px;
+	color:#666;
+	margin-left:10px;
+}
+li.NewsComment .messageBox {
+	margin-left:80px;
+	background-color:#eee;
+	border:1px solid #ddd;
+	
+	overflow:hidden;
+	margin-bottom:10px;
+}
+
+li.NewsComment .messageBox .date {
+
+	font-size:11px;
+	color:#666;
+	float:right;
+	
+}
+li.NewsComment .messageBox .links {
+	font-size:11px;
+	float:right;
+	margin-right:10px;
+	height:20px;
+	color:#aaa;
+}
+li.NewsComment .messageBox .links a {
+	padding:0 3px;
+}
+li.NewsComment .messageBox .content {
+	font-size:12px;
+
+}
+li.NewsComment .messageBox p {
+	margin:0 0 10px;
+}

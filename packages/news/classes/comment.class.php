@@ -45,6 +45,11 @@ class comment {
      */
     private $_text;
     /**
+     * Image of writing
+     * @var URL
+     */
+    private $_image_url;	
+    /**
      * Date of writing
      * @var Date
      */
@@ -149,6 +154,17 @@ class comment {
             return false;
         return $this->_date->formatDate();
     }
+    /**
+     * Image URL
+     * @return string
+     */
+    public function getImageUrl() {
+        if(!$this->_initialized)
+            return false;
+        return $this->_image_url;
+		
+    }
+
     /**
      * Returns the writer
      * @return user
@@ -302,9 +318,17 @@ class comment {
         $this->_writer = new user($result[5]);
         $this->_writer->setLocalBufferPolicy(false);
         $this->_IP = $result[6];
+		$this->_image_url=self::_buildImageURL( $result[0]);
         $this->_writeCache($this->_ID, $this->_title, $this->_text, $this->_date, $this->_news, $this->_writer, $this->_IP);
         return true;
     }
+	private function _buildImageURL($ID){
+		//future integration of gravatar
+		$curImageUrl =package::getTplURL('news')."img/news_anonym.png";
+		return $curImageUrl ;
+	}
+	
+	
     private function _getNewsCached($ID) {
         return (isset(self::$_newsCache[$ID]))?self::$_newsCache[$ID]:false;
     }
@@ -339,6 +363,7 @@ class comment {
             'date'      =>  $date,
             'news'      =>  $news,
             'writer'    =>  $writer,
+			'image_url' =>  self::_buildImageURL($ID),
             'IP'        =>  $IP
         );
         return true;
