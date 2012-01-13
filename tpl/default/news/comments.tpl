@@ -1,11 +1,9 @@
 {include file=$HEADER}
-<h2>News - Kommentare zu {$newsItem->getTitle()}</h2>
+<h2>{$newsItem->getTitle()}</h2>
 <div class="inhalt_box1">
-
-
 <p>{$newsItem->getText()}</p>
-<p align="right">By {$newsItem->getWriterName()}</p>
-<h2>Kommentare</h2>
+<p align="right">{#LN_NEWS_FROM_AUTHOR#} {$newsItem->getWriterName()} {#LN_NEWS_FROM_AUTHOR_DATE#} {$newsItem->getFormatedDate()}</p>
+<h2>{#LN_NEWS_COMMENT_TITLE#}</h2>
 <ul class="NewsCommentList">
 	{foreach from=$comments item=comment}
 		<li class="NewsComment">

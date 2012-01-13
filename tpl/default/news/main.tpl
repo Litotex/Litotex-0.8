@@ -1,5 +1,5 @@
 {include file=$HEADER}
-<h2>News - Übersicht</h2>
+<h2>{#LN_NEWS_OVER#}</h2>
 <p>Seite x von x</p>
           <div class="inhalt_box1">
 <table width="100%"><tr>
