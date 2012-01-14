@@ -1,21 +1,8 @@
-
-
-.acp_users {
-	width: 800px;	
+#options label {
+    width: 200px;
+    display: inline-block;
 }
 
-label { display: inline-block; width: 100px; }
-
-fieldset fieldset label { display: block; }
-#OptionEditForm { width: 100%; }
-#OptionEditForm label { width: 250px; }
-
-#OptionEditForm label.error {
-	margin-left: 0px;
-	width: auto;
-	display:block;
-padding: 0px 0px 0px 0px;
-color: #ff0000;
-height: 20px;
+#options input[type=text] {
+    width: 200px;
 }
-#OptionEditForm button.submit { margin-left: 253px; }

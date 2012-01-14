@@ -28,121 +28,103 @@
 
 class package_acp_options extends acpPackage {
 
-    protected $_availableActions = array('main', 'edit', 'list', 'save' );
+    protected $_availableActions = array('main', 'edit', 'editSubmit');
     public static $dependency = array('acp_config');
     protected $_packageName = 'acp_options';
     protected $_theme = 'main.tpl';
-	private static $_options = false;
+    private static $_options = false;
 
     public function __action_main() {
-
+        self::addCssFile('options.css', 'acp_options');
         self::addJsFile('options.js', 'acp_options');
-        self::addCssFile('options.css', 'acp_options');
 
+        // get all options from database
+        $state = package::$pdb->prepare('
+            SELECT `ID`, `package`, `key`, `value`, `default` 
+            FROM `lttx' . package::$pdbn . '_options`
+        ');
+        $state->execute();
+        
+        $options = array();
+        while($option = $state->fetch()) {
+            $options[] = array(
+                'optionID'  => $option['ID'],
+                'package'   => $option['package'],
+                'key'       => $option['key'],
+                'value'     => $option['value'],
+                'default'   => $option['default']
+            );
+        }
+        package::$tpl->assign('options', $options);
+        
         return true;
     }
-
-
-
-    public function __action_new() {
-        $this->__action_edit();
-        return true;
-    }
-
+    
     public function __action_edit() {
-
         $this->_theme = 'edit.tpl';
-
-        $iOptionID = 0;
-
-        if (isset($_GET['id'])) {
-            $iOptionID = (int) $_GET['id'];
-        }
-
-		$result = package::$pdb->prepare("SELECT * FROM `lttx".package::$pdbn."_options` WHERE `ID` = ?");
-		$result->execute(array($iOptionID));
-		
-		
-		if($result->rowCount() < 1){
-				throw new lttxError('LN_DB_ERRROR_1');
-				return true;
-		}
-		$result = $result->fetch();
-				
-		$Option_package =$result['package'];
-		$Option_key =$result['key'];
-		$Option_value =$result['value'];
-		$Option_default =$result['default'];
-
-		package::$tpl->assign('Option_package', $Option_package);
-		package::$tpl->assign('Option_key', $Option_key);
-		package::$tpl->assign('Option_value', $Option_value);
-		package::$tpl->assign('Option_default', $Option_default);
-		package::$tpl->assign('edit_id', $iOptionID);
-        return true;
-    }
-
-
-    public function __action_list() {
-
-        $this->_theme = 'list.tpl';
-		$elements = array();
-    	$searchResults =self::$pdb->query("SELECT * FROM `lttx1_options` order by package");
-    	
-		 foreach($searchResults as $element) {
-			$elements[] = $element;
-        }
-        self::$tpl->assign('aOptions', $elements);
-
-        return true;
-    }
-
-    public function __action_save() {
-   self::addJsFile('options.js', 'acp_options');
         self::addCssFile('options.css', 'acp_options');
-
-		if (isset($_GET['id'])) {
-            $iOptionID = (int) $_GET['id'];
+        
+        $optionID = (int) $_GET['optionID'];
+        $state = self::$pdb->prepare('
+            SELECT `ID`, `package`, `key`, `value`, `default` 
+            FROM `lttx'.package::$pdbn.'_options`
+            WHERE
+                ID = :optionID
+        ');
+        $state->execute(array(
+           ':optionID' => $optionID
+        ));
+        
+        // so, let us look if there is a result
+        if($state->rowCount() < 1) {
+            throw new lttxError('LN_OPTION_OPTION_NOT_EXISTS');
+            return true;
         }
-	
-        $this->_theme = 'main.tpl';
-		
-		
-		$result = package::$pdb->prepare("SELECT * FROM `lttx".package::$pdbn."_options` WHERE `ID` = ?");
-		$result->execute(array($iOptionID));
-		
-		
-		if($result->rowCount() < 1){
-				throw new lttxError('LN_DB_ERRROR_1');
-				return true;
-		}
-		
-		$result = $result->fetch();
-		
-		$Option_package =$result['package'];
-		$Option_key =$result['key'];
-		
-        if (isset($_POST['Ovalue'])) {
-            $aPackageValue = $_POST['Ovalue'];
-        } else {
-			throw new lttxError('LN_OPTION_ERROR_VALUE');					
-        }
-
-        if (isset($_POST['Odefault'])) {
-            $aPackageDefaultValue = $_POST['Odefault'];
-        } else {
-			throw new lttxError('LN_OPTION_ERROR_DEFASULTVALUE');							
-        }
-
-		
-
-		$option = new option($Option_package, true);
-		$option->set($Option_key,$aPackageValue);
-
-
-			
+        
+        $result = $state->fetch();
+        $option = array(
+            'optionID'  => $result['ID'],
+            'package'   => $result['package'],
+            'key'       => $result['key'],
+            'value'     => $result['value'],
+            'default'   => $result['default']
+        );
+        self::$tpl->assign('option', $option);
         return true;
     }
-
-
+    
+    public function __action_editSubmit() {
+        // get form data
+        $optionID = $_POST['optionID'];
+        $value = $_POST['value'];
+        
+        // get current option data
+        $state = package::$pdb->prepare('
+            SELECT `ID`, `package`, `key`, `value`, `default`
+            FROM `lttx'.package::$pdbn.'_options`
+            WHERE
+                ID = :optionID
+        ');
+        $state->execute(array(
+            ':optionID' => $optionID
+        ));
+                
+        // so, let us look if there is a result
+        if($state->rowCount() < 1) {
+            throw new lttxError('LN_OPTION_OPTION_NOT_EXISTS');
+            return false;
+        }
+        
+        // save
+        $result = $state->fetch();
+        $option = new option($result['package'], true);
+        if($value == '') {
+            $option->reset($result['key']);
+        } else {
+            $option->set($result['key'], $value);
+        }
+        if(!isset($_GET['ajax']))
+            Header('Location: ?package=acp_options&action=main');
+        return true;
+    }
 }
