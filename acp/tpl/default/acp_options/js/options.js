@@ -7,7 +7,7 @@ $(document).ready(function() {
         optionID = $(this).attr('optionID');
         
         // replace value field with a form
-        optionValue = $(this).parent().prev().prev().get();
+        optionValue = $('.option[optionID="'+optionID+'"] .optionValue').get();
         value = $(optionValue).html();
         $(optionValue).html('<input type="text" value="'+value+'" placeholder="'+LN_default_will_be_used+'" />');
         
@@ -24,7 +24,7 @@ $(document).ready(function() {
         optionID = $(this).attr('optionID');
         
         // get value
-        optionValue = $(this).parent().prev().prev().get();
+        optionValue = $('.option[optionID="'+optionID+'"] .optionValue').get();
         value = $(optionValue).find('input').val();
         
         // send value to server
@@ -33,11 +33,13 @@ $(document).ready(function() {
             value: value
         }, function() {
             // done, now remove the textfield and the button
+            if(value == '') {
+                value = $('.option[optionID="'+optionID+'"] .optionDefault').html();
+            }
             $(optionValue).html(value);
             $('.optionsSaveOption[optionID='+optionID+']').hide();
             $('.optionsEditOption[optionID='+optionID+']').fadeIn();
         });
-
         return false;
     });
 });
