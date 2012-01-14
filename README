@@ -13,19 +13,15 @@ Installation:
 Hochladen der Dateien
 folgende Ordner benötigen Schreibrechte:
 packages\core\cache
-tpl_c
+tpl_c (muss erst erstellt werden)
 
 Neue Datenbank anlegen aus dbUpdates
 litotex.sql sowie die litotex_new.sql in die Datenbank importieren
 
 
 unter packages\core\config
-in der Datei path.php
-den LITO_ROOT und LITO_URL ändern
+in der Datei path.php.dist
+den LITO_ROOT und LITO_URL ändern und das .dist aus dem Namen entfernen
 in der Datei database.conf.php
-SQl Einstellungen ändern.
-Ebenso ist die const.php.dist umzubenennen in 
-const.php
-
-
-insert_sample aus dem Ordner dbUpdates importieren 
+SQl Einstellungen ändern und das .dist aus dem Namen entfernen.
+Ebenso ist die const.php.dist umzubenennen in const.php
