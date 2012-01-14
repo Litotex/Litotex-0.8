@@ -34,8 +34,8 @@ $(document).ready(function() {
         }, function() {
             // done, now remove the textfield and the button
             $(optionValue).html(value);
-            $('.optionSaveOption[optionID='+optionID+']').hide();
-            $('.optionEditOption[optionID='+optionID+']').fadeIn();
+            $('.optionsSaveOption[optionID='+optionID+']').hide();
+            $('.optionsEditOption[optionID='+optionID+']').fadeIn();
         });
 
         return false;
