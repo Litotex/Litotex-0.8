@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /*
  * Copyright (c) 2010 Litotex
  * 
@@ -103,22 +103,15 @@ class package_acp_groups extends acpPackage{
 	}
 	
 	public function __action_list(){
-		
 		$this->_theme = 'list.tpl';
-
 		$aGroups = userGroup::getList();
-
 		self::$tpl->assign('aGroups', $aGroups);
-		
 		return true;
 	}
 	
 	public function __action_save(){
-		
 		$this->_theme = 'empty.tpl';
-		
 		$aError = array();
-		
 		if(isset($_POST['group'])){
 			$aGroupData = $_POST['group'];
 		} else {

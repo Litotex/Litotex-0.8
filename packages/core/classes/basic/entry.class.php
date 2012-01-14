@@ -91,11 +91,13 @@ class Basis_Entry {
 
 		$aResult = package::$pdb->prepare($sSql);
 		$aResult->execute($aSql);
-		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
+		//modified by snoop because of issues #19
+		//$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
 		$aBack = array();
 		if(!empty($aResult)){
-			foreach((array)$aResult as $aData){
+			//foreach((array)$aResult as $aData){
+			foreach($aResult as $aData){			
 				$aBack[] = new $sClass($aData['ID']);
 			}
 		}
