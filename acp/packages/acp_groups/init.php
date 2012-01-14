@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*
  * Copyright (c) 2010 Litotex
  * 
