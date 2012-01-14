@@ -98,7 +98,7 @@ class package_login extends package {
 	}
 	
 	public function __action_forget_submit() {
-		$email= mysql_real_escape_string($_POST['email']);		
+		$email= ($_POST['email']);		
 
 		$pos = strpos ($email, "@");
 		if ($pos < 1 ) { 
@@ -176,6 +176,7 @@ class package_login extends package {
 			$sError = user::$sLastLoginError;
 			throw new lttxError($sError);
 		}
+		package::$log->debug('user '.$_POST['username'].' logged in') ;
 		header("Location:index.php");
 		exit();
     }

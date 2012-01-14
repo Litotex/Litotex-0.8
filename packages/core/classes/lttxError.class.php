@@ -80,14 +80,13 @@ class lttxLog{
 	public function __construct  (){
 	}
 	public function debug($message = ''){
-		$message=mysql_real_escape_string($message);
 		$currentuser=0;
 		$currenttime = new Date(time());
 		$currenttime = $currenttime->getDbTime();
 		if(package::$user){
 			$currentuser=package::$user->getUserID();
 		}
-		package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $curenttime, $message));
+		package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $currenttime,$message));
 	}
 }
 

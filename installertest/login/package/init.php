@@ -100,7 +100,7 @@ class package_login extends package {
 	}
 	
 	public function __action_forget_submit() {
-		$email= mysql_real_escape_string($_POST['email']);		
+		$email= ($_POST['email']);		
 
 		$pos = strpos ($email, "@");
 		if ($pos < 1 ) { 

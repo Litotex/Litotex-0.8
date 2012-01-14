@@ -73,8 +73,8 @@ class package_edit_profile extends package {
  
 	public function __action_profile_submit(){
 		
-		$email= mysql_real_escape_string($_POST['email']);
-		$password= mysql_real_escape_string($_POST['password']);
+		$email= ($_POST['email']);
+		$password=($_POST['password']);
 
 		if(!package::$user){
 			throw new lttxError('LN_EDIT_PROFILE_ERROR_2');

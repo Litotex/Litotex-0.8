@@ -868,7 +868,8 @@ class user {
 		$match = array();
 		$searchResults = package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx".package::$pdbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
 		$searchResults->execute(array('%' . $request . '%'));
-		if($searchResults->errorCode()){
+		
+		if(!$searchResults){
 			throw new lttxDBError();
 		}
 		foreach($searchResults as $result){
