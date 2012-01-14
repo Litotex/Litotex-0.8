@@ -1,1 +1,0 @@
-ALTER TABLE `lttx1_log`  ADD COLUMN `log_type` INT(3) NULL DEFAULT '0' AFTER `message`;

@@ -1,1 +1,0 @@
-INSERT INTO `lttx1_acpnavigation` (`parent`, `title`, `description`, `icon`, `package`, `action`, `sort`, `tab`) VALUES (4, 'Gruppen', 'Berechtigungsgruppen', 'nothing.png', 'acp_groups', 'main', 3, 1);
