@@ -311,7 +311,7 @@ class package_acp_news extends acpPackage{
 
 
 			$result = package::$pdb->prepare("SELECT * FROM `lttx1_news_categories` WHERE `id` = ?");
-			$result->execute($iNewsId);
+			$result->execute(array($iNewsId));
 			if($result->rowCount() < 1){
 				throw new lttxError('LN_DB_ERRROR_1');
 				return true;
@@ -371,7 +371,7 @@ class package_acp_news extends acpPackage{
 			));
 
 		}
-		header('Location: index.php?package=acp_news&action=categories_list');
+			return true;
 	}
 
 
