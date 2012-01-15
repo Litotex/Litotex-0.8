@@ -33,13 +33,15 @@ class Logger {
     }
 
     public function debug($message = '') {
-        $currentuser = 0;
-        $currenttime = new Date(time());
-        $currenttime = $currenttime->getDbTime();
+        $currentUser = 0;
         if (Package::$user) {
-            $currentuser = Package::$user->getUserID();
+            $currentUser = Package::$user->getUserID();
         }
-        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $currenttime, $message));
+        
+        $date = new Date(time());
+        $currentTime = $date->getDbTime();
+        
+        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentUser, $currentTime, $message));
     }
 
 }
