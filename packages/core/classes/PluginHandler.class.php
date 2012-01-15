@@ -93,18 +93,18 @@ class PluginHandler {
         $classname = 'plugin_' . $pluginname;
         if (!class_exists($classname)) {
             if (DEVDEBUG)
-                trigger_error("The plugin " . $pluginname . " was not found. Please check if it's file contains the " . $classname . ' class', E_USER_NOTICE);
+                trigger_error("The plugin '" . $pluginname . "' was not found. Please check if the file contains the " . $classname . ' class', E_USER_NOTICE);
             return false;
         }
-        if (get_parent_class($classname) != 'plugin') {
+        if (get_parent_class($classname) != 'Pugin') {
             if (DEVDEBUG)
-                trigger_error("The plugin " . $pluginname . " was found but does not extend plugin. Please check the documentation to get more information about the plugin system.", E_USER_NOTICE);
+                trigger_error("The plugin '" . $pluginname . "' was found but does not extend the Plugin class", E_USER_NOTICE);
             return false;
         }
         $prop = get_class_vars($classname);
         if ($prop['handlerName'] != $this->_name) {
             if (DEVDEBUG)
-                trigger_error("The plugin " . $pluginname . " was found but does not use this class as it's handler. Please check the documentation to get more information about the plugin system.", E_USER_NOTICE);
+                trigger_error("The plugin '" . $pluginname . "' was found but does not use this class as its handler", E_USER_NOTICE);
             return false;
         }
         return true;
