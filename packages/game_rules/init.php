@@ -29,7 +29,7 @@
  * @package terms_and_conditions
 
  */
-class package_game_rules extends package {
+class package_game_rules extends Package {
     /**
      * Package name
      * @var string

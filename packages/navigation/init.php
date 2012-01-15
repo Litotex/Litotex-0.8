@@ -29,7 +29,7 @@
  * @package navigation
 
  */
-class package_navigation extends package {
+class package_navigation extends Package {
     /**
      * Package name
      * @var string
@@ -63,7 +63,7 @@ class package_navigation extends package {
 			$menu_item=intval($_GET['menu']);
 		
 		$elements = array();
-        $data = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        $data = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".Package::$pdbn."_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
         foreach($data as $element) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';
 			if($element[0] == $menu_item)
@@ -95,7 +95,7 @@ class package_navigation extends package {
 			$submenu_item=intval($_GET['submenu']);
 		
 		$elements = array();
-        $data = self::$pdb->prepare("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".package::$pdbn."_navigation` WHERE `parent` =? ORDER BY `sort` ASC");
+        $data = self::$pdb->prepare("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".Package::$pdbn."_navigation` WHERE `parent` =? ORDER BY `sort` ASC");
         $data->execute(array($menu_item));
         foreach($data as $element) {
 			if(!isset($_GET['package'])) $_GET['package'] = 'main';

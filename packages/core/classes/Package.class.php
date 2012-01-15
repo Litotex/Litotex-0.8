@@ -33,7 +33,7 @@
  * @author: Jonas Schwbae <jonas.schwabe@gmail.com>
  * @copyright: 2010
  */
-abstract class package {
+abstract class Package {
 
     /**
      * This will keep an instance of the database class for usage in extending classes
@@ -54,22 +54,22 @@ abstract class package {
     public static $log;
     /**
      * This will keep an instance of the package and hook manager for usage in extending classes
-     * @var packages
+     * @var PackageManager
      */
     public static $packages;
     /**
      * Session to be used globaly
-     * @var session
+     * @var Session
      */
     public static $session;
     /**
      * User class to be used globaly
-     * @var user
+     * @var User
      */
     public static $user;
     /**
      * Permission class instance
-     * @var perm
+     * @var Permission
      */
     public static $perm;
     /**
@@ -204,11 +204,11 @@ abstract class package {
             } else
                 return false;
             if (!self::$perm->checkPerm($this->_packageName, $action, 'package_' . $this->_packageName)) {
-                throw new lttxError('E_noPermission');
+                throw new LitotexError('E_noPermission');
             }
         }
         if (!self::$perm->checkPerm($this, $action, 'package_' . $this->_packageName)) {
-            throw new lttxError('E_noPermission');
+            throw new LitotexError('E_noPermission');
         }
         $this->runtime();
         return $this->$functionName();
@@ -279,9 +279,9 @@ abstract class package {
      * @return bool
      */
     static public final function setlttxLogClass($log) {
-        if (__CLASS__ != 'package')
+        if (__CLASS__ != 'Package')
             return false;
-        package::$log = $log;
+        Package::$log = $log;
         return true;
     }
 
@@ -291,9 +291,9 @@ abstract class package {
      * @return bool
      */
     static public final function setDatabaseClass($db) {
-        if (__CLASS__ != 'package')
+        if (__CLASS__ != 'Package')
             return false;
-        package::$pdb = $db;
+        Package::$pdb = $db;
         return true;
     }
 
@@ -303,9 +303,9 @@ abstract class package {
      * @return bool
      */
     public static final function setTemplateClass($tpl) {
-        if (__CLASS__ != 'package')
+        if (__CLASS__ != 'Package')
             return false;
-        package::$tpl = $tpl;
+        Package::$tpl = $tpl;
         self::$tpl->assign('CSS_FILES', self::$_cssFiles);
         self::$tpl->assign('JS_FILES', self::$_jsFiles);
         return true;
@@ -317,34 +317,34 @@ abstract class package {
      * @return bool
      */
     public static final function setPackageManagerClass($packages) {
-        if (__CLASS__ != 'package')
+        if (__CLASS__ != 'Package')
             return false;
-        package::$packages = $packages;
+        Package::$packages = $packages;
         return true;
     }
 
     /**
      * This will save the session instance in the package
-     * @param session $session instance
+     * @param Session $session instance
      * @return bool
      */
     public static final function setSessionClass($session) {
-        if (__CLASS__ != 'package')
+        if (__CLASS__ != 'Package')
             return false;
-        package::$session = $session;
-        package::$user = &$session->user;
+        Package::$session = $session;
+        Package::$user = &$session->user;
         return true;
     }
 
     /**
      * This will save the permission class instance in the package
-     * @param perm $perm instance
+     * @param Permission $perm instance
      * @return bool
      */
     public static final function setPermClass($perm) {
-        if (__CLASS__ != 'package')
+        if (__CLASS__ != 'Package')
             return false;
-        package::$perm = $perm;
+        Package::$perm = $perm;
         return true;
     }
 

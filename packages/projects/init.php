@@ -31,7 +31,7 @@
  * @author:     Martin Lantzsch <martin@linux-doku.de>
  * @copyright:  Copyright 2010 Litotex Team
  */
-class package_projects extends package {
+class package_projects extends Package {
     protected $_availableActions = array('main', 'getList');
     protected $_packageName = 'projects';
     protected $_theme = 'main.tpl';
@@ -66,8 +66,8 @@ class package_projects extends package {
     
     protected static function _addPackage($packageName, $data){
     	try{
-    		self::$_packageCache[$packageName] = array($data['description'], new user($data['owner']), unserialize($data['dependencies']));
-    	} catch(lttxFatalError $e){
+    		self::$_packageCache[$packageName] = array($data['description'], new User($data['owner']), unserialize($data['dependencies']));
+    	} catch(LitotexFatalError $e){
     		//The user does not exist, we can't show this package!
     	}
     }
@@ -76,30 +76,30 @@ class package_projects extends package {
     	$xmlFile = new SimpleXMLElement('<litotex origin="updateServer" version="undefined" responsetype="packageList"/>');
     	$dataArea = $xmlFile->addChild('data');
     	$packageData = self::$pdb->prepare("SELECT
-    		`lttx".package::$pdbn."_projects`.`ID` AS `projectID`,
-    		`lttx".package::$pdbn."_projects`.`name`,
-    		`lttx".package::$pdbn."_projects`.`description`,
-    		`lttx".package::$pdbn."_projects`.`owner`,
-    		`lttx".package::$pdbn."_projects`.`creationTime`,
-    		`lttx".package::$pdbn."_projectReleases`.`ID` AS `releaseID`,
-    		`lttx".package::$pdbn."_projectReleases`.`uploader`,
-    		`lttx".package::$pdbn."_projectReleases`.`version`,
-    		`lttx".package::$pdbn."_projectReleases`.`platform`,
-    		`lttx".package::$pdbn."_projectReleases`.`dependencies`,
-    		`lttx".package::$pdbn."_projectReleases`.`changelog`,
-    		`lttx".package::$pdbn."_projectReleases`.`critupdate`,
-    		`lttx".package::$pdbn."_projectReleases`.`time`,
-    		`lttx".package::$pdbn."_projectReleases`.`file`,
-    		`lttx".package::$pdbn."_projectReleases`.`downloads`,
-    		`lttx".package::$pdbn."_projectSignes`.`ID` AS `certID`,
-    		`lttx".package::$pdbn."_projectSignes`.`comment` AS `certComment`,
-    		`lttx".package::$pdbn."_projectSignes`.`fullReview`
-    		FROM `lttx".package::$pdbn."_projects`
-    		LEFT JOIN `lttx".package::$pdbn."_projectReleases`
-	    	ON `lttx".package::$pdbn."_projects`.`id` = `lttx".package::$pdbn."_projectReleases`.`projectID`
-	    	LEFT JOIN `lttx".package::$pdbn."_projectSignes`
-	    	ON `lttx".package::$pdbn."_projectReleases`.`ID` = `lttx".package::$pdbn."_projectSignes`.`releaseID`
-	    	WHERE `lttx".package::$pdbn."_projectReleases`.`platform` = ?
+    		`lttx".Package::$pdbn."_projects`.`ID` AS `projectID`,
+    		`lttx".Package::$pdbn."_projects`.`name`,
+    		`lttx".Package::$pdbn."_projects`.`description`,
+    		`lttx".Package::$pdbn."_projects`.`owner`,
+    		`lttx".Package::$pdbn."_projects`.`creationTime`,
+    		`lttx".Package::$pdbn."_projectReleases`.`ID` AS `releaseID`,
+    		`lttx".Package::$pdbn."_projectReleases`.`uploader`,
+    		`lttx".Package::$pdbn."_projectReleases`.`version`,
+    		`lttx".Package::$pdbn."_projectReleases`.`platform`,
+    		`lttx".Package::$pdbn."_projectReleases`.`dependencies`,
+    		`lttx".Package::$pdbn."_projectReleases`.`changelog`,
+    		`lttx".Package::$pdbn."_projectReleases`.`critupdate`,
+    		`lttx".Package::$pdbn."_projectReleases`.`time`,
+    		`lttx".Package::$pdbn."_projectReleases`.`file`,
+    		`lttx".Package::$pdbn."_projectReleases`.`downloads`,
+    		`lttx".Package::$pdbn."_projectSignes`.`ID` AS `certID`,
+    		`lttx".Package::$pdbn."_projectSignes`.`comment` AS `certComment`,
+    		`lttx".Package::$pdbn."_projectSignes`.`fullReview`
+    		FROM `lttx".Package::$pdbn."_projects`
+    		LEFT JOIN `lttx".Package::$pdbn."_projectReleases`
+	    	ON `lttx".Package::$pdbn."_projects`.`id` = `lttx".Package::$pdbn."_projectReleases`.`projectID`
+	    	LEFT JOIN `lttx".Package::$pdbn."_projectSignes`
+	    	ON `lttx".Package::$pdbn."_projectReleases`.`ID` = `lttx".Package::$pdbn."_projectSignes`.`releaseID`
+	    	WHERE `lttx".Package::$pdbn."_projectReleases`.`platform` = ?
 	    	ORDER BY  `lttx1_projectReleases`.`version` DESC");
     	$packageData->execute(array($platform));
     	self::$_packageCache = array();

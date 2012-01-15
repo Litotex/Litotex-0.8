@@ -30,7 +30,7 @@
  * This class provides functions to controll options of packages
  * Options are saved in lttxn_options as blob values
  */
-class option{
+class Option{
 	/**
 	 * Name of the package
 	 * @var string
@@ -53,17 +53,17 @@ class option{
 		}
 		if($allowOtherPackageSpace){
 			if(PACKAGE_PREFIX == 'acp')
-			$otherSpace = new packages('', false, MODULES_FRONTEND_DIRECTORY, TEMPLATE_FRONTEND_DIRECTORY);
+			$otherSpace = new PackageManager('', false, MODULES_FRONTEND_DIRECTORY, TEMPLATE_FRONTEND_DIRECTORY);
 			else
-			$otherSpace = new packages('acp', false, MODULES_BACKEND_DIRECTORY, TEMPLATE_BACKEND_DIRECTORY);
+			$otherSpace = new PackageManager('acp', false, MODULES_BACKEND_DIRECTORY, TEMPLATE_BACKEND_DIRECTORY);
 		}
-		if(!package::$packages->exists($package) && !($allowOtherPackageSpace && $otherSpace->exists($package)))
+		if(!Package::$packages->exists($package) && !($allowOtherPackageSpace && $otherSpace->exists($package)))
 		return false;
 		$this->_package = $package;
-		$cache = package::$pdb->prepare("SELECT `key`, `value`, `default` FROM `lttx".package::$pdbn."_options` WHERE `package` = ?");
+		$cache = Package::$pdb->prepare("SELECT `key`, `value`, `default` FROM `lttx".Package::$pdbn."_options` WHERE `package` = ?");
 		$cache->execute(array($package));
 		if($cache->rowCount() < 1){
-			throw new lttxFatalError('Options of ' . $package . ' could not be found');
+			throw new LitotexFatalError('Options of ' . $package . ' could not be found');
 			return;
 		}
 		foreach($cache as $element){
@@ -92,7 +92,7 @@ class option{
 	public function set($key, $value){
 		if(!isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_options` SET `value` = ? WHERE `package` = ? AND `key` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_options` SET `value` = ? WHERE `package` = ? AND `key` = ?");
 		$result->execute(array($value, $this->_package, $key));
 		if($result->rowCount() <= 0){
 			return false;
@@ -110,7 +110,7 @@ class option{
 	public function add($key, $value, $default){
 		if(isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)");
+		$result = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)");
 		$result->execute(array($this->_package, $key, $value, $default));
 		if($result->rowCount() <= 0){
 			return false;
@@ -127,7 +127,7 @@ class option{
 	public function reset($key){
 		if(!isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?");
 		$result->execute(array($this->_package, $key));
 		if($result->rowCount() <= 0)
 		return false;

@@ -71,7 +71,7 @@ class Basis_Entry {
 			try {
 				self::$_aInstance[$sClass][$iDataId] = new $sClass($iDataId);
 			} catch(Exception $e) {
-				throw new lttxError($e->getMessage());
+				throw new LitotexError($e->getMessage());
 			}
 		}
 
@@ -89,7 +89,7 @@ class Basis_Entry {
 		$sSql = " SELECT * FROM `".$oTemp->_sTableName."` ";
 		$aSql = array();
 
-		$aResult = package::$pdb->prepare($sSql);
+		$aResult = Package::$pdb->prepare($sSql);
 		$aResult->execute($aSql);
 		//modified by snoop because of issues #19
 		//$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
@@ -179,7 +179,7 @@ class Basis_Entry {
 				$aSql[] = (int)$this->ID;
 			}
 
-			package::$pdb->prepare($sSql)->execute($aSql);
+			Package::$pdb->prepare($sSql)->execute($aSql);
 
 			return true;
 
@@ -200,7 +200,7 @@ class Basis_Entry {
 		$sSql = " DELETE FROM `".$this->_sTableName."` WHERE `ID` = ?";
 		$aSql = array($this->ID);
 
-		package::$pdb->prepare($sSql)->execute($aSql);
+		Package::$pdb->prepare($sSql)->execute($aSql);
 	}
 
 	/**
@@ -213,7 +213,7 @@ class Basis_Entry {
 			$sSql = " SELECT * FROM `".$this->_sTableName."` WHERE ID = ? ";
 			$aSql = array($this->_aData['ID']);
 
-			$aResult = package::$pdb->prepare($sSql);
+			$aResult = Package::$pdb->prepare($sSql);
 			$aResult->execute($aSql);
 			$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 

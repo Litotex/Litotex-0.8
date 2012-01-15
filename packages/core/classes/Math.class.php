@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class math{
+class Math{
 	static private function _doOperation(&$operation, &$buffer){
 		$return = '';
 		if($operation !== false){

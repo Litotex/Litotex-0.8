@@ -25,20 +25,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-abstract class acpPackage extends package{
+abstract class acpPackage extends Package{
 	public final function runtime(){
-		if(!package::$user && $this->_packageName != 'acp_login'){
+		if(!Package::$user && $this->_packageName != 'acp_login'){
 			header('Location: index.php?package=acp_login');
 			exit();
 		}
-		if(package::$user && !package::$user->checkAcpLoginExpired())
-			package::$user->revokeAcpLogin();
-		if(package::$user && !package::$user->isAcpLogin() && $this->_packageName != 'acp_login'){
+		if(Package::$user && !Package::$user->checkAcpLoginExpired())
+			Package::$user->revokeAcpLogin();
+		if(Package::$user && !Package::$user->isAcpLogin() && $this->_packageName != 'acp_login'){
     		header('Location: index.php?package=acp_login');
     		exit();
     	}
-    	if(package::$user)
-    		package::$user->acpReLegit();
+    	if(Package::$user)
+    		Package::$user->acpReLegit();
     	$this->runtimeAcp();
 	}
 	public function runtimeAcp(){}

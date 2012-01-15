@@ -25,10 +25,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-define("defaultPackage", 'acp_main');
-define('LITOTX8', true);
-require_once('../packages/core/config/path.php');
-require 'const.php';
-require '../packages/core/classes/package.class.php';
-require_once 'packages/core/classes/acpPackage.class.php';
+
+define('LITO_START_PACKAGE', 'acp_main');
+define('LITO_INSIDE', true);
+
+require_once '../packages/core/config/path.php';
+require_once 'packages/core/config/const.php';
+
 require '../packages/core/global.php';

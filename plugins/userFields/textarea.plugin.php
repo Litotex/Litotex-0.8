@@ -25,11 +25,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-class plugin_textarea extends plugin{
+class plugin_textarea extends Plugin{
 	public static $handlerName = 'userFields';
 	public static $name = 'textarea';
 	public static $availableFunctions = array('getHTML', 'checkValid', 'setContent', 'getContent');
-	public static function getHTML(userField $field, user $user){
+	public static function getHTML(UserField $field, User $user){
 		return '<textarea name="userfield['.$user->getUserID().']['.$field->ID.']">'.self::getContent($user->getUserFieldData($field->ID)).'</textarea>';
 	}
 	public static function checkValid($value){

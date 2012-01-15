@@ -40,7 +40,7 @@ class package_acp_packageManager extends acpPackage {
     protected $_frontendPackages = false;
 
     public function runtimeAcp() {
-        $this->_frontendPackages = new packages('', false, MODULES_FRONTEND_DIRECTORY, TEMPLATE_FRONTEND_DIRECTORY);
+        $this->_frontendPackages = new PackageManager('', false, MODULES_FRONTEND_DIRECTORY, TEMPLATE_FRONTEND_DIRECTORY);
     }
 
     public static function registerHooks() {
@@ -48,9 +48,9 @@ class package_acp_packageManager extends acpPackage {
     }
 
     public function __action_main() {
-        package::$packages->generateDependencyCache();
-        package::$packages->generateHookCache();
-        package::$packages->generateTplModificationCache();
+        Package::$packages->generateDependencyCache();
+        Package::$packages->generateHookCache();
+        Package::$packages->generateTplModificationCache();
         $this->_frontendPackages->generateDependencyCache();
         $this->_frontendPackages->generateHookCache();
         $this->_frontendPackages->generateTplModificationCache();
@@ -64,7 +64,7 @@ class package_acp_packageManager extends acpPackage {
     public function __action_listUpdates() {
         self::addJsFile('checkbox.js', $this->_packageName);
         $packages = array();
-        $result = self::$pdb->query("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `update` = 1");
+        $result = self::$pdb->query("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".Package::$pdbn."_package_list` WHERE `update` = 1");
         foreach ($result as $element) {
             $element['changelog'] = unserialize($element['changelog']);
             $packages[] = $element;
@@ -86,11 +86,11 @@ class package_acp_packageManager extends acpPackage {
             header("Location: index.php?package=acp_packageManager&action=listUpdates");
         foreach ($_POST['update'] as $i => $update) {
             $_POST['update'][$i] = (int) $update;
-            $exists = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ? AND `update` = 1");
+            $exists = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ? AND `update` = 1");
             $exists->execute(array($_POST['update'][$i]));
             $exists = $exists->fetch();
             if ($exists[0] == 0)
-                throw new lttxError('E_updateIDNotFound');
+                throw new LitotexError('E_updateIDNotFound');
             $this->_addInstallItem($items, $_POST['update'][$i]);
         }
         $_SESSION['updateQueue'] = $items;
@@ -100,7 +100,7 @@ class package_acp_packageManager extends acpPackage {
     private function _addInstallItem(&$items, $newItem) {
         if (in_array($newItem, $items))
             return true;
-        $data = self::$pdb->prepare("SELECT `dependencies`, `name` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?");
+        $data = self::$pdb->prepare("SELECT `dependencies`, `name` FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ?");
         $data->execute(array($newItem));
         if ($data->rowCount() < 1)
             return false;
@@ -110,7 +110,7 @@ class package_acp_packageManager extends acpPackage {
         foreach ($dep as $depItem) {
             if ($depItem['installed'] >= 1)
                 continue;
-            $itemID = self::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_package_list` WHERE `name` = ?");
+            $itemID = self::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_package_list` WHERE `name` = ?");
             $itemID->execute(array($depItem['name']));
             if ($itemID->rowCount() < 1)
                 return false;
@@ -146,7 +146,7 @@ class package_acp_packageManager extends acpPackage {
         require_once(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache/installer.php');
         $installerName = 'installer_' . $item['name'];
         if (!class_exists($installerName))
-            throw new lttxError('E_couldNotLoadInstallerPackage');
+            throw new LitotexError('E_couldNotLoadInstallerPackage');
         $installData = new $installerName(LITO_ROOT . 'files/cache/' . $item['name'] . '.' . $item['version'] . '.0.8.x.cache', $item['name'], $pm, $root . 'packages/', $root . TPL_DIR);
         $fBlack = (isset($fileBlackList[$item['name']])) ? $fileBlackList[$item['name']] : array();
         $sBlack = (isset($sqlBlacklist[$item['name']])) ? $sqlBlacklist[$item['name']] : array();
@@ -172,15 +172,15 @@ class package_acp_packageManager extends acpPackage {
         foreach ($_SESSION['updateQueue'] as $installItem) {
             $tplFiles = array();
             $packageFiles = array();
-            $data = self::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?");
+            $data = self::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ?");
             $data->execute(array($installItem));
             if ($data->rowCount() < 1)
-                throw new lttxError('E_updateIDNotFound');
+                throw new LitotexError('E_updateIDNotFound');
             $data = $data->fetch();
             require_once(LITO_ROOT . 'files/cache/' . $data['name'] . '.' . $data['version'] . '.0.8.x.cache/installer.php');
             $installerName = 'installer_' . $data['name'];
             if (!class_exists($installerName))
-                throw new lttxError('E_couldNotLoadInstallerPackage');
+                throw new LitotexError('E_couldNotLoadInstallerPackage');
             if ($data['prefix'] === '') {
                 $pm = $this->_frontendPackages;
                 $root = LITO_FRONTEND_ROOT;
@@ -241,7 +241,7 @@ class package_acp_packageManager extends acpPackage {
     public function __action_setQueueDetails() {
         require_once LITO_FRONTEND_ROOT . 'packages/core/classes/installer.class.php';
         if (!isset($_POST['update']) || !is_array($_POST['update']))
-            throw new lttxError('E_noPackageListPassed');
+            throw new LitotexError('E_noPackageListPassed');
         $fileBlackList = array();
         if (isset($_POST['fileBlacklist']) && is_array($_POST['fileBlacklist'])) {
             foreach ($_POST['fileBlacklist'] as $item) {
@@ -264,7 +264,7 @@ class package_acp_packageManager extends acpPackage {
         }
         $packages = array();
         foreach ($_POST['update'] as $item) {
-            $data = package::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".package::$pdbn."_package_list` WHERE `ID` = ?");
+            $data = Package::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ?");
             $data->execute(array($item));
             if ($data->rowCount() < 1)
                 continue;
@@ -276,10 +276,10 @@ class package_acp_packageManager extends acpPackage {
             $packages[$data['name']] = $data;
         }
         foreach ($packages as $item) {
-            $pm = ($item['prefix'] == '') ? $this->_frontendPackages : package::$packages;
+            $pm = ($item['prefix'] == '') ? $this->_frontendPackages : Package::$packages;
             foreach ($item['dependencies'] as $dep) {
                 if (!isset($packages[$dep['name']]) && !$pm->exists($dep['name']))
-                    throw new lttxError('E_couldNotResolveDependencies', $item['name']);
+                    throw new LitotexError('E_couldNotResolveDependencies', $item['name']);
             }
         }
         unset($_SESSION['updateQueue']);

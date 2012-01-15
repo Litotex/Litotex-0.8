@@ -34,7 +34,7 @@
  * @author: Litotex Team
  * @copyright: 2010
  */
-class package_register extends package {
+class package_register extends Package {
     /**
      * Package name
      * @var string
@@ -57,31 +57,31 @@ class package_register extends package {
     }
 	 
     public function __action_main() {
-		package::addCssFile('register.css', 'register');
+		Package::addCssFile('register.css', 'register');
 		$fields = array();
-		$additionalFields = userField::getList();
+		$additionalFields = UserField::getList();
 		return true;
     }
 	public static function  __tpl_showRegisterLink() {
-        package::$tpl->display(self::getTplDir('register') . 'register.tpl');
+        Package::$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     }
  	public function __action_register_submit(){
 		if(!isset($_POST['confirm_password']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['username']) || !isset($_POST['rules'])){
-                    throw new lttxError('E_notAllInformationPassed');
+                    throw new LitotexError('E_notAllInformationPassed');
                 }
-                $result = user::register($_POST['username'], $_POST['password'], $_POST['email'], array());
+                $result = User::register($_POST['username'], $_POST['password'], $_POST['email'], array());
                 if(is_a($result, 'user')){
-                    throw new lttxInfo('registrationComplete');
+                    throw new LitotexInfo('registrationComplete');
                 }
                 if($result == -2){
-                    throw new lttxError('E_userNameAlreadyExists');
+                    throw new LitotexError('E_userNameAlreadyExists');
                 }
                 if($result == -1){
-                    throw new lttxError('E_emailAlreadyExists');
+                    throw new LitotexError('E_emailAlreadyExists');
                 }
                 if($result == -3){
-                    throw new lttxFatalError('unexpected error while registration.');
+                    throw new LitotexFatalError('unexpected error while registration.');
                 }
 	}
 }

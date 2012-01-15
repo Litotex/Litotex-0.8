@@ -31,7 +31,7 @@
  * @author: Litotex Team
  * @copyright: 2010
  */
-class package_edit_profile extends package {
+class package_edit_profile extends Package {
     /**
      * Package name
      * @var string
@@ -56,17 +56,17 @@ class package_edit_profile extends package {
     	return true;
    }
     public function __action_main() {
-		if(!package::$user){
+		if(!Package::$user){
 		header("Location: index.php");
 		exit();
 		}
-		package::$tpl->assign('EMAIL', package::$user->getData('email'));
-		package::addCssFile('edit_profile.css', 'edit_profile');
+		Package::$tpl->assign('EMAIL', Package::$user->getData('email'));
+		Package::addCssFile('edit_profile.css', 'edit_profile');
 		return true;
     }
 	public static function  __tpl_showProfileLink() {
-        if(package::$user){
-			package::$tpl->display(self::getTplDir('edit_profile') . 'edit_profile_link.tpl');
+        if(Package::$user){
+			Package::$tpl->display(self::getTplDir('edit_profile') . 'edit_profile_link.tpl');
         }
 		return true;
     }
@@ -76,22 +76,22 @@ class package_edit_profile extends package {
 		$email= ($_POST['email']);
 		$password=($_POST['password']);
 
-		if(!package::$user){
-			throw new lttxError('LN_EDIT_PROFILE_ERROR_2');
+		if(!Package::$user){
+			throw new LitotexError('LN_EDIT_PROFILE_ERROR_2');
 		}
 		
 		if ($email !=''){
 			$pos = strpos ($email, "@");
 			if ($pos < 1 ) { 
-				throw new lttxError('LN_EDIT_PROFILE_ERROR_1');
+				throw new LitotexError('LN_EDIT_PROFILE_ERROR_1');
 				exit();
 			}
 		 
-			package::$user->setData('email',$email);
+			Package::$user->setData('email',$email);
 		}	
 		
 		if ($password !=''){
-			package::$user->setPassword($password);;
+			Package::$user->setPassword($password);;
 		}
 		
 		header("Location: index.php"); 

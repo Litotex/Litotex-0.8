@@ -25,14 +25,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-require_once("userGroup.class.php");
-require_once("userField.class.php");
+
 /**
  * This class provides methodes to manipulate user informations
  * Further it offers functions to interact with other users
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  */
-class user {
+class User {
 	/**
 	 * Is this instance initialized successfully
 	 * @var bool
@@ -135,7 +134,7 @@ class user {
 
 		$userID = intval($userID);
 		if(!self::userExists($userID) && $userID > 0)
-		throw new lttxFatalError('User ' . $userID . ' was not found');
+		throw new LitotexFatalError('User ' . $userID . ' was not found');
 		$this->_currentID = $userID;
 		$this->_initialized = true;
 		$this->_bufferActive = self::$_globalBufferActive;
@@ -207,7 +206,7 @@ class user {
 		if($iUserId > 0  &&	self::userExists($iUserId)){
 
 			$sSql = " UPDATE
-    						`lttx".package::$pdbn."_users`
+    						`lttx".Package::$pdbn."_users`
     					SET
     						".$sSqlSetPart."
     					WHERE
@@ -215,30 +214,30 @@ class user {
     				";
 			$aSql[] = $iUserId;
 			// Update
-			$bSuccess = package::$pdb->prepare($sSql)->execute($aSql);
+			$bSuccess = Package::$pdb->prepare($sSql)->execute($aSql);
 			
 		} else if($iUserId == 0){
 
 			$sSql = " INSERT INTO
-    						`lttx".package::$pdbn."_users`
+    						`lttx".Package::$pdbn."_users`
     					SET
     					".$sSqlSetPart;
 			// Insert
 
-			$bSuccess = package::$pdb->prepare($sSql)->execute($aSql);
+			$bSuccess = Package::$pdb->prepare($sSql)->execute($aSql);
 			// get ID
-			$iUserId = package::$pdb->lastInsertId();
+			$iUserId = Package::$pdb->lastInsertId();
 
 			// set New ID
 			$this->_currentID = $iUserId;
 
 		} else {
-			throw new lttxError('E_unknownUser');
+			throw new LitotexError('E_unknownUser');
 		}
 
 		if($bSuccess === false){
-			$sDBError = package::$pdb->errorCode();
-			throw new lttxError($sDBError);
+			$sDBError = Package::$pdb->errorCode();
+			throw new LitotexError($sDBError);
 		}
 			
 		return true;
@@ -255,9 +254,9 @@ class user {
 		$passwordSalted = self::_saltString($password);
 		if(self::userExists($username))
 		return -1;
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT COUNT(`ID`)
-            FROM `lttx".package::$pdbn."_users`
+            FROM `lttx".Package::$pdbn."_users`
             WHERE `email` = ?");
 		$result->execute(array($email));
 		if($result->rowCount() < 1) {
@@ -274,8 +273,8 @@ class user {
 			$additionalDataPointer .= ', ?';
 			$additionalDataColumns .= ', `' . $key . '`';
 		}
-		$result = package::$pdb->prepare("
-            INSERT INTO `lttx".package::$pdbn."_users`
+		$result = Package::$pdb->prepare("
+            INSERT INTO `lttx".Package::$pdbn."_users`
             (`bannedReason`,`userGroup`,`serverAdmin`,`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
             VALUES
             (? ,? ,? ,?, ?, ?, ?" . $additionalDataPointer . ")");
@@ -283,7 +282,7 @@ class user {
 		if($result->rowCount() < 1) {
 			return -3;
 		}
-		return new user(package::$pdb->lastInsertId());
+		return new User(Package::$pdb->lastInsertId());
 	}
 
 	/**
@@ -307,7 +306,7 @@ class user {
 		} else if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
 			$user->setUsersInstance();
 			$user->setData('lastActive', date('Y-m-d H:i:s'), false);
-			package::$session->setUserObject($user);
+			Package::$session->setUserObject($user);
 			return $user;
 		}
 		self::$sLastLoginError = 'login_incorrect';
@@ -348,11 +347,11 @@ class user {
 	 */
 	static public function getUserByName($username) {
 		if(isset(self::$_usernames[$username])) {
-			return new user(self::$_usernames[$username]);
+			return new User(self::$_usernames[$username]);
 		}
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT `ID`
-            FROM `lttx".package::$pdbn."_users`
+            FROM `lttx".Package::$pdbn."_users`
             WHERE `username` = ?");
 		$result->execute(array($username));
 		
@@ -361,7 +360,7 @@ class user {
 		$result = $result->fetch();
 		if($result[0] != 0) {
 			//self::$_usernames[$username] = $result[0];
-			return new user($result[0]);
+			return new User($result[0]);
 		}
 		return false;
 	}
@@ -384,9 +383,9 @@ class user {
 			return $this->getData($key, $cached, false);
 		}
 		//Nothing was cached... read manually
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT `" . $key . "`
-            FROM `lttx".package::$pdbn."_users`
+            FROM `lttx".Package::$pdbn."_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -415,8 +414,8 @@ class user {
 			$this->_writeBuffer[$key] = $newValue;
 			return true;
 		}
-		$result = package::$pdb->prepare("
-            UPDATE `lttx".package::$pdbn."_users`
+		$result = Package::$pdb->prepare("
+            UPDATE `lttx".Package::$pdbn."_users`
             SET `" . $key . "` = ?
             WHERE `ID` = ?");
 		$result->execute(array($newValue, $this->_currentID));
@@ -481,9 +480,9 @@ class user {
 		if($this->getUserID() == 0)
 		return false;
 
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT *
-            FROM `lttx".package::$pdbn."_users`
+            FROM `lttx".Package::$pdbn."_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		$result = $result->fetch();
@@ -511,9 +510,9 @@ class user {
 			}
 			$fields .= ', `' . $buffered[$i] . '`';
 		}
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT " . $fields . "
-            FROM `lttx".package::$pdbn."_users`
+            FROM `lttx".Package::$pdbn."_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -546,7 +545,7 @@ class user {
 		}
 		$queryString .= ' WHERE `ID` = ?';
 		$values[] = $this->_currentID;
-		$result = package::$pdb->prepare($queryString);
+		$result = Package::$pdb->prepare($queryString);
 		$result->execute($values);
 		if($result->rowCount() < 1)
 		return false;
@@ -563,15 +562,15 @@ class user {
 			if (intval($user) ==0)
 			return false;
 			
-			$result = package::$pdb->prepare("
+			$result = Package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".package::$pdbn."_users`
+                FROM `lttx".Package::$pdbn."_users`
                 WHERE `ID` = ?");
 			$result->execute(array($user));
 		} else {
-			$result = package::$pdb->prepare("
+			$result = Package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".package::$pdbn."_users`
+                FROM `lttx".Package::$pdbn."_users`
                 WHERE `username` = ?");
 			$result->execute(array($user));
 		}
@@ -617,9 +616,9 @@ class user {
 
 	public function getStatus(){
 		if($this->checkUserBanned()){
-			return package::getLanguageVar('users_is_banned');
+			return Package::getLanguageVar('users_is_banned');
 		} else {
-			return package::getLanguageVar('users_is_active');
+			return Package::getLanguageVar('users_is_active');
 		}
 	}
 
@@ -716,7 +715,7 @@ class user {
 	public function getUserGroups() {
 
 		if(!$this->_initialized || $this->getUserID() <= 0){
-			return userGroup::getDefault();
+			return UserGroup::getDefault();
 		}
 
 		$ID = $this->getUserID();
@@ -726,7 +725,7 @@ class user {
 		}
 
 		$aGroups = array();
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT `groupID`
             FROM `lttx1_user_group_connections`
             WHERE `userID` = ?");
@@ -737,14 +736,14 @@ class user {
 		}
 
 		foreach($result as $connection){
-			$aGroups[] = new userGroup($connection[0]);
+			$aGroups[] = new UserGroup($connection[0]);
 		}
 
 		return $aGroups;
 	}
 
 	public function getAvailableGroups(){
-		$aGroups = userGroup::getList();
+		$aGroups = UserGroup::getList();
 		$aUserGroups = $this->getUserGroups();
 
 		if($aUserGroups !== false){
@@ -764,7 +763,7 @@ class user {
 	 * This will logout the currently logged in user by deleting the session
 	 */
 	public function logout(){
-		package::$session->destroy();
+		Package::$session->destroy();
 	}
 
 	/**
@@ -774,7 +773,7 @@ class user {
 	 */
 	public function setPassword($password){
 		$salted = $this->_saltString($password);
-		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
+		Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
 		return true;
 	}
 
@@ -844,11 +843,11 @@ class user {
 
 	/**
 	 * This will compare two user objects (id's)
-	 * @param   user    $u1
-	 * @param   user    $u2
+	 * @param   User    $u1
+	 * @param   User    $u2
 	 * @return  bool
 	 */
-	public static function compare(user $u1, user $u2){
+	public static function compare(User $u1, User $u2){
 		if(!$u1->initialized() || !$u2->initialized())
 		return false;
 		if($u1->getUserID() == $u2->getUserID())
@@ -860,24 +859,23 @@ class user {
 	 * This will seach for all user id's which profile fields match to the given value
 	 * @param   string  $request
 	 * @param   string  $field
-	 * @return  user
+	 * @return  User
 	 */
 	public static function search($request, $field = 'username'){
 		//We absolutly need to stop buffering every entry! This would be the perfect overkill
 		$return = array();
 		$match = array();
-		$searchResults = package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx".package::$pdbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
+		$searchResults = Package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx".Package::$pdbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
 		$searchResults->execute(array('%' . $request . '%'));
-		
 		if(!$searchResults){
-			throw new lttxDBError();
+			throw new LitotexDBError();
 		}
 		foreach($searchResults as $result){
 			if($result[1] == $request){
-				$user = new user($result[0]);
+				$user = new User($result[0]);
 				$match[] = $user;
 			} else {
-				$user= new user($result[0]);
+				$user= new User($result[0]);
 				$return[] = $user;
 			}
 			$user->setLocalBufferPolicy(false);
@@ -887,22 +885,22 @@ class user {
 	}
 
 	public function saveUserFieldData($iFieldId, $mValue){
-		$sSql = " REPLACE INTO `lttx".package::$pdbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
+		$sSql = " REPLACE INTO `lttx".Package::$pdbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'), $mValue);
-		package::$pdb->prepare($sSql)->execute($aSql);
+		Package::$pdb->prepare($sSql)->execute($aSql);
 	}
 
 	public function validateFieldData($iFieldId, $mValue){
-		$field = new userField($iFieldId);
+		$field = new UserField($iFieldId);
 		if(!$field->validateContent($mValue)){
-			throw new lttxError('E_user_couldNotValidateUserField', $field->key);
+			throw new LitotexError('E_user_couldNotValidateUserField', $field->key);
 		}
 	}
 
 	public function getUserFieldData($iFieldId){
-		$sSql = " SELECT `value` FROM `lttx".package::$pdbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
+		$sSql = " SELECT `value` FROM `lttx".Package::$pdbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'));
-		$mValue = package::$pdb->prepare($sSql);
+		$mValue = Package::$pdb->prepare($sSql);
 		$mValue->execute($aSql);
 		$mValue = $mValue->fetch();
 		$mValue = $mValue[0];
@@ -910,7 +908,7 @@ class user {
 	}
 
 	public function deleteAllGroups(){
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             DELETE FROM `lttx1_user_group_connections`
             WHERE `userID` = ?")
 		->execute(array($this->getUserID()));

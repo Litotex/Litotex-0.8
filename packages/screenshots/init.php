@@ -29,7 +29,7 @@
  * @package screenshots
 
  */
-class package_screenshots extends package {
+class package_screenshots extends Package {
     /**
      * Package name
      * @var string

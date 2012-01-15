@@ -25,57 +25,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-class tplModSort extends Basis_Entry {
 
-	protected $_sTableName = 'lttx1_tpl_modification_sort';
-	protected static $_sClassName = 'tplModSort';
+class Logger {
 
-	/**
-	 * Get a List of all Entrys
-	 * @return self
-	 */
-	public static function getList($sPosition){
+    public function __construct() {
+        
+    }
 
-		$oTemp = new tplModSort(0);
+    public function debug($message = '') {
+        $currentuser = 0;
+        $currenttime = new Date(time());
+        $currenttime = $currenttime->getDbTime();
+        if (Package::$user) {
+            $currentuser = Package::$user->getUserID();
+        }
+        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentuser, $currenttime, $message));
+    }
 
-		$sSql = " SELECT * FROM `".$oTemp->_sTableName."` WHERE `position` = ? ";
-		$aSql = array($sPosition);
-
-		$aResult = package::$pdb->prepare($sSql);
-		$aResult->execute($aSql);
-		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
-
-		$aBack = array();
-		if(!empty($aResult)){
-			foreach((array)$aResult as $aData){
-				$aBack[] = new tplModSort($aData['ID']);
-			}
-		}
-
-		return $aBack;
-	}
-
-	public static function searchId($sClass, $sFuntion){
-
-		$oTemp = new tplModSort(0);
-		
-		$sSql = " SELECT
-						`ID`
-					FROM
-						`".$oTemp->_sTableName."`
-					WHERE
-						`class` = ? AND
-						`function` = ? AND
-						`active` = ?";
-		$aSql = array($sClass, $sFuntion, 1 );
-
-		$iID = package::$pdb->prepare($sSql);
-		$iID->execute($aSql);
-		$iID = $iID->fetch();
-		$iID = $iID[0];
-
-		return $iID;
-
-	}
-	
 }

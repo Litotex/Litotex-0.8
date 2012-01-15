@@ -44,7 +44,7 @@ class package_acp_users extends acpPackage {
 
     public function __action_delField() {
         $this->_theme = 'empty.tpl';
-        $oField = userField::getInstance($_POST['field_id']);
+        $oField = UserField::getInstance($_POST['field_id']);
         $oField->delete();
     }
 
@@ -56,7 +56,7 @@ class package_acp_users extends acpPackage {
             if ($iFieldId <= 0) {
                 continue;
             }
-            $oField = userField::getInstance($iFieldId);
+            $oField = UserField::getInstance($iFieldId);
             $oField->position = $i;
             $oField->save();
             $i++;
@@ -67,7 +67,7 @@ class package_acp_users extends acpPackage {
 
         $this->_theme = 'empty.tpl';
 
-        $oNewField = new userField(0);
+        $oNewField = new UserField(0);
         $oNewField->key = $_POST['name'];
         $oNewField->type = $_POST['type'];
 		$oNewField->extra = '';
@@ -83,11 +83,11 @@ class package_acp_users extends acpPackage {
     public function __action_fields() {
         $this->_theme = 'fields.tpl';
 
-        $aFields = userField::getList();
-        package::$tpl->assign('aFields', $aFields);
+        $aFields = UserField::getList();
+        Package::$tpl->assign('aFields', $aFields);
 
-        $field = new userField(0);
-        package::$tpl->assign('fieldTypes', $field->getTypes());
+        $field = new UserField(0);
+        Package::$tpl->assign('fieldTypes', $field->getTypes());
 
         return true;
     }
@@ -107,23 +107,23 @@ class package_acp_users extends acpPackage {
             $iUserId = (int) $_GET['id'];
         }
 
-        $oUser = new user($iUserId);
+        $oUser = new User($iUserId);
 
-        package::$tpl->assign('oUser', $oUser);
+        Package::$tpl->assign('oUser', $oUser);
 
-        $aFields = userField::getList();
-        package::$tpl->assign('aFields', $aFields);
+        $aFields = UserField::getList();
+        Package::$tpl->assign('aFields', $aFields);
         $aUserGroups = $oUser->getUserGroups();
         if ($aUserGroups === false) {
             $aUserGroups = array();
         }
-        package::$tpl->assign('aUserGroups', $aUserGroups);
+        Package::$tpl->assign('aUserGroups', $aUserGroups);
 
         $aGroups = $oUser->getAvailableGroups();
         if ($aGroups === false) {
             $aUserGroups = array();
         }
-        package::$tpl->assign('aGroups', $aGroups);
+        Package::$tpl->assign('aGroups', $aGroups);
 
         return true;
     }
@@ -144,7 +144,7 @@ class package_acp_users extends acpPackage {
             return false;
         }
 
-        $oUser = new user($iUserId);
+        $oUser = new User($iUserId);
         $oUser->delete();
 
         return true;
@@ -166,7 +166,7 @@ class package_acp_users extends acpPackage {
             return false;
         }
 
-        $oUser = new user($iUserId);
+        $oUser = new User($iUserId);
         $oUser->banUser();
 
         return true;
@@ -188,7 +188,7 @@ class package_acp_users extends acpPackage {
             return false;
         }
 
-        $oUser = new user($iUserId);
+        $oUser = new User($iUserId);
         $oUser->unbanUser();
 
         return true;
@@ -198,11 +198,11 @@ class package_acp_users extends acpPackage {
 
         $this->_theme = 'list.tpl';
 
-        $oUser = package::$user;
+        $oUser = Package::$user;
 
         $aUsers = array();
 
-        $aUsers = (array) user::search('');
+        $aUsers = (array) User::search('');
 
         self::$tpl->assign('oUser', $oUser);
         self::$tpl->assign('aUsers', $aUsers);
@@ -234,7 +234,7 @@ class package_acp_users extends acpPackage {
         if (empty($aError)) {
             try {
                 foreach ((array) $aUserData as $iUserId => $aUser) {
-                    $oUser = new user((int) $iUserId);
+                    $oUser = new User((int) $iUserId);
                     $oUser->update($aUser);
                     if ($iUserId <= 0) {
                         $iNewUserId = $oUser->getUserID();
@@ -252,7 +252,7 @@ class package_acp_users extends acpPackage {
                     if ($iUserId <= 0) {
                         $iUserId = $iNewUserId;
                     }
-                    $oUser = new user($iUserId);
+                    $oUser = new User($iUserId);
                     foreach ((array) $aData as $iFieldId => $mValue) {
                         if ($iFieldId <= 0) {
                             continue;
@@ -268,7 +268,7 @@ class package_acp_users extends acpPackage {
                 if ($iUserId <= 0) {
                     $iUserId = $iNewUserId;
                 }
-                $oUser = new user($iUserId);
+                $oUser = new User($iUserId);
                 foreach ((array) $aData as $iFieldId => $mValue) {
                     if ($iFieldId <= 0) {
                         continue;
@@ -282,7 +282,7 @@ class package_acp_users extends acpPackage {
 
         if (!empty($_POST['group'])) {
             foreach ((array) $_POST['group'] as $iGroup) {
-                $oGroup = new userGroup($iGroup);
+                $oGroup = new UserGroup($iGroup);
                 $oGroup->addUser($oUser);
             }
         }

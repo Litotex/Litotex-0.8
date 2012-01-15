@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class plugin_handler {
+class PluginHandler {
 
     protected $_cache = array();
     protected $_name;
@@ -67,7 +67,7 @@ class plugin_handler {
 
     public final function generatePluginCache() {
         if (!is_dir(LITO_PLUGIN_ROOT . $this->_location))
-            throw new lttxFatalError('Could not find plugin directory in ' . LITO_PLUGIN_ROOT . $this->_location);
+            throw new LitotexFatalError('Could not find plugin directory in ' . LITO_PLUGIN_ROOT . $this->_location);
         $dir = opendir(LITO_PLUGIN_ROOT . $this->_location);
         $this->_location = preg_replace("!/$!", '', $this->_location);
         $this->_location .= '/';
@@ -138,9 +138,9 @@ class plugin_handler {
             return false;
         $this->_location = preg_replace("!/$!", '', $this->_location);
         $this->_location .= '/';
-        if (!file_exists(LITO_PLUGIN_ROOT . $this->_location . $this->_cache[$pluginName][1] . '.' . package::getLanguage() . '.lang.php'))
+        if (!file_exists(LITO_PLUGIN_ROOT . $this->_location . $this->_cache[$pluginName][1] . '.' . Package::getLanguage() . '.lang.php'))
             return false;
-        $langCache->configLoad(LITO_PLUGIN_ROOT . $this->_location . $this->_cache[$pluginName][1] . '.' . package::getLanguage() . '.lang.php');
+        $langCache->configLoad(LITO_PLUGIN_ROOT . $this->_location . $this->_cache[$pluginName][1] . '.' . Package::getLanguage() . '.lang.php');
         return $langCache->getConfigVariable($varName);
     }
 
@@ -155,13 +155,5 @@ class plugin_handler {
         }
         return $return;
     }
-
-}
-
-abstract class plugin {
-
-    public static $handlerName;
-    public static $name;
-    public static $availableFunctions = array();
 
 }

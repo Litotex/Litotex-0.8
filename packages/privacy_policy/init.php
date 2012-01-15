@@ -29,7 +29,7 @@
  * @package privacy_policy
 
  */
-class package_privacy_policy extends package {
+class package_privacy_policy extends Package {
     /**
      * Package name
      * @var string

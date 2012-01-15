@@ -25,42 +25,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-/**
- * It's a simple login module
- *
- * @author: Litotex Team
- * @copyright: 2010
- */
-class package_acp_login extends acpPackage {
-    /**
-     * Package name
-     * @var string
-     */
-    protected $_packageName = 'acp_login';
-    /**
-     * Avaibilbe actions in this package
-     * @var array
-     */
-    protected $_availableActions = array('main','loginSubmit');
-    /**
-     * Register all hooks of this package
-     * @return bool
-     */
-    public function __action_main() {
-        return true;
-    }
-    public function __action_loginSubmit(){
-    	if(!(isset($_POST['username']) && isset($_POST['password']) && $_POST['username'] && $_POST['password']))
-    		throw new LitotexInfo('acp_login_UsernamePasswordMissing');
-    	$controllUser = User::login($_POST['username'], $_POST['password']);
+class TemplateModSort extends Basis_Entry {
 
-       	if(!$controllUser || !User::compare(Package::$user, $controllUser)){
-    		throw new LitotexInfo('acp_login_UsernamePasswordWrong');
-    	}
+	protected $_sTableName = 'lttx1_tpl_modification_sort';
+	protected static $_sClassName = 'tplModSort';
 
-    	Package::$user->setAcpLogin();
-    	header('Location:index.php');
-    	exit();
-    	return true;
-    }
+	/**
+	 * Get a List of all Entrys
+	 * @return self
+	 */
+	public static function getList($sPosition){
+
+		$oTemp = new TemplateModSort(0);
+
+		$sSql = " SELECT * FROM `".$oTemp->_sTableName."` WHERE `position` = ? ";
+		$aSql = array($sPosition);
+
+		$aResult = Package::$pdb->prepare($sSql);
+		$aResult->execute($aSql);
+		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
+
+		$aBack = array();
+		if(!empty($aResult)){
+			foreach((array)$aResult as $aData){
+				$aBack[] = new TemplateModSort($aData['ID']);
+			}
+		}
+
+		return $aBack;
+	}
+
+	public static function searchId($sClass, $sFuntion){
+
+		$oTemp = new TemplateModSort(0);
+		
+		$sSql = " SELECT
+						`ID`
+					FROM
+						`".$oTemp->_sTableName."`
+					WHERE
+						`class` = ? AND
+						`function` = ? AND
+						`active` = ?";
+		$aSql = array($sClass, $sFuntion, 1 );
+
+		$iID = Package::$pdb->prepare($sSql);
+		$iID->execute($aSql);
+		$iID = $iID->fetch();
+		$iID = $iID[0];
+
+		return $iID;
+
+	}
+	
 }

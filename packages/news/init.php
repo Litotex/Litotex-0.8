@@ -29,7 +29,7 @@
 require_once('classes/category.class.php');
 require_once('classes/news.class.php');
 require_once('classes/comment.class.php');
-class package_news extends package {
+class package_news extends Package {
     protected $_packageName = 'news';
     protected $_availableActions = array('main', 'showComments');
     
@@ -48,7 +48,7 @@ class package_news extends package {
         return false;
     }
     public function __action_main() {
-		package::addCssFile('news.css', 'news');	
+		Package::addCssFile('news.css', 'news');	
         $category = false;
         $page = 1;
         if(isset($_GET['page']))
@@ -84,8 +84,8 @@ class package_news extends package {
             $this->_referMain();
         }
         $comments = comment::getAll($newsItem);
-        package::$tpl->assign('comments', $comments);
-        package::$tpl->assign('newsItem', $newsItem);
+        Package::$tpl->assign('comments', $comments);
+        Package::$tpl->assign('newsItem', $newsItem);
         return true;
     }
     public static function getNews($category = false, $page = 1, $newsPerSite = false) {
@@ -101,7 +101,7 @@ class package_news extends package {
         return true;
     }
     public static function  __hook_showNewsBlock($n) {
-		package::addCssFile('news.css', 'news');	
+		Package::addCssFile('news.css', 'news');	
        
 		$news = self::getNews(false, 1, $n);
 		

@@ -68,7 +68,7 @@ class news{
 	private $_allow_comments =0;
     /**
      * Author
-     * @var user
+     * @var User
      */
     private $_writtenBy = false;
     /**
@@ -78,7 +78,7 @@ class news{
     private $_active = false;
     /**
      * Contains preferences (auto inform etc)
-     * @var option
+     * @var Option
      */
     private static $_options = false;
     /**
@@ -98,7 +98,7 @@ class news{
             return;
         }
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         $this->_initialized = true;
         return;
     }
@@ -125,10 +125,10 @@ class news{
         if(!is_a($category, 'category'))
                 return false;
         $title = htmlspecialchars($title);
-        $insert = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news` (`title`, `text`, `category`, `date`, `writtenBy`, `active`) VALUES (?, ?, ?, ".package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).", ?, ?)");
-        $insert->execute(array($title, $text, $category->getID(), (package::$user)?package::$user->getID():false, (bool)$active));
+        $insert = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_news` (`title`, `text`, `category`, `date`, `writtenBy`, `active`) VALUES (?, ?, ?, ".Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).", ?, ?)");
+        $insert->execute(array($title, $text, $category->getID(), (Package::$user)?Package::$user->getID():false, (bool)$active));
         $category->updateTimestamp();
-        return ($insert->rowCount() < 1)?false:new news(package::$pdb->lastInsertId());
+        return ($insert->rowCount() < 1)?false:new news(Package::$pdb->lastInsertId());
     }
     /**
      * Returns an array of all news based on category if set
@@ -141,7 +141,7 @@ class news{
         if($category && !is_a($category, 'category'))
                 return false;
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         $return = array();
         if($offset === false)
             $offset = self::$_options->get('newsPerSite');
@@ -154,14 +154,14 @@ class news{
         $return = array();
         
 		if($category){
-			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
+			$news = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `writtenBy`, `active`,`allow_comments` FROM `lttx".Package::$pdbn."_news` WHERE `category` = ? AND `active` = ? ORDER BY `date` DESC");
 			$news->bindParam(':offset', $start, PDO::PARAM_INT);
 			$news->bindParam(':max', $offset, PDO::PARAM_INT);
 			$news->execute(array($category->getID(), true));
 
 			}
 		else{
-			$news = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
+			$news = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `category`, `date`, `writtenBy`, `active`,`allow_comments` FROM `lttx".Package::$pdbn."_news` WHERE `active` = ? ORDER BY `date` DESC");
 			$news->bindParam(':offset', $start, PDO::PARAM_INT);
 			$news->bindParam(':max', $offset, PDO::PARAM_INT);
 			$news->execute(array(true));
@@ -169,7 +169,7 @@ class news{
 	   
 	   foreach($news as $rows){
 			$CommentsCount=self::_getCommentCount($rows[0]);
-			self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $CommentsCount, new user($rows[5]), $rows[6], $rows[7]);
+			self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $CommentsCount, new User($rows[5]), $rows[6], $rows[7]);
 			$return[] = new news($rows[0]);
         }
         return $return;
@@ -178,10 +178,10 @@ class news{
         if($category && !is_a($category, 'category'))
                 return false;
         if($category){
-            $result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news` WHERE `category` = ? AND `active` = ?");
+            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news` WHERE `category` = ? AND `active` = ?");
             $result->execute(array($category->getID(), true));
         }else{
-            $result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news` WHERE `active` = ?");
+            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news` WHERE `active` = ?");
             $result->execute(array(true));
         }
         if($result->rowCount() < 1)
@@ -282,7 +282,7 @@ class news{
     }
     /**
      * This will return the user object
-     * @return user
+     * @return User
      */
     public function getAuthor(){
         if(!$this->_initialized)
@@ -316,7 +316,7 @@ class news{
         if(!$this->_initialized)
                 return false;
         $value = (bool)$value;
-        $result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_news` SET `active` = ? WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_news` SET `active` = ? WHERE `ID` = ?");
         $result->execute(array($value, $this->_ID));
         if($result->rowCount() < 1)
             return false;
@@ -339,7 +339,7 @@ class news{
     public function delete(){
         if(!$this->_initialized)
                 return false;
-        $result = package::$pdb->prepare("DELETE FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("DELETE FROM `lttx".Package::$pdbn."_news` WHERE `ID` = ?");
         $result->execute(array($this->_ID));
         return ($result->rowCount() <= 0)?false:true;
     }
@@ -374,7 +374,7 @@ class news{
      */
     public static function setGlobalAutoInformMail($value){
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         $result = self::$_options->set('autoInformMail', (bool)$value);
         if(!$result)
             $result = self::$_options->add('autoInformMail', (bool)$value, true);
@@ -387,7 +387,7 @@ class news{
      */
     public static function setGlobalAutoInformPM($value){
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         $result = self::$_options->set('autoInformPM', (bool)$value);
         if(!$result)
             $result = self::$_options->add('autoInformPM', (bool)$value, true);
@@ -402,7 +402,7 @@ class news{
         if($this->_getCache($ID))
                 return true;
 				
-        $news = package::$pdb->prepare("SELECT `title`, `text`, `category`, `date`,`writtenBy`, `active`,`allow_comments` FROM `lttx".package::$pdbn."_news` WHERE `ID` = ?");
+        $news = Package::$pdb->prepare("SELECT `title`, `text`, `category`, `date`,`writtenBy`, `active`,`allow_comments` FROM `lttx".Package::$pdbn."_news` WHERE `ID` = ?");
         $news->execute(array($ID));
         if($news->rowCount() < 1)
             return false;
@@ -414,7 +414,7 @@ class news{
         $this->_category = new category($news[2]);
         $this->_date= new Date(Date::fromDbDate($news[3]));
 		$this->_commentNum = self::_getCommentCount($ID);
-        $this->_writtenBy = new user($news[5]);
+        $this->_writtenBy = new User($news[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
         $this->_active = $news[5];
 		$this->_allow_comments = $news[6];
@@ -448,7 +448,7 @@ class news{
      * @param category $category
      * @param Date $date
      * @param int $commentNum
-     * @param user $writtenBy
+     * @param User $writtenBy
      * @param bool $active
      * @param bool $allow_comments
 	 * @return bool
@@ -480,7 +480,7 @@ class news{
      * @return int
      */
 	private function _getCommentCount($ID){
-		$result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?");	
+		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ?");	
 		$result->execute(array($ID));
 		if($result->rowCount() < 1)
             return 0;
@@ -489,11 +489,11 @@ class news{
 	}
     /**
      * Returns options element of news
-     * @return option
+     * @return Option
      */
     public static function getOptions(){
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         return self::$_options;
     }
 }

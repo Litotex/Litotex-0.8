@@ -32,7 +32,7 @@
  * @author: Martin Lantzsch <martin@linux-doku.de>
  * @copyright: 2010
  */
-class package_mail extends package {
+class package_mail extends Package {
      private static $_version = '0.8.01';
 	 /**
      * Is this instance initialized?
@@ -68,7 +68,7 @@ class package_mail extends package {
 
 	    /**
      * Contains preferences (auto inform etc)
-     * @var option
+     * @var Option
      */
     private static $_options = false;
 	
@@ -87,15 +87,15 @@ class package_mail extends package {
         return true;
     }
     public static function __hook_mail() {
-		package::$tpl->display(self::getTplDir('sample3') . 'table.tpl');
+		Package::$tpl->display(self::getTplDir('sample3') . 'table.tpl');
 		return true;
     }
 
  	 public function sendMailPlain($mailTo,$mailSubject,$MailMessage){
 		
-		package::loadLang(package::$tpl,'mail');
+		Package::loadLang(Package::$tpl,'mail');
 		if(!self::$_options)
-            self::$_options = new option('mail');
+            self::$_options = new Option('mail');
         $this->_initialized = true;
         
 		self::$_MailFrom = self::$_options->get('AdminEmail');
@@ -103,7 +103,7 @@ class package_mail extends package {
 		
 		
 		if (!self::$_MailFrom || !self::$_MailFromName){
-			throw new lttxError('LN_MAIL_CONFIG_ERROR');
+			throw new LitotexError('LN_MAIL_CONFIG_ERROR');
 			return false;
 		}
 
@@ -113,7 +113,7 @@ class package_mail extends package {
 
 
 		if (!@mail($mailTo, $mailSubject,$MailMessage, $mailHeader)){
-			throw new lttxError('LN_MAIL_SEND_ERROR'); 
+			throw new LitotexError('LN_MAIL_SEND_ERROR'); 
 			return false;
 		}else{
 			return true;

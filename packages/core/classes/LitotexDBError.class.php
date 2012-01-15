@@ -25,19 +25,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-if(!defined('LITO_ROOT'))
-	define('LITO_ROOT', $frontendRoot . 'acp/');
-if(!defined('LITO_URL'))
-	define('LITO_URL', $frontendUrl . 'acp/');
-if(!defined('DATABASE_CONFIG_FILE'))
-	define('DATABASE_CONFIG_FILE', LITO_ROOT . '../packages/core/config/database.conf.php');
-if(!defined('HOOK_CACHE'))
-	define('HOOK_CACHE', LITO_ROOT . '../packages/core/cache/acp_hook_cache.php');
-if(!defined('PACKAGE_CACHE'))
-	define('PACKAGE_CACHE', LITO_ROOT . '../packages/core/cache/acp_dependency_cache.php');
-if(!defined('TPLMOD_CACHE'))
-	define('TPLMOD_CACHE', LITO_ROOT . '../packages/core/cache/acp_tpl_modification_cache.php');
-if(!defined('PACKAGE_PREFIX'))
-	define('PACKAGE_PREFIX', 'acp');
-if(!defined('LITO_ERROR_MODULE'))
-	define('LITO_ERROR_MODULE', 'acp_errorPage');
+
+class LitotexDBError extends LitotexError {
+
+    public function __construct() {
+        $code = Package::$pdb->errorInfo();
+        $sError = 'No Error!';
+        if ($code[2] != NULL)
+            $sError = $code[2];
+        parent::__construct($sError);
+    }
+
+}

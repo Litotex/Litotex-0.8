@@ -60,11 +60,11 @@ class package_acp_projects extends acpPackage {
 	 */
 	public function __action_main() {
 		// count projects
-		$result = package::$pdb->query('SELECT id FROM lttx1_projects');
+		$result = Package::$pdb->query('SELECT id FROM lttx1_projects');
 		$projectCount = $result->rowCount();
 
 		// count releases
-		$result = package::$pdb->query('SELECT id FROM lttx1_projects_releases');
+		$result = Package::$pdb->query('SELECT id FROM lttx1_projects_releases');
 		$releaseCount = $result->rowCount();
 
 		// assign new vars to template
@@ -79,7 +79,7 @@ class package_acp_projects extends acpPackage {
 		foreach($result as $item) {
 			// get username
 			try{
-				$user = new user($item[2]);
+				$user = new User($item[2]);
 				$username = $user->getData('username');
 				unset($user);
 			} catch(Exception $e){
@@ -119,7 +119,7 @@ class package_acp_projects extends acpPackage {
 
 		// check if all fields are filled
 		if(!$name || !$owner || !$description)
-		throw new lttxError('formNotComplete');
+		throw new LitotexError('formNotComplete');
 
 		// write to db
 		self::$pdb->prepare('INSERT INTO lttx1_projects
@@ -127,7 +127,7 @@ class package_acp_projects extends acpPackage {
                                 name = ?,
                                 owner = ?,
                                 description = ?,
-                                creationTime = ?')->execute(array($name,user::getUserByName($owner)->getData('id'),$description,time()));
+                                creationTime = ?')->execute(array($name,User::getUserByName($owner)->getData('id'),$description,time()));
 
 		header('Location: index.php?package=acp_projects');
 
@@ -141,7 +141,7 @@ class package_acp_projects extends acpPackage {
 		$this->_theme = 'editProject.tpl';
 
 		if(!$_GET['projectID'])
-		throw new lttxError('noProjectIdGiven');
+		throw new LitotexError('noProjectIdGiven');
 		else
 		$projectID = $_GET['projectID'];
 
@@ -151,7 +151,7 @@ class package_acp_projects extends acpPackage {
 
 		$project = $project->fetch();
 		try {
-			$user = new user($project[2]);
+			$user = new User($project[2]);
 			$owner = $user->getData('username');
 			unset($user);
 		}catch (Exception $e){
@@ -171,7 +171,7 @@ class package_acp_projects extends acpPackage {
 		foreach($result as $item) {
 			// get username
 			try{
-				$user = new user($item[0]);
+				$user = new User($item[0]);
 				$uploader = $user->getData('username');
 				unset($user);
 			}catch (Exception $e){
@@ -206,7 +206,7 @@ class package_acp_projects extends acpPackage {
 
 		// check if all fields are filled
 		if(!$name || !$owner || !$description)
-		throw new lttxError('formNotComplete');
+		throw new LitotexError('formNotComplete');
 
 		// write to db
 		self::$pdb->prepare('UPDATE lttx1_projects
@@ -217,7 +217,7 @@ class package_acp_projects extends acpPackage {
                             WHERE `id` = ?')
 		->execute(array(
 		$name,
-		user::getUserByName($owner)->getData('id'),
+		User::getUserByName($owner)->getData('id'),
 		$description,
 		$projectID
 		));
@@ -236,7 +236,7 @@ class package_acp_projects extends acpPackage {
 		$this->_theme = 'deleteProjectNotSure.tpl';
 
 		if(!$_GET['projectID'])
-		throw new lttxError('noProjectIdGiven');
+		throw new LitotexError('noProjectIdGiven');
 
 		self::$tpl->assign('projectID', $_GET['projectID']);
 
@@ -248,7 +248,7 @@ class package_acp_projects extends acpPackage {
 	 */
 	public function __action_deleteProject() {
 		if(!$_GET['projectID'])
-		throw new lttxError('noProjectIdGiven');
+		throw new LitotexError('noProjectIdGiven');
 		else
 		$projectID = $_GET['projectID'];
 
@@ -264,7 +264,7 @@ class package_acp_projects extends acpPackage {
 		$this->_theme = 'uploadRelease.tpl';
 
 		if(!$_GET['projectID'])
-		throw new lttxError('noProjectIdGiven');
+		throw new LitotexError('noProjectIdGiven');
 
 		self::$tpl->assign('projectID', $_GET['projectID']);
 
@@ -284,11 +284,11 @@ class package_acp_projects extends acpPackage {
 
 		// check if alle fields are filled
 		if(!$projectID || !$version || !$platform || !$changelog || !$package)
-		throw new lttxError('formNotComplete');
+		throw new LitotexError('formNotComplete');
 
 		// check if version numbers are corrent
 		if(!self::validateVersionNumber($version))
-		throw new lttxError('invalidVersionNumber');
+		throw new LitotexError('invalidVersionNumber');
 
 		// set package dir
 		$dir = 'files/packages/'.$projectID.'/'.$platform.'/';
@@ -317,7 +317,7 @@ class package_acp_projects extends acpPackage {
                                 time = ?')
 		->execute(array(
 		$projectID,
-		package::$user->getData('id'),
+		Package::$user->getData('id'),
 		$version,
 		$platform,
 		$changelog,
@@ -326,7 +326,7 @@ class package_acp_projects extends acpPackage {
 		));
 
 		if(!self::validateVersionNumber($version) || !self::validatePlatformNumber($platform))
-		throw new lttxError('versionNumberIsInvalid');
+		throw new LitotexError('versionNumberIsInvalid');
 
 		header('Location: index.php?package=acp_projects&action=editProject&projectID='.$projectID);
 
@@ -342,7 +342,7 @@ class package_acp_projects extends acpPackage {
 		$this->_theme = 'deleteReleaseNotSure.tpl';
 
 		if(!$_GET['releaseID'])
-		throw new lttxError('noReleaseIdGiven');
+		throw new LitotexError('noReleaseIdGiven');
 
 		self::$tpl->assign('releaseID', $_GET['releaseID']);
 		self::$tpl->assign('projectID', $_GET['projectID']);
@@ -355,11 +355,11 @@ class package_acp_projects extends acpPackage {
 	 */
 	public function __action_deleteRelease() {
 		if(!$_GET['releaseID'])
-		throw new lttxError('noReleaseIdGiven');
+		throw new LitotexError('noReleaseIdGiven');
 		else
 		$releaseID = $_GET['releaseID'];
 
-		package::$pdb->prepare('DELETE FROM lttx1_projects_releases WHERE id = ?')->execute(array($releaseID));
+		Package::$pdb->prepare('DELETE FROM lttx1_projects_releases WHERE id = ?')->execute(array($releaseID));
 		header('Location: index.php?package=acp_projects&action=editProject&projectID='.$_GET['projectID']);
 	}
 }

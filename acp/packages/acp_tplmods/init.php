@@ -41,7 +41,7 @@ class package_acp_tplmods extends acpPackage{
 		self::addJsFile('tplmod.js', 'acp_tplmods');
 		self::addCssFile('tplmod.css', 'acp_tplmods');
 
-		package::$tpl->assign('LITO_FRONTEND_URL', LITO_FRONTEND_URL);
+		Package::$tpl->assign('LITO_FRONTEND_URL', LITO_FRONTEND_URL);
 
 		return true;
 	}

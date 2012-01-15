@@ -25,6 +25,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-define("defaultPackage", 'main');
-define('LITOTX8', true);
-require('packages/core/global.php');
+
+define('LITO_START_PACKAGE', 'main');
+define('LITO_INSIDE', true);
+
+require_once 'packages/core/config/path.php';
+require_once 'packages/core/config/const.php';
+
+require 'packages/core/global.php';

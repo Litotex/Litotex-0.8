@@ -26,22 +26,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class userField extends Basis_Entry {
+class UserField extends Basis_Entry {
 	protected $_pluginHandler = NULL;
 	protected $_sTableName = 'lttx_userfields';
 	static protected $_sClassName = 'userField';
 	
 	public function  __construct($iFieldId = 0) {
 		parent::__construct($iFieldId);
-		$this->_pluginHandler = new plugin_handler($name = 'userFields', $location = 'userFields', $cacheLocation = 'userFields.plugin.cache.php', $currentFile = __FILE__);
+		$this->_pluginHandler = new PluginHandler($name = 'userFields', $location = 'userFields', $cacheLocation = 'userFields.plugin.cache.php', $currentFile = __FILE__);
 	}
 	
 	public static function getList(){
-
-		$sSql = " SELECT `ID`, `key`, IF (extra='','empty' ,extra) as extra ,`optional`, `display`, `editable`, IF (package='','empty' ,package) as package, `position` FROM `lttx".package::$pdbn."_userfields` ORDER BY `position` ASC";
+		$sSql = " SELECT `ID`, `key`, IF (extra='','empty' ,extra) as extra ,`optional`, `display`, `editable`, IF (package='','empty' ,package) as package, `position` FROM `lttx".Package::$pdbn."_userfields` ORDER BY `position` ASC";
 		$aSql = array();
 		
-		$aResult = package::$pdb->prepare($sSql);
+		$aResult = Package::$pdb->prepare($sSql);
 		$aResult->execute($aSql);
 		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
 
@@ -67,7 +66,7 @@ class userField extends Basis_Entry {
 
         public function  validate() {
             if(!$this->_pluginHandler->pluginExists($this->type)){
-                throw new lttxError ('userField_noPlugin', $this->type);
+                throw new LitotexError ('userField_noPlugin', $this->type);
                 return false;
             }
             return parent::validate();

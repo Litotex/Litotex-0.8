@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class userPerm extends perm {
+class UserPermission extends Permission {
 
 	/**
 	 * User object
@@ -90,7 +90,7 @@ class userPerm extends perm {
 				return false;
 			}
 
-			$oGroupPerm = new userGroupPerm($oGroup);
+			$oGroupPerm = new UserGroupPermission($oGroup);
 			$iGroupPerm = $oGroupPerm->checkPerm($mPackage, $sFunction, $sClass);
 
 			$iPerm = $this->_mergePerm($iPerm, (int)$iGroupPerm);

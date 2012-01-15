@@ -26,14 +26,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class buildingPluginHandler extends plugin_handler{
+class buildingPluginHandler extends PluginHandler{
 	protected $_name = "buildings";
 	protected $_location = "buildings";
 	protected $_cacheLocation = "../cache/buildings.cache.php";
 	protected $_currentFile = __FILE__;
 }
 
-class buildingDependencyPluginHandler extends plugin_handler{
+class buildingDependencyPluginHandler extends PluginHandler{
 	protected $_name = 'dependencies';
 	protected $_location = 'dependencies';
 	protected $_cacheLocation = "../cache/buildingDependencies.cache.php";
@@ -51,7 +51,7 @@ class building{
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
 	public function __construct($buildingID){
-		$data = package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$pdbn."_buildings` WHERE `ID` = ?");
+		$data = Package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".Package::$pdbn."_buildings` WHERE `ID` = ?");
 		$data->execute(array($buildingID));
 		if($data->rowCount() < 1)
 			throw new Exception('Building ' . $buildingID .' was not found');
@@ -89,7 +89,7 @@ class building{
 			return false;
 		$resource = new ressource($this->_data['race'], 'building', $this->_ID, false, true);
 		$resource->useFormula($level);
-		package::$packages->callHook('manipulateBuildingCost', array(&$resource));
+		Package::$packages->callHook('manipulateBuildingCost', array(&$resource));
 		return $resource;
 	}
 	public function initialized(){
@@ -112,22 +112,22 @@ class building{
 		return $return;
 	}
 	public function getBuildTime($level){
-		if(!math::verifyFormula($this->_timeFormula))
+		if(!Math::verifyFormula($this->_timeFormula))
 			return false;
-		$formula = math::replaceX($this->_timeFormula, (int)$level);
-		return math::calculateString($formula);
+		$formula = Math::replaceX($this->_timeFormula, (int)$level);
+		return Math::calculateString($formula);
 	}
 	public function getPoints($level){
-		if(!math::verifyFormula($this->_pointsFormula))
+		if(!Math::verifyFormula($this->_pointsFormula))
 			return false;
-		$formula = math::replaceX($this->_pointsFormula, (int)$level);
-		return math::calculateString($formula);
+		$formula = Math::replaceX($this->_pointsFormula, (int)$level);
+		return Math::calculateString($formula);
 	}
 	public function increaseBuildingLevel($level, territory $territory){
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$pdbn."_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
+		$dep = Package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".Package::$pdbn."_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
 		$dep->execute(array($this->_ID, (int)$level));
 		$return = array();
 		
@@ -146,12 +146,12 @@ class building{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_buildings` WHERE `race` = ?");
+		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_buildings` WHERE `race` = ?");
 		$result->execute(array($race));
 		return self::_getByQuery($result);
 	}
 	public static function getAll(){
-		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_buildings`");
+		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_buildings`");
 		$result->execute();
 		return self::_getByQuery($result);
 	}

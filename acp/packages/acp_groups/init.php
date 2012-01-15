@@ -57,12 +57,12 @@ class package_acp_groups extends acpPackage {
             $iGroupId = (int) $_GET['id'];
         }
 
-        $oGroup = new userGroup($iGroupId);
+        $oGroup = new UserGroup($iGroupId);
 
-        package::$tpl->assign('oGroup', $oGroup);
+        self::$tpl->assign('oGroup', $oGroup);
 
-        $aUsers = user::search('');
-        package::$tpl->assign('aUsers', $aUsers);
+        $aUsers = User::search('');
+        self::$tpl->assign('aUsers', $aUsers);
 
         $aGroupUsers = $oGroup->getUsers();
 
@@ -72,8 +72,7 @@ class package_acp_groups extends acpPackage {
             $sUserList .= ', ';
         }
 
-        package::$tpl->assign('sUserList', $sUserList);
-
+        self::$tpl->assign('sUserList', $sUserList);
 
         return true;
     }
@@ -94,7 +93,7 @@ class package_acp_groups extends acpPackage {
             return false;
         }
 
-        $oGroup = new userGroup($iGroupId);
+        $oGroup = new UserGroup($iGroupId);
         $oGroup->delete();
 
         return true;
@@ -102,7 +101,7 @@ class package_acp_groups extends acpPackage {
 
     public function __action_list() {
         $this->_theme = 'list.tpl';
-        $aGroups = userGroup::getList();
+        $aGroups = UserGroup::getList();
         self::$tpl->assign('aGroups', $aGroups);
         return true;
     }
@@ -113,19 +112,19 @@ class package_acp_groups extends acpPackage {
         if (isset($_POST['group'])) {
             $aGroupData = $_POST['group'];
         } else {
-            $aError[] = package::getLanguageVar('groups_no_data_found');
+            $aError[] = self::getLanguageVar('groups_no_data_found');
         }
 
         foreach ((array) $aGroupData as $aGroup) {
             if (empty($aGroup['name'])) {
-                $aError[] = package::getLanguageVar('groups_no_groupname');
+                $aError[] = self::getLanguageVar('groups_no_groupname');
             }
         }
         $iNewGroupId = 0;
         if (empty($aError)) {
             try {
                 foreach ((array) $aGroupData as $iGroupId => $aGroup) {
-                    $oGroup = new userGroup((int) $iGroupId);
+                    $oGroup = new UserGroup((int) $iGroupId);
                     foreach ((array) $aGroup as $sColumn => $mValue) {
                         $oGroup->$sColumn = $mValue;
                     }
@@ -135,7 +134,7 @@ class package_acp_groups extends acpPackage {
                     }
                 }
             } catch (Exception $e) {
-                $aError[] = package::getLanguageVar('groups_error');
+                $aError[] = self::getLanguageVar('groups_error');
                 $aError[] = $e->getMessage();
             }
         }
@@ -145,7 +144,7 @@ class package_acp_groups extends acpPackage {
             $oGroup->deleteAllUsers();
             foreach ((array) $aUsers as $sUserName) {
                 $sUserName = trim($sUserName);
-                $aUsers = user::search($sUserName);
+                $aUsers = User::search($sUserName);
                 $oUser = reset($aUsers);
                 if (!$oUser || $oUser->getUserID() <= 0) {
                     continue;
@@ -157,7 +156,7 @@ class package_acp_groups extends acpPackage {
         $aTransfer = array();
         $aTransfer['errors'] = $aError;
         if (empty($aError)) {
-            $aTransfer['message'] = package::getLanguageVar('groups_success');
+            $aTransfer['message'] = self::getLanguageVar('groups_success');
             if (key($aGroupData) == 0) {
                 $aTransfer['task'] = 'resetFields';
             }

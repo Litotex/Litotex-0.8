@@ -56,7 +56,7 @@ class comment {
     private $_date;
     /**
      * Written by
-     * @var user
+     * @var User
      */
     private $_writer;
     /**
@@ -86,7 +86,7 @@ class comment {
     private static $_commentsCache = array();
     /**
      * Options saved in options table
-     * @var option
+     * @var Option
      */
     private static $_options = false;
     /**
@@ -100,7 +100,7 @@ class comment {
             return;
         }
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         $this->_initialized = true;
         return;
     }
@@ -167,7 +167,7 @@ class comment {
 
     /**
      * Returns the Author
-     * @return user
+     * @return User
      */
     public function getAuthor() {
         if(!$this->_initialized)
@@ -232,7 +232,7 @@ class comment {
      * @param string $title
      * @param string $text
      * @param news $news
-     * @param user $writer
+     * @param User $writer
      * @return bool on failure | comment
      */
     public static function publish($title, $text, $news, $writer) {
@@ -240,9 +240,9 @@ class comment {
                 return false;
         if(!is_a($writer, 'user'))
                 return false;
-        $result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?");
-        $result->execute(array($title, $text, $news->getID(), $writer->getID(), session::getIPAdress()));
-        return ($result->rowCount() <= 0)?false:new comment(package::$pdb->lastInsertId());
+        $result = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?");
+        $result->execute(array($title, $text, $news->getID(), $writer->getID(), Session::getIPAdress()));
+        return ($result->rowCount() <= 0)?false:new comment(Package::$pdb->lastInsertId());
     }
     /**
      * This will return all the comments sorted by news
@@ -253,7 +253,7 @@ class comment {
         if($news && !is_a($news, 'news'))
                 return false;
         if(!self::$_options)
-            self::$_options = new option('news');
+            self::$_options = new Option('news');
         $return = array();
         if($offset === false)
             $offset = self::$_options->get('commentsPerSite');
@@ -264,19 +264,19 @@ class comment {
             $offset = -1;
         }
         if($news){
-            $result = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC");
 			$result->bindParam(':offset', $start, PDO::PARAM_INT);
 			$result->bindParam(':max', $offset, PDO::PARAM_INT);
 			$result->execute(array($news->getID()));
 		}else{
-            $result = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` ORDER BY `date` DESC");
 			$result->bindParam(':offset', $start, PDO::PARAM_INT);
 			$result->bindParam(':max', $offset, PDO::PARAM_INT);
 		}
 		if(!$result)
             return false;
 		foreach($result as $comments){
-            self::_writeCache($comments[0], $comments[1], $comments[2], $comments[3], new news($comments[4]), new user($comments[5]), $comments[6]);
+            self::_writeCache($comments[0], $comments[1], $comments[2], $comments[3], new news($comments[4]), new User($comments[5]), $comments[6]);
             $return[] = new comment($comments[0]);
         }
         return $return;
@@ -285,10 +285,10 @@ class comment {
         if($news && !is_a($news, 'news'))
                 return false;
         if($news){
-            $result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?");
+            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ?");
             $result->execute(array($news->getID()));
         }else{
-            $result = package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments`");
+            $result = Package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments`");
         }
         if($result->rowCount() < 1)
             return false;
@@ -300,7 +300,7 @@ class comment {
         if($this->_getCommentCached($ID))
                 return true;
         $ID = (int)$ID;
-        $result = package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".package::$pdbn."_news_comments` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` WHERE `ID` = ?");
         $result->execute(array($ID));
         if($result->rowCount() < 1)
             return false;
@@ -315,7 +315,7 @@ class comment {
             $this->_news = new news($result[4]);
             $this->_writeNewsCache($this->_news);
         }
-        $this->_writer = new user($result[5]);
+        $this->_writer = new User($result[5]);
         $this->_writer->setLocalBufferPolicy(false);
         $this->_IP = $result[6];
 		$this->_image_url=self::_buildImageURL( $result[0]);
@@ -324,7 +324,7 @@ class comment {
     }
 	private function _buildImageURL($ID){
 		//future integration of gravatar
-		$curImageUrl =package::getTplURL('news')."img/news_anonym.png";
+		$curImageUrl =Package::getTplURL('news')."img/news_anonym.png";
 		return $curImageUrl ;
 	}
 	

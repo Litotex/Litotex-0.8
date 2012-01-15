@@ -25,42 +25,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-/**
- * It's a simple login module
- *
- * @author: Litotex Team
- * @copyright: 2010
- */
-class package_acp_login extends acpPackage {
-    /**
-     * Package name
-     * @var string
-     */
-    protected $_packageName = 'acp_login';
-    /**
-     * Avaibilbe actions in this package
-     * @var array
-     */
-    protected $_availableActions = array('main','loginSubmit');
-    /**
-     * Register all hooks of this package
-     * @return bool
-     */
-    public function __action_main() {
-        return true;
-    }
-    public function __action_loginSubmit(){
-    	if(!(isset($_POST['username']) && isset($_POST['password']) && $_POST['username'] && $_POST['password']))
-    		throw new LitotexInfo('acp_login_UsernamePasswordMissing');
-    	$controllUser = User::login($_POST['username'], $_POST['password']);
+class UserGroupPermission extends Permission {
 
-       	if(!$controllUser || !User::compare(Package::$user, $controllUser)){
-    		throw new LitotexInfo('acp_login_UsernamePasswordWrong');
-    	}
+	protected $_oGroup;
 
-    	Package::$user->setAcpLogin();
-    	header('Location:index.php');
-    	exit();
-    	return true;
-    }
+ 	/**
+	 * This will set up permission handlich for a userGroup
+	 * @param userGroup $oGroup
+	 * @return void
+	 */
+	public function  __construct($oGroup) {
+
+		if(!is_a($oGroup, 'userGroup')) {
+			throw new Exception('UserGroup class has to be passed');
+			return;
+		}
+
+		$this->_iAssociateID	= $oGroup->getID();
+		$this->_iAssociateType	= 2;
+		
+		$this->_oGroup = $oGroup;
+	}
 }

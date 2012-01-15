@@ -63,8 +63,8 @@ class package_acp_news extends acpPackage{
 		$NewsComments="";
 		$iNewsId=0;
 		$Newscategory=0;
-		$FilemanagerFolder=package::getTplURL()."js/pdw_file_browser/";
-		$folder=package::getFilesDir('news');
+		$FilemanagerFolder=Package::getTplURL()."js/pdw_file_browser/";
+		$folder=Package::getFilesDir('news');
 		// Create Session for Filemanger
 		$_SESSION['uploadfolder']=$folder.'/';
 		$this->_theme = 'edit.tpl';
@@ -76,10 +76,10 @@ class package_acp_news extends acpPackage{
 		if ($iNewsId > 0) {
 
 
-			$result = package::$pdb->prepare("SELECT * FROM `lttx1_news` WHERE `id` = ?");
+			$result = Package::$pdb->prepare("SELECT * FROM `lttx1_news` WHERE `id` = ?");
 			$result->execute(array($iNewsId));
 			if($result->rowCount() < 1){
-				throw new lttxError('LN_DB_ERRROR_1');
+				throw new LitotexError('LN_DB_ERRROR_1');
 				return true;
 			}
 
@@ -91,18 +91,18 @@ class package_acp_news extends acpPackage{
 		}
 
 		$cat_elements[]="";
-		$categories = package::$pdb->query("SELECT id,title FROM `lttx1_news_categories` order by title");
+		$categories = Package::$pdb->query("SELECT id,title FROM `lttx1_news_categories` order by title");
 		foreach($categories as $category) {
 			$cat_elements[$category['id']] = $category['title'];				
 		}
 
-		package::$tpl->assign('cat_options_sel', $Newscategory);
-		package::$tpl->assign('cat_options', $cat_elements);
-		package::$tpl->assign('News_Title', $NewsTitle );
-		package::$tpl->assign('News_Text', $NewsText );
-		package::$tpl->assign('News_Comments', $NewsComments);
-		package::$tpl->assign('News_ID', $iNewsId);
-		package::$tpl->assign('FileBrowser', $FilemanagerFolder );
+		Package::$tpl->assign('cat_options_sel', $Newscategory);
+		Package::$tpl->assign('cat_options', $cat_elements);
+		Package::$tpl->assign('News_Title', $NewsTitle );
+		Package::$tpl->assign('News_Text', $NewsText );
+		Package::$tpl->assign('News_Comments', $NewsComments);
+		Package::$tpl->assign('News_ID', $iNewsId);
+		Package::$tpl->assign('FileBrowser', $FilemanagerFolder );
 		return true;
 	}
 
@@ -201,7 +201,7 @@ class package_acp_news extends acpPackage{
 		$searchResults =self::$pdb->query("SELECT * FROM `lttx1_news` order by date DESC");
 		
 		if($searchResults == false){
-			throw new lttxDBError();
+			throw new LitotexDBError();
 		}
 		foreach($searchResults as $result){		
 			$result['commentcount']=self::_getCommentCount($result[0]);
@@ -219,12 +219,12 @@ class package_acp_news extends acpPackage{
 		$category=0;
 		$saveDate=date("Y-m-d H:m:s", time());
 
-		$saveUserID=package::$user->getUserID();
+		$saveUserID=Package::$user->getUserID();
 
 		if(isset($_POST['news_text'])){
 			$news_text = $_POST['news_text'];
 		} else {
-			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
+			throw new LitotexInfo('LN_NEWS_ERROR_DEFAULT');
 		}
 		if(isset($_POST['categories_id'])){
 			$category=$_POST['categories_id'];
@@ -233,7 +233,7 @@ class package_acp_news extends acpPackage{
 		if(isset($_POST['news_over'])){
 			$news_title = htmlspecialchars($_POST['news_over']);
 		} else {
-			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
+			throw new LitotexInfo('LN_NEWS_ERROR_DEFAULT');
 		}
 
 		if (isset($_GET['id'])) {
@@ -308,12 +308,10 @@ class package_acp_news extends acpPackage{
 			$iNewsId = (int)$_GET['id'];
 		}
 		if ($iNewsId > 0) {
-
-
-			$result = package::$pdb->prepare("SELECT * FROM `lttx1_news_categories` WHERE `id` = ?");
+			$result = self::$pdb->prepare("SELECT * FROM `lttx1_news_categories` WHERE `id` = ?");
 			$result->execute(array($iNewsId));
 			if($result->rowCount() < 1){
-				throw new lttxError('LN_DB_ERRROR_1');
+				throw new LitotexError('LN_DB_ERRROR_1');
 				return true;
 			}
 
@@ -322,9 +320,9 @@ class package_acp_news extends acpPackage{
 			$cat_description =$result['description'];
 		}
 
-		package::$tpl->assign('cat_titel', $cat_titel );
-		package::$tpl->assign('cat_description', $cat_description );
-		package::$tpl->assign('edit_id', $iNewsId );
+		Package::$tpl->assign('cat_titel', $cat_titel );
+		Package::$tpl->assign('cat_description', $cat_description );
+		Package::$tpl->assign('edit_id', $iNewsId );
 
 		return true;
 	}
@@ -339,13 +337,13 @@ class package_acp_news extends acpPackage{
 		if(isset($_POST['OvalueTitle'])){
 			$cat_title = $_POST['OvalueTitle'];
 		} else {
-			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
+			throw new LitotexInfo('LN_NEWS_ERROR_DEFAULT');
 		}
 
 		if(isset($_POST['OvalueDesc'])){
 			$cat_description = $_POST['OvalueDesc'];
 		} else {
-			throw new lttxInfo('LN_NEWS_ERROR_DEFAULT');
+			throw new LitotexInfo('LN_NEWS_ERROR_DEFAULT');
 		}
 
 		if ($iNewsID > 0) {
@@ -383,7 +381,7 @@ class package_acp_news extends acpPackage{
 * @return int
 */
 	private function _getCommentCount($ID){
-		$result = package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".package::$pdbn."_news_comments` WHERE `news` = ?");	
+		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ?");	
 		$result->execute(array($ID));
 		if($result->rowCount() < 1)
             return 0;

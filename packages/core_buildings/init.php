@@ -32,7 +32,7 @@ include_once('classes/building.class.php');
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  * @hooks: None as this class has no features to be serious
  */
-class package_core_buildings extends package{
+class package_core_buildings extends Package{
 	protected $_availableActions = array('main');
 	/**
 	 * Name of the module, please do not change this!
@@ -50,8 +50,8 @@ class package_core_buildings extends package{
      * @return bool
      */
 	public function __action_main(){
-		if(!package::$user)return false;
-		$territory = territory::getUserTerritories(package::$user);
+		if(!Package::$user)return false;
+		$territory = territory::getUserTerritories(Package::$user);
 		self::$tpl->assign("buildings", $territory[0]->getBuildings());
 		$buildings = $territory[0]->getBuildings();
 		$territory[0]->increaseBuildingLevel(1);

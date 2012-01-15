@@ -29,7 +29,7 @@
  * @package terms_and_conditions
 
  */
-class package_terms_and_conditions extends package {
+class package_terms_and_conditions extends Package {
     /**
      * Package name
      * @var string

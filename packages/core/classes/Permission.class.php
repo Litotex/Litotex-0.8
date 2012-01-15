@@ -30,7 +30,7 @@
 require_once("userPerm.class.php");
 require_once("userGroupPerm.class.php");
 
-class perm {
+class Permission {
 
 	protected $_iAssociateType 	= 0;
 	protected $_iAssociateID 	= 0;
@@ -109,13 +109,13 @@ class perm {
 	 **/
 	public function deleteAllPerissions(){
 		$sSql = " DELETE FROM
-						`lttx".package::$pdbn."_permissions` 
+						`lttx".Package::$pdbn."_permissions` 
 					WHERE
 						`associateType` = ? AND 
 						`associateID` = ? ";
 
 		$aSql = array($this->_iAssociateType, $this->_iAssociateID);
-		package::$pdb->prepare($sSql)->execute($aSql);
+		Package::$pdb->prepare($sSql)->execute($aSql);
 	}
 
 	/**
@@ -172,7 +172,7 @@ class perm {
 
 			$sSql = "
 				INSERT INTO
-					`lttx".package::$pdbn."_permissions`
+					`lttx".Package::$pdbn."_permissions`
 				SET
 			".$sSqlSetPart;
 
@@ -180,7 +180,7 @@ class perm {
 
 			$sSql = "
 				UPDATE
-					`lttx".package::$pdbn."_permissions`
+					`lttx".Package::$pdbn."_permissions`
 				SET
 					".$sSqlSetPart."   
 				WHERE   
@@ -206,7 +206,7 @@ class perm {
 						$sClass
 					);
 	
-	   	package::$pdb->prepare($sSql)->execute($aSql);
+	   	Package::$pdb->prepare($sSql)->execute($aSql);
 
 		return true;
 
@@ -250,7 +250,7 @@ class perm {
 				SELECT 
 					`permissionLevel`
 				FROM 
-					`lttx".package::$pdbn."_permissions`
+					`lttx".Package::$pdbn."_permissions`
 				WHERE 
 					`associateType` = ? AND 
 					`associateID` = ? AND 
@@ -264,7 +264,7 @@ class perm {
 		}
 
 		$aSql = array($this->_iAssociateType, $this->_iAssociateID, $sPackage, $sFunction, $sClass);
-		$mPermissionQuery = package::$pdb->prepare($sSql);
+		$mPermissionQuery = Package::$pdb->prepare($sSql);
 		$mPermissionQuery->execute($aSql);
 		$mPermissionQuery = $mPermissionQuery->fetch();
 		if(!isset($mPermissionQuery[0]))
@@ -294,12 +294,12 @@ class perm {
 					SELECT 
 						*
 					FROM 
-						`lttx".package::$pdbn."_permissions_available`
+						`lttx".Package::$pdbn."_permissions_available`
 					ORDER BY
 						`package`, `function`
 					";
 				
-			$aSelect = package::$pdb->prepare($sSql);
+			$aSelect = Package::$pdb->prepare($sSql);
 			$aResult = $aSelect->fetch(PDO::FETCH_ASSOC);
 			if(!empty($aResult)){
 				self::$_aAvailablePermissons = $aResult;
@@ -308,11 +308,11 @@ class perm {
 	}
 
         public static function clearAvailableTable($packageDir, $type = 2){
-        	$delete = package::$pdb->prepare("DELETE FROM `lttx".package::$pdbn."_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
+        	$delete = Package::$pdb->prepare("DELETE FROM `lttx".Package::$pdbn."_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
             $delete->execute(array($type, $packageDir));
         }
         public static function registerAvailable($name, $class, $function, $packageDir, $type = 2){
-        	$insert = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
+        	$insert = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
         	$insert->execute(array($type, $name, $class, $function, $packageDir));
         }
 }

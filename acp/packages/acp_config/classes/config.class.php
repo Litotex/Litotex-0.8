@@ -32,7 +32,7 @@ require_once "configDBConnector.class.php";
  * This one handles config elements
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  */
-class configPluginHandler extends plugin_handler{
+class configPluginHandler extends PluginHandler{
 	/**
 	 * Handlername
 	 * @var string
@@ -123,12 +123,12 @@ class configElement{
 	}
 	/**
 	 * Returns the value send by form uncleaned or checked
-	 * @throws lttxFatalError if there is no data to get for this name (means wrong or manipulated form in general)
+	 * @throws LitotexFatalError if there is no data to get for this name (means wrong or manipulated form in general)
 	 * @return mixed
 	 */
 	private function _getSystemSaveValue(){
 		if(!isset($_POST[$this->_nodeName]))
-			throw new lttxFatalError('Unable to fetch value for ' . $this->_nodeName . '. Use the predefined form!');
+			throw new LitotexFatalError('Unable to fetch value for ' . $this->_nodeName . '. Use the predefined form!');
 		return $_POST[$this->_nodeName];
 	}
 	/**
@@ -164,13 +164,13 @@ class config{
 	 * Initialize default Values for every element.
 	 * Does not generate a form!
 	 * @param array $defaultData strings for default values
-	 * @throws lttxFatalError on error
+	 * @throws LitotexFatalError on error
 	 * @return void
 	 */
 	public function __construct($defaultData = array()){
-		package::addJsFile('main.js', 'acp_config');
+		Package::addJsFile('main.js', 'acp_config');
 		if(!is_array($defaultData)){
-			throw new lttxFatalError('Default config data need to be passed as an array.');
+			throw new LitotexFatalError('Default config data need to be passed as an array.');
 		}
 		$this->_defaultData = $defaultData;
 		$this->_pluginHandler = new configPluginHandler();
@@ -183,17 +183,17 @@ class config{
 	 * @param array $settings settings for the plugin (check references in plugin code or further documentation)
 	 * @param string $default Default value if NON other was set in __construct.
 	 * @param string $label Label to display in HTML
-	 * @throws lttxFatalError on plugin problems
+	 * @throws LitotexFatalError on plugin problems
 	 * @return bool
 	 */
 	public function addElement($name, $type, $settings, $default, $label){
 		$exists = $this->_pluginHandler->callPluginFunc($type, 'exists');
 		if(!$exists)
-			throw new lttxFatalError('Config plugin ' . $name . ' could not be found within the plugin directory.');
+			throw new LitotexFatalError('Config plugin ' . $name . ' could not be found within the plugin directory.');
 		$settings = $this->_pluginHandler->callPluginFunc($type, 'cleanSettings', array($settings));
 		$return = $this->_pluginHandler->callPluginFunc($type, 'registerElement', array($name, $settings, $default, $label));
 		if(!is_a($return, 'configElement'))
-			throw new lttxFatalError('Config plugin ' . $name . ' could not initialize a new element, it returned an undefined problem.');
+			throw new LitotexFatalError('Config plugin ' . $name . ' could not initialize a new element, it returned an undefined problem.');
 		$this->_elements[] = $return;
 		return true;
 	}
@@ -206,9 +206,9 @@ class config{
 		foreach($this->_elements as $element){
 			$formCode .= $element->getHTML();
 		}
-		package::$tpl->assign('formCode', $formCode);
-		package::loadLang(package::$tpl, 'acp_config');
-		$return = package::$tpl->fetch(package::getTplDir('acp_config') . 'defaultConfig.tpl');
+		Package::$tpl->assign('formCode', $formCode);
+		Package::loadLang(Package::$tpl, 'acp_config');
+		$return = Package::$tpl->fetch(Package::getTplDir('acp_config') . 'defaultConfig.tpl');
 		return $return;
 	}
 	/**

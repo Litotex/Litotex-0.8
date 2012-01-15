@@ -25,42 +25,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-/**
- * It's a simple login module
- *
- * @author: Litotex Team
- * @copyright: 2010
- */
-class package_acp_login extends acpPackage {
-    /**
-     * Package name
-     * @var string
-     */
-    protected $_packageName = 'acp_login';
-    /**
-     * Avaibilbe actions in this package
-     * @var array
-     */
-    protected $_availableActions = array('main','loginSubmit');
-    /**
-     * Register all hooks of this package
-     * @return bool
-     */
-    public function __action_main() {
-        return true;
-    }
-    public function __action_loginSubmit(){
-    	if(!(isset($_POST['username']) && isset($_POST['password']) && $_POST['username'] && $_POST['password']))
-    		throw new LitotexInfo('acp_login_UsernamePasswordMissing');
-    	$controllUser = User::login($_POST['username'], $_POST['password']);
 
-       	if(!$controllUser || !User::compare(Package::$user, $controllUser)){
-    		throw new LitotexInfo('acp_login_UsernamePasswordWrong');
-    	}
+class LitotexFatalError extends Exception {
 
-    	Package::$user->setAcpLogin();
-    	header('Location:index.php');
-    	exit();
-    	return true;
+    private $_oID = false;
+
+    public function __construct($message = '', $package = false) {
+        Package::loadLang(Package::$tpl);
+        $this->message = Package::getLanguageVar('E_fatalErrorOccured');
+        $this->message .= '<br /><b>'.nl2br($message).'</b>';
+        $this->_log($message, $package);
     }
+
+    private function _log($message, $package) {
+        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, '##'.$this->getFile().'('.$this->getLine().'):'.$message."\n".$this->getTraceAsString()));
+        $this->_oID = Package::$pdb->lastInsertId();
+    }
+
+    public function setTraced($option) {
+        if (!$this->_oID)
+            return false;
+        Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_oID));
+    }
+
 }

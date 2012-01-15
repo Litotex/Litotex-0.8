@@ -58,7 +58,7 @@ class package_acp_log_viewer extends acpPackage{
 		$sord = isset($_GET['sord'])?$_GET['sord']:"DESC";
 		
 	
-		$result =  package::$pdb->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='0' ");
+		$result =  Package::$pdb->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='0' ");
 		$result = $result->fetch(); 
 		$count = $result['count'];
 		$limit=$count;
@@ -73,7 +73,7 @@ class package_acp_log_viewer extends acpPackage{
 		$start = $limit*$page - $limit; // do not put $limit*($page - 1) 
 	
 		$SQL = "SELECT lttx1_log.*, lttx1_users.username  FROM lttx1_log LEFT OUTER JOIN lttx1_users ON (lttx1_log.userid=lttx1_users.ID)  where log_type ='0' ORDER BY $sidx $sord LIMIT $start , $limit"; 
-		$result =  package::$pdb->query($SQL );
+		$result =  Package::$pdb->query($SQL );
 		
 		$responce->page = $page; 
 		$responce->total = $total_pages; 
@@ -107,7 +107,7 @@ class package_acp_log_viewer extends acpPackage{
 		$sord = isset($_GET['sord'])?$_GET['sord']:"DESC";
 		
 	
-		$result =  package::$pdb->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='1' ");
+		$result =  Package::$pdb->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='1' ");
 		$result = $result->fetch(); 
 		$count = $result['count'];
 		$limit=$count;
@@ -122,7 +122,7 @@ class package_acp_log_viewer extends acpPackage{
 		$start = $limit*$page - $limit; // do not put $limit*($page - 1) 
 	
 		$SQL = "SELECT *  FROM lttx1_log  where log_type ='1' ORDER BY $sidx $sord LIMIT $start , $limit"; 
-		$result =  package::$pdb->query($SQL );
+		$result =  Package::$pdb->query($SQL );
 		
 		$responce->page = $page; 
 		$responce->total = $total_pages; 

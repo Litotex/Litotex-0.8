@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class userGroup extends Basis_Entry {
+class UserGroup extends Basis_Entry {
 
 	protected $_sTableName = 'lttx1_user_groups';
 	static protected $_sClassName = 'userGroup';
@@ -86,7 +86,7 @@ class userGroup extends Basis_Entry {
      * @return array
      */
     public function getUsers(){
-        $result = package::$pdb->prepare("
+        $result = Package::$pdb->prepare("
             SELECT `userID`
             FROM `lttx1_user_group_connections`
             WHERE `groupID` = ?");
@@ -95,24 +95,24 @@ class userGroup extends Basis_Entry {
             return false;
         $return = array();
         foreach($result as $user){
-            $return[] = new user($user[0]);
+            $return[] = new User($user[0]);
         }
         return $return;
     }
 	
     /**
      * This will add a user to the selected group
-     * @param user $user
+     * @param User $user
      * @return bool
      */
-    public function addUser(user $user){
+    public function addUser(User $user){
         if(!is_a($user, 'user'))
                 return false;
         $ID = $user->getUserID();
         if($ID === false)
             return false;
         //Check if already in first...
-        $result = package::$pdb->prepare("
+        $result = Package::$pdb->prepare("
             SELECT COUNT(`ID`)
             FROM  `lttx1_user_group_connections`
             WHERE `userID` = ?
@@ -124,7 +124,7 @@ class userGroup extends Basis_Entry {
         if($result[0] > 0)
                 return true;
         //end check
-        $result = package::$pdb->prepare("
+        $result = Package::$pdb->prepare("
             INSERT INTO `lttx1_user_group_connections`
             (`userID`, `groupID`)
             VALUES
@@ -136,15 +136,15 @@ class userGroup extends Basis_Entry {
 	
     /**
      * This will kick a user from the selected group
-     * @param user $user
+     * @param User $user
      * @return bool
      */
-    public function removeUser(user $user){
+    public function removeUser(User $user){
         $ID = $user->getUserID();
         if($ID === false)
             return false;
-        $result = package::$pdb->prepare("
-            DELETE FROM `lttx".package::$pdbn."_userGroupConnections`
+        $result = Package::$pdb->prepare("
+            DELETE FROM `lttx".Package::$pdbn."_userGroupConnections`
             WHERE `userID` = ?
             AND `groupID` = ?");
 		$result->execute(array($ID, $this->ID));
@@ -168,7 +168,7 @@ class userGroup extends Basis_Entry {
 			return false;
 		}
 
-       package::$pdb->prepare("
+       Package::$pdb->prepare("
             DELETE FROM `lttx1_user_group_connections`
             WHERE `groupID` = ?")->execute(array($this->ID));
 
@@ -179,7 +179,7 @@ class userGroup extends Basis_Entry {
 	
     public static function getDefault(){
     	$return = array();
-        $result = package::$pdb->prepare("
+        $result = Package::$pdb->prepare("
             SELECT `ID`
             FROM `lttx1_user_groups`
             WHERE `default` = ?");
@@ -188,7 +188,7 @@ class userGroup extends Basis_Entry {
         if($result->rowCount() < 1)
                 return false;
         foreach($result as $group){
-            $return[] = new userGroup($group[0]);
+            $return[] = new UserGroup($group[0]);
         }
         return $return;
     }

@@ -116,7 +116,7 @@ class diff {
 
 	function inline($old, $new, $linepadding=null){
 		$this->linepadding = $linepadding;
-                $ret = package::$tpl->fetch(package::getTplDir('acp_diff') . 'tableHeader.tpl');
+                $ret = Package::$tpl->fetch(Package::getTplDir('acp_diff') . 'tableHeader.tpl');
 		$count_old = 1;
 		$count_new = 1;
 
@@ -138,11 +138,11 @@ class diff {
 							if ($insert) $class = '';
 							$insert = false;
 						}
-						package::$tpl->assign('oldLine', $count_old);
-                                                package::$tpl->assign('newLine', ' ');
-                                                package::$tpl->assign('code', $this->formatcode($val));
-                                                package::$tpl->assign('cssClass', 'del ' . $class);
-                                                $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
+						Package::$tpl->assign('oldLine', $count_old);
+                                                Package::$tpl->assign('newLine', ' ');
+                                                Package::$tpl->assign('code', $this->formatcode($val));
+                                                Package::$tpl->assign('cssClass', 'del ' . $class);
+                                                $ret .= Package::$tpl->fetch(Package::getTplDir('acp_diff').'lineElement.tpl');
 						$count_old++;
 					}
 					foreach ($k['i'] as $val){
@@ -153,11 +153,11 @@ class diff {
 							if ($delete) $class = '';
 							$delete = false;
 						}
-						package::$tpl->assign('oldLine', ' ');
-                                                package::$tpl->assign('newLine', $count_new);
-                                                package::$tpl->assign('code', $this->formatcode($val));
-                                                package::$tpl->assign('cssClass', 'ins ' . $class);
-                                                $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
+						Package::$tpl->assign('oldLine', ' ');
+                                                Package::$tpl->assign('newLine', $count_new);
+                                                Package::$tpl->assign('code', $this->formatcode($val));
+                                                Package::$tpl->assign('cssClass', 'ins ' . $class);
+                                                $ret .= Package::$tpl->fetch(Package::getTplDir('acp_diff').'lineElement.tpl');
 						$count_new++;
 					}
 				} else {
@@ -165,11 +165,11 @@ class diff {
 					$class = ($insert) ? 'ins_end' : $class;
 					$delete = false;
 					$insert = false;
-                                        package::$tpl->assign('oldLine', $count_old);
-                                        package::$tpl->assign('newLine', $count_new);
-                                        package::$tpl->assign('code', $this->formatcode($k));
-                                        package::$tpl->assign('cssClass', $class);
-                                        $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
+                                        Package::$tpl->assign('oldLine', $count_old);
+                                        Package::$tpl->assign('newLine', $count_new);
+                                        Package::$tpl->assign('code', $this->formatcode($k));
+                                        Package::$tpl->assign('cssClass', $class);
+                                        $ret .= Package::$tpl->fetch(Package::getTplDir('acp_diff').'lineElement.tpl');
 					$count_old++;
 					$count_new++;
 				}
@@ -181,18 +181,18 @@ class diff {
 
 				if (!$truncate){
 					$truncate = true;
-                                        package::$tpl->assign('oldLine', '...');
-                                        package::$tpl->assign('newLine', '...');
-                                        package::$tpl->assign('code', ' ');
-                                        package::$tpl->assign('cssClass', 'truncated '.$class);
-                                        $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'lineElement.tpl');
+                                        Package::$tpl->assign('oldLine', '...');
+                                        Package::$tpl->assign('newLine', '...');
+                                        Package::$tpl->assign('code', ' ');
+                                        Package::$tpl->assign('cssClass', 'truncated '.$class);
+                                        $ret .= Package::$tpl->fetch(Package::getTplDir('acp_diff').'lineElement.tpl');
 				}
 				$count_old++;
 				$count_new++;
 
 			}
 		}
-                $ret .= package::$tpl->fetch(package::getTplDir('acp_diff').'tableFooter.tpl');
+                $ret .= Package::$tpl->fetch(Package::getTplDir('acp_diff').'tableFooter.tpl');
 		return $ret;
 	}
 }

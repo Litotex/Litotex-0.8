@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-abstract class installer {
+abstract class Installer {
 
     private $_location = false;
     private $_initialized = false;
@@ -73,16 +73,16 @@ abstract class installer {
         try {
             $this->_backup = $this->_pm->createBackup($this->_packageName);
         } catch (Exception $e) {
-            $this->addLog(package::getLanguageVar('acp_packageManager_noBackupTaken'));
+            $this->addLog(Package::getLanguageVar('acp_packageManager_noBackupTaken'));
         }
         if (!isset($fileBlacklist['tpl']))
             $fileBlacklist['tpl'] = array();
         if (!isset($fileBlacklist['package']))
             $fileBlacklist['package'] = array();
-        packages::recursiveCopy($this->_location . '/template', $this->_templateDir . 'default/' . $this->_packageName, $fileBlacklist['tpl']);
-        $this->addLog(package::getLanguageVar('acp_packageManager_tplFileCopy'));
-        packages::recursiveCopy($this->_location . '/package', $this->_packageDir . $this->_packageName, $fileBlacklist['package']);
-        $this->addLog(package::getLanguageVar('acp_packageManager_packageFileCopy'));
+        PackageManager::recursiveCopy($this->_location . '/template', $this->_templateDir . 'default/' . $this->_packageName, $fileBlacklist['tpl']);
+        $this->addLog(Package::getLanguageVar('acp_packageManager_tplFileCopy'));
+        PackageManager::recursiveCopy($this->_location . '/package', $this->_packageDir . $this->_packageName, $fileBlacklist['package']);
+        $this->addLog(Package::getLanguageVar('acp_packageManager_packageFileCopy'));
         $this->_patchDatabase(true, $dbBlacklist);
         $this->_freeInstall();
     }
@@ -104,14 +104,14 @@ abstract class installer {
             return true;
         foreach ($data->query as $query) {
             if(in_array(md5($query), $blackList)) continue;
-            if (packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 || packages::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 && $install) {
-                $this->addLog(sprintf(package::getLanguageVar('acp_packageManager_packageSqlQuery'), $query));
-                $result = package::$pdb->query($query); //TODO Replace with $dbn
+            if (PackageManager::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 || PackageManager::compareVersionNumbers($this->_versionOld, $query->attributes()->version) == 1 && $install) {
+                $this->addLog(sprintf(Package::getLanguageVar('acp_packageManager_packageSqlQuery'), $query));
+                $result = Package::$pdb->query($query); //TODO Replace with $dbn
                 $errorMsg = $result->errorCode();
                 if ($errorMsg) {
-                    $this->addLog(sprintf(package::getLanguageVar('acp_packageManager_packageSqlQueryReturn'), $errorMsg));
+                    $this->addLog(sprintf(Package::getLanguageVar('acp_packageManager_packageSqlQueryReturn'), $errorMsg));
                     if ($install)
-                        $this->addLog(package::getLanguageVar('acp_packageManager_packageRollback'));
+                        $this->addLog(Package::getLanguageVar('acp_packageManager_packageRollback'));
                     try {
                         if ($install) {
                             $this->rollback();

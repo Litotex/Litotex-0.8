@@ -31,7 +31,7 @@
  * @author: Litotex Team
  * @copyright: 2010
  */
-class package_login extends package {
+class package_login extends Package {
     /**
      * Package name
      * @var string
@@ -64,13 +64,13 @@ class package_login extends package {
      *Hook function for LoginBox
     */
 	public static function __hook_showLoginBox() {
-		package::addCssFile('login.css', 'login');
+		Package::addCssFile('login.css', 'login');
 
-		if(!package::$user){
-			package::$tpl->display(self::getTplDir('login') . 'login_template.tpl');
+		if(!Package::$user){
+			Package::$tpl->display(self::getTplDir('login') . 'login_template.tpl');
 		}else{
-			package::$tpl->assign('USERNAME',package::$user->getUsername() );
-			package::$tpl->display(self::getTplDir('login') . 'loggedin_template.tpl');
+			Package::$tpl->assign('USERNAME',Package::$user->getUsername() );
+			Package::$tpl->display(self::getTplDir('login') . 'loggedin_template.tpl');
 		}
         return true;
     } 
@@ -87,14 +87,14 @@ class package_login extends package {
      *Logout an destrooy Session
     */
 	public function __action_logout() {
-			if(package::$user){
-				package::$user->logout();
+			if(Package::$user){
+				Package::$user->logout();
 				header("Location: index.php"); 
 				exit();
 			}
 	}
 	public function __action_forget() {
-		package::$tpl->display(self::getTplDir('login') . 'login_forget.tpl');
+		Package::$tpl->display(self::getTplDir('login') . 'login_forget.tpl');
 	}
 	
 	public function __action_forget_submit() {
@@ -102,29 +102,29 @@ class package_login extends package {
 
 		$pos = strpos ($email, "@");
 		if ($pos < 1 ) { 
-			throw new lttxError('LN_LOGIN_FORGET_NOTE3');
+			throw new LitotexError('LN_LOGIN_FORGET_NOTE3');
 			exit();
 		}
 		
-		if(package::$user){
+		if(Package::$user){
 				header("Location: index.php"); 
 				exit();
 			}
 		
-		$result = package::$pdb->prepare("
+		$result = Package::$pdb->prepare("
             SELECT *
-            FROM `lttx".package::$pdbn."_users`
+            FROM `lttx".Package::$pdbn."_users`
             WHERE `email` = ?");
 		$result->execute($email);
 		
 		
 		if($result->rowCount() < 1){
-				throw new lttxError('LN_LOGIN_FORGET_ERROR_1');
+				throw new LitotexError('LN_LOGIN_FORGET_ERROR_1');
 				return true;
 		}
 		
 		if ($result->rowCount() > 1 ){
-			throw new lttxError('LN_LOGIN_FORGET_ERROR');
+			throw new LitotexError('LN_LOGIN_FORGET_ERROR');
 			return true;
 		}
 		
@@ -142,13 +142,13 @@ class package_login extends package {
 			$password .= $pool{rand(0, strlen($pool)-1)};
 		}
 		
-		$MailSubject=package::$tpl->get_config_vars('LN_LOGIN_MAIL_SUBJECT');
-		$MailMessage=package::$tpl->get_config_vars('LN_LOGIN_MAIL_MESSAGE');
+		$MailSubject=Package::$tpl->get_config_vars('LN_LOGIN_MAIL_SUBJECT');
+		$MailMessage=Package::$tpl->get_config_vars('LN_LOGIN_MAIL_MESSAGE');
 		
 		$MailMessage = str_replace("%%Username%%", $forgetUsername, $MailMessage);
 		$MailMessage = str_replace("%%Password%%", $password, $MailMessage);
 
-		$forget_password_user=new user($forgetUserID);
+		$forget_password_user=new User($forgetUserID);
 		$forget_password_user->setPassword($password);
 		$forget_password_user->logout();
 		
@@ -156,7 +156,7 @@ class package_login extends package {
 		$ret=package_mail::sendMailPlain($email,$MailSubject,$MailMessage);
 		
 		if ($ret){
-			throw new lttxInfo('LN_LOGIN_FORGET_OK');
+			throw new LitotexInfo('LN_LOGIN_FORGET_OK');
 			return true;
 		}
 		
@@ -166,17 +166,17 @@ class package_login extends package {
 	
     public function __action_loginsubmit() {
 		if (!isset($_POST['username'])){
-			throw new lttxError('login_noUsername');
+			throw new LitotexError('login_noUsername');
 		}
 		if(!isset($_POST['password'])){
-			throw new lttxError('login_noUsername');
+			throw new LitotexError('login_noUsername');
 		}
-		$user = user::login($_POST['username'],$_POST['password']);
+		$user = User::login($_POST['username'],$_POST['password']);
 		if(!$user){
-			$sError = user::$sLastLoginError;
-			throw new lttxError($sError);
+			$sError = User::$sLastLoginError;
+			throw new LitotexError($sError);
 		}
-		package::$log->debug('user '.$_POST['username'].' logged in') ;
+		Package::$log->debug('user '.$_POST['username'].' logged in') ;
 		header("Location:index.php");
 		exit();
     }

@@ -95,7 +95,7 @@ class ressource{
 			$add .= ', `increaseFormula`';
 		if($limit)
 			$add .= ', `limit`';
-		$res = package::$pdb->prepare("SELECT `resID`, `resNum`" . $add . " FROM `lttx".package::$pdbn."_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?");
+		$res = Package::$pdb->prepare("SELECT `resID`, `resNum`" . $add . " FROM `lttx".Package::$pdbn."_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?");
 		$res->execute(array($id, $race));
 		if($res->rowCount() < 1)
 			throw new Exception('Selected ressource table "' . $table . '" was not found or incompatible');
@@ -109,13 +109,13 @@ class ressource{
 				$this->_limit[$element[0]] = $element[$i++];
 			}
 		}
-		$checkRes = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_ressources` WHERE `raceID` = ?");
+		$checkRes = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_ressources` WHERE `raceID` = ?");
 		$checkRes->execute(array($race));
 		foreach($checkRes as $element){
 			if(isset($this->_res[$element[0]])){
 				continue;
 			}
-			package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)")->execute(array($element[0], $race, $id));
+			Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)")->execute(array($element[0], $race, $id));
 			$this->_res[$element[0]] = 0;
 		}
 		$this->_race = $race;
@@ -139,10 +139,10 @@ class ressource{
 	}
 	public function useFormula($x){
 		foreach($this->_resFormula as $id => $formula){
-			if(!math::verifyFormula($formula))
+			if(!Math::verifyFormula($formula))
 				return false;
-			$formula = math::replaceX($formula, $x);
-			$this->_res[$id] = math::calculateString($formula);
+			$formula = Math::replaceX($formula, $x);
+			$this->_res[$id] = Math::calculateString($formula);
 		}
 		return true;
 	}
@@ -224,7 +224,7 @@ class ressource{
 		if(!isset($this->_limit[$resID]))
 			return false;
 		$this->_limit[$resID] = $newValue;
-		package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?")->execute(array($newValue, $resID, $this->_race, $this->_src));
+		Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?")->execute(array($newValue, $resID, $this->_race, $this->_src));
 		return true;
 	}
 	/**
@@ -266,7 +266,7 @@ class ressource{
 	 * @return array
 	 */
 	public function getAllRessName(){
-		$names = package::$pdb->prepare("SELECT `ID`, `name` FROM `lttx".package::$pdbn."_ressources` WHERE `raceID` = ?");
+		$names = Package::$pdb->prepare("SELECT `ID`, `name` FROM `lttx".Package::$pdbn."_ressources` WHERE `raceID` = ?");
 		$names->execute(array($this->_race));
 		$return = array();
 		foreach($names as $name){
@@ -298,7 +298,7 @@ class ressource{
 	 */
 	public function flush(){
 		foreach($this->_changed as $value){
-			package::$pdb->prepare('UPDATE `lttx".package::$pdbn."_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?')->execute(array($this->_res[$value], $this->_src, $value, $this->_race));
+			Package::$pdb->prepare('UPDATE `lttx".package::$pdbn."_' . $this->_table . 'Ressources` SET `resNum` = ? WHERE `sourceID` = ? AND `resID` = ? AND `raceID` = ?')->execute(array($this->_res[$value], $this->_src, $value, $this->_race));
 		}
 		$this->_changed = array();
 		return true;

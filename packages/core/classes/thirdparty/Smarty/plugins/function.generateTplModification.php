@@ -32,7 +32,7 @@ function smarty_function_generateTplModification($params, &$smarty)
 
     ob_start();
     
-    package::$packages->displayTplModification($position, $surrounddiv);
+    Package::$packages->displayTplModification($position, $surrounddiv);
 
     if(!$out){
         $out = array();
@@ -42,7 +42,7 @@ function smarty_function_generateTplModification($params, &$smarty)
 	
     ob_end_clean();
 
-	$hookCache = package::$packages->callHook('generateTplModification', array($sHtml, $position));
+	$hookCache = Package::$packages->callHook('generateTplModification', array($sHtml, $position));
 	$sHtml = ($hookCache === true) ? $sHtml : $hookCache;
 
 	$out[$position] = $sHtml;

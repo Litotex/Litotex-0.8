@@ -32,7 +32,7 @@
  * @author: Litotex Team
  * @copyright: 2010
  */
-class package_tplSwitcher extends package {
+class package_tplSwitcher extends Package {
 	/**
 	 * Package name
 	 * @var string
@@ -71,10 +71,10 @@ class package_tplSwitcher extends package {
 	 * @return bool
 	 */
 	public static function __hook_showTemplateSwitch() {
-		package::addCssFile('switch.css', 'tplSwitcher');
+		Package::addCssFile('switch.css', 'tplSwitcher');
 		$dir = opendir(TEMPLATE_DIRECTORY);
 		$tpls = array();
-		$option = new option('tplSwitcher');
+		$option = new Option('tplSwitcher');
 		$now = $option->get('tpl');
 		if(!$now){
 			$option->add('tpl', 'default', 'default');
@@ -86,8 +86,8 @@ class package_tplSwitcher extends package {
 			if(is_dir(TEMPLATE_DIRECTORY . $file))
 			$tpls[] = array($file, ($now == $file)?true:false);
 		}
-		package::$tpl->assign('tpls', $tpls);
-		package::$tpl->display(self::getTplDir('tplSwitcher') . 'switch.tpl');
+		Package::$tpl->assign('tpls', $tpls);
+		Package::$tpl->display(self::getTplDir('tplSwitcher') . 'switch.tpl');
 		return true;
 	}
 	/**
@@ -96,7 +96,7 @@ class package_tplSwitcher extends package {
 	 * @return bool
 	 */
 	public static function __hook_getTemplateName(&$back){
-		$option = new option('tplSwitcher');
+		$option = new Option('tplSwitcher');
 		if(!($var = $option->get('tpl'))){
 			$var = 'default';
 			$option->add('tpl', $var, $var);
@@ -117,7 +117,7 @@ class package_tplSwitcher extends package {
 	}
 	/**
 	 * This will save tpl settings and refers back to index.php
-	 * @throws lttxError
+	 * @throws LitotexError
 	 * @return bool
 	 */
 	public function __action_save(){
@@ -125,9 +125,9 @@ class package_tplSwitcher extends package {
 		return $this->__action_main();
 		$file = $_POST['tpl'];
 		if(!is_dir(TEMPLATE_DIRECTORY . $file)){
-			throw new lttxError('E_tplNotFound');
+			throw new LitotexError('E_tplNotFound');
 		}
-		$option = new option('tplSwitcher');
+		$option = new Option('tplSwitcher');
 		$option->addIfNExists('tpl', $file, 'default');
 		header('Location:index.php');
 		return true;

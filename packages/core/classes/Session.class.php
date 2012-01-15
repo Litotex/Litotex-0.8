@@ -26,10 +26,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class session{
+class Session{
 	/**
 	 * User object
-	 * @var user
+	 * @var User
 	 */
     public $user = false;
     private $_sessionKey = false;
@@ -95,7 +95,7 @@ class session{
      * @param   string  $msg
      */
     public function addHistory($msg){
-        $result = package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)");
+        $result = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_sessions` (`sessionID`, `userID`, `username`, `currentIP`, `message`) VALUES (?, ?, ?, ?, ?)");
         $result->execute(array(hash('sha512', $this->_sessionKey), ($this->user)?$this->user->getUserID():0, ($this->user)?$this->user->getUsername():0, self::getIPAdress(), self::$_historyStringTable[$msg]));
     }
 

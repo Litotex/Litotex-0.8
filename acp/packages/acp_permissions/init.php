@@ -43,7 +43,7 @@ class package_acp_permissions extends acpPackage{
 		//Variable over Get or Post(formular)
 		$_POST = array_merge($_POST, $_GET);
 		if(!isset($_POST['associateType']) || !isset($_POST['associateID']))
-                    throw new lttxError('permissions_no_user_or_group');
+                    throw new LitotexError('permissions_no_user_or_group');
 
 		$iAssociateType = (int)$_POST['associateType'];
 		$iAssociateID 	= (int)$_POST['associateID'];
@@ -55,13 +55,13 @@ class package_acp_permissions extends acpPackage{
 			try  {
 
 				if($iAssociateType == 1){
-					$oAssociate = new user($iAssociateID);
+					$oAssociate = new User($iAssociateID);
 				} else {
-					$oAssociate = new userGroup($iAssociateID);
+					$oAssociate = new UserGroup($iAssociateID);
 				}
 
 			} catch (Exception $e) {
-				throw new lttxError('permissions_no_user_or_group');
+				throw new LitotexError('permissions_no_user_or_group');
 			}
 
 
@@ -69,7 +69,7 @@ class package_acp_permissions extends acpPackage{
 			self::$tpl->assign('iAssociateType', $iAssociateType);
 			self::$tpl->assign('iAssociateID', $iAssociateID);
 
-			$oPermission = new perm($iAssociateType, $iAssociateID);
+			$oPermission = new Permission($iAssociateType, $iAssociateID);
 
 			$aPermissions = $oPermission->getAvailablePermissions();
 
@@ -98,7 +98,7 @@ class package_acp_permissions extends acpPackage{
 		$iAssociateType = (int)$_POST['associateType'];
 		$iAssociateID 	= (int)$_POST['associateID'];
 
-		$oPermission 	= new perm($iAssociateType, $iAssociateID);
+		$oPermission 	= new Permission($iAssociateType, $iAssociateID);
 
 		//$oPermission->deleteAllPerissions();
 

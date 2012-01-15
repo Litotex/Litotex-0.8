@@ -29,7 +29,7 @@
 /**
  * Packagemanager class to organize packages to be loaded etc.
  */
-class packages {
+class PackageManager {
 
 	/**
 	 * File hook cached is saved in
@@ -102,8 +102,8 @@ class packages {
 	public function __construct($prefix = false, $setPM = true, $packagesDir = false, $tplDir = false) {
 		if ($prefix !== false)
 		$this->_packagePrefix = $prefix;
-		$oldPM = package::$packages;
-		package::setPackageManagerClass($this);
+		$oldPM = Package::$packages;
+		Package::setPackageManagerClass($this);
 		if ($packagesDir)
 		$this->_packagesDir = $packagesDir;
 		if ($tplDir)
@@ -118,7 +118,7 @@ class packages {
 			$this->generateTplModificationCache();
 		}
 		if (!$setPM)
-		package::setPackageManagerClass($oldPM);
+		Package::setPackageManagerClass($oldPM);
 		return;
 	}
 
@@ -156,10 +156,10 @@ class packages {
 	 * @return bool
 	 */
 	public function generateTplModificationCache() {
-		$oldPM = package::$packages;
-		package::setPackageManagerClass($this);
+		$oldPM = Package::$packages;
+		Package::setPackageManagerClass($this);
 		$this->_tplModificationCache = array();
-		perm::clearAvailableTable($this->_packagePrefix);
+		Permission::clearAvailableTable($this->_packagePrefix);
 		if (!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -177,11 +177,11 @@ class packages {
 			}
 		}
 		if (!$this->_orderTplModificationCache()) {
-			throw new lttxFatalError("Could not fetch tplMod settings, this might be a serious database issue!");
+			throw new LitotexFatalError("Could not fetch tplMod settings, this might be a serious database issue!");
 		}
-		package::$pdb->prepare("DELETE FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ?")->execute(array($this->_packagePrefix));
+		Package::$pdb->prepare("DELETE FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ?")->execute(array($this->_packagePrefix));
 		closedir($packages);
-		package::setPackageManagerClass($oldPM);
+		Package::setPackageManagerClass($oldPM);
 		return $this->_writeTplModificationCache();
 	}
 
@@ -200,7 +200,7 @@ class packages {
 		foreach ($this->_tplModificationCache as $position => $list) {
 			$n = 0;
 			foreach ($list as $item) {
-				package::$pdb->prepare("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
+				Package::$pdb->prepare("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
 				$n++;
 			}
 		}
@@ -240,8 +240,8 @@ class packages {
 	 * @return bool
 	 */
 	public function generateHookCache() {
-		$oldPM = package::$packages;
-		package::setPackageManagerClass($this);
+		$oldPM = Package::$packages;
+		Package::setPackageManagerClass($this);
 		if (!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -258,7 +258,7 @@ class packages {
 				return false;
 			}
 		}
-		package::setPackageManagerClass($oldPM);
+		Package::setPackageManagerClass($oldPM);
 		return $this->_writeHookCache();
 	}
 
@@ -267,7 +267,7 @@ class packages {
 	 * @return bool
 	 */
 	private function _orderTplModificationCache() {
-		$database = package::$pdb->prepare("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ? ORDER BY `sort` ASC");
+		$database = Package::$pdb->prepare("SELECT `class`, `function`, `position`, `sort`, `active` FROM `lttx1_tpl_modification_sort` WHERE `packageDir` = ? ORDER BY `sort` ASC");
 		$database->execute(array($this->_packagePrefix));
 
 		$cache = array();
@@ -339,7 +339,7 @@ class packages {
 		}
 		if (!method_exists($class, '__tpl_' . $function))
 		return false;
-		perm::registerAvailable($packageName, $class, $function, $this->_packagePrefix);
+		Permission::registerAvailable($packageName, $class, $function, $this->_packagePrefix);
 		$this->_tplModificationCache[$class . ':' . $function] = array($class, $function, $file, $packageName, false);
 		return true;
 	}
@@ -385,15 +385,15 @@ class packages {
 	 * @return bool on failure | instance of class | true if not initialized
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true, $loadDep = true) {
-		if (!in_array($packageName, $this->_loadedLang) && is_a(package::$tpl, 'Smarty')) {
+		if (!in_array($packageName, $this->_loadedLang) && is_a(Package::$tpl, 'Smarty')) {
 			$this->_loadedLang[] = $packageName;
-			package::loadLang(package::$tpl, $packageName);
+			Package::loadLang(Package::$tpl, $packageName);
 		}
 		$dep = array();
 		if (isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true) {
-			if (!in_array($packageName, $this->_loadedLang) && is_a(package::$tpl, 'Smarty')) {
+			if (!in_array($packageName, $this->_loadedLang) && is_a(Package::$tpl, 'Smarty')) {
 				$this->_loadedLang[] = $packageName;
-				package::loadLang(package::$tpl, $packageName);
+				Package::loadLang(Package::$tpl, $packageName);
 			}
 			include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
 			if ($loadDep)
@@ -418,8 +418,8 @@ class packages {
 	 * Gets all dependencies of a package
 	 * @param string $package Name of package
 	 * @param int $type -1 = loadDep 0 = all 1 = usualDep
-	 * @throws lttxFatalError
-	 * @throws lttxError
+	 * @throws LitotexFatalError
+	 * @throws LitotexError
 	 */
 	private function _getPackageDependencies($package, $type = 0) {
 		$dep = array();
@@ -484,9 +484,9 @@ class packages {
 	 * @return bool
 	 */
 	public function generateDependencyCache() {
-		$oldPM = package::$packages;
-		package::setPackageManagerClass($this);
-		perm::clearAvailableTable($this->_packagePrefix, 1);
+		$oldPM = Package::$packages;
+		Package::setPackageManagerClass($this);
+		Permission::clearAvailableTable($this->_packagePrefix, 1);
 		if (!is_dir($this->_packagesDir))
 		return false;
 		$packages = opendir($this->_packagesDir);
@@ -504,7 +504,7 @@ class packages {
 			}
 		}
 		$this->_checkDependency();
-		package::setPackageManagerClass($oldPM);
+		Package::setPackageManagerClass($oldPM);
 		return $this->_writeDependencyCache();
 	}
 
@@ -553,7 +553,7 @@ class packages {
 		$pack = $this->loadPackage($path, false, false, false);
 		$actions = $pack->getActions();
 		foreach ($actions as $action) {
-			perm::registerAvailable($path, $class, $action, $this->_packagePrefix, 1);
+			Permission::registerAvailable($path, $class, $action, $this->_packagePrefix, 1);
 		}
 		return true;
 	}
@@ -631,15 +631,15 @@ class packages {
 		try {
 			@$xmlData = new SimpleXMLElement($data);
 		} catch (Exception $e) {
-			throw new lttxError('E_couldNotRetrievePackageList');
+			throw new LitotexError('E_couldNotRetrievePackageList');
 		}
 		$systemData = $xmlData->attributes();
 		if ($systemData['responsetype'] != 'packageList') {
-			throw new lttxError('E_wrongListRetrieved');
+			throw new LitotexError('E_wrongListRetrieved');
 		}
 		//Every check passed :)
 		//after this we can delete the old database tables...
-		package::$pdb->query("TRUNCATE TABLE `lttx".package::$pdbn."_package_list`");
+		Package::$pdb->query("TRUNCATE TABLE `lttx".Package::$pdbn."_package_list`");
 		$dataSection = $xmlData->data;
 		foreach ($dataSection->children() as $package) {
 			$packageAttributes = $package->attributes();
@@ -710,7 +710,7 @@ class packages {
 				$dependency[] = array('name' => (string) $dependencyAttributes['name'], 'minVersion' => (string) $dependencyAttributes['minVersion'], 'installed' => $installedDep);
 			}
 			//Now we have to write all this to the database :)
-			package::$pdb->prepare("INSERT INTO  `lttx".package::$pdbn."_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
+			Package::$pdb->prepare("INSERT INTO  `lttx".Package::$pdbn."_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
 				VALUES (NULL ,  ?, ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?, ?);")->execute(
 			array($name, $prefix, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
 		}
@@ -786,28 +786,28 @@ class packages {
 	 * @TODO: Almost everything
 	 */
 	public function copyRemotePackage($package, $platform) {
-		require_once(LITO_FRONTEND_ROOT . 'packages/core/classes/pclzip.class.php');
+		require_once(LITO_FRONTEND_ROOT . 'packages/core/classes/thirdparty/PclZip.class.php');
 		$remote = file_get_contents('http://localhost/LitotexUpdateServer/Litotex8/index.php?package=projects&action=fetch&packageName=' . urldecode($package) . '&platform=' . urlencode($platform));
 		if (!$remote)
-		throw new lttxError('E_couldNotFetchPackage', $package);
+		throw new LitotexError('E_couldNotFetchPackage', $package);
 		try {
 			@$xml = new SimpleXMLElement($remote);
 		} catch (Exception $e) {
 
 		}
 		if (!isset($xml) || !$xml)
-		throw new lttxError('E_couldNotFetchPackage', $package);
+		throw new LitotexError('E_couldNotFetchPackage', $package);
 		$systemData = $xml->attributes();
 		if ($systemData['responsetype'] != 'packageFetch') {
-			throw new lttxError('E_wrongFetchRetrieved');
+			throw new LitotexError('E_wrongFetchRetrieved');
 		}
 		$package = $xml->package->attributes();
 		$handler = @fopen($package['file'], 'r');
 		if (!$handler)
-		throw new lttxError("E_couldNotLoadPackage", $package['name']);
+		throw new LitotexError("E_couldNotLoadPackage", $package['name']);
 		$cache = @fopen(LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip', 'w');
 		if (!$cache)
-		throw new lttxError("E_couldNotOpenCachePackage", LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip');
+		throw new LitotexError("E_couldNotOpenCachePackage", LITO_ROOT . 'files/cache/' . $package . '.' . $package['version'] . '.' . $package['platform'] . '.cache.zip');
 		while (!feof($handler)) {
 			fwrite($cache, fread($handler, 10000000));
 		}
@@ -863,7 +863,7 @@ class packages {
 
 			$pack = $this->loadPackage(preg_replace("/^package_/", "", $func[0]), false, false);
 
-			if (!package::$perm->checkPerm($pack, $func[1], $func[0])) {
+			if (!Package::$perm->checkPerm($pack, $func[1], $func[0])) {
 				continue;
 			}
 
@@ -874,7 +874,7 @@ class packages {
 			$sHtml = ob_get_contents();
 
 			ob_end_clean();
-			$hookCache = package::$packages->callHook('displayTplModification', array($sHtml, $position, $pack, $func));
+			$hookCache = Package::$packages->callHook('displayTplModification', array($sHtml, $position, $pack, $func));
 			$sHtml = ($hookCache === true)?$sHtml:$hookCache;
 
 			echo $sHtml;
@@ -890,14 +890,14 @@ class packages {
 
 	public function createBackup($package) {
 		if (!$this->exists($package))
-		throw new lttxError('E_packageDoesNotExist', $package);
+		throw new LitotexError('E_packageDoesNotExist', $package);
 		if (!is_dir(LITO_ROOT . 'backup'))
-		throw new lttxError('E_noBackupDir');
+		throw new LitotexError('E_noBackupDir');
 		if (!is_writeable(LITO_ROOT . 'backup'))
-		throw new lttxError('E_backupNotWriteable');
+		throw new LitotexError('E_backupNotWriteable');
 		$saveDirName = LITO_ROOT . 'backup/' . $package . date('c', time()) . '/';
 		if (is_dir($saveDirName))
-		throw new lttxError('E_backupOverride');
+		throw new LitotexError('E_backupOverride');
 		mkdir($saveDirName);
 		//Here we go, everything should work
 		mkdir($saveDirName . 'package');
@@ -921,11 +921,11 @@ class packages {
 		if (!$path)
 		return false;
 		if (!is_dir($path))
-		throw new lttxError('E_backupPathDoesNotExist');
+		throw new LitotexError('E_backupPathDoesNotExist');
 		if (!is_dir($path . '/package'))
-		throw new lttxError('E_backupNoPackageDir');
+		throw new LitotexError('E_backupNoPackageDir');
 		if (!is_dir($path . '/template'))
-		throw new lttxError('E_backupNoTemplateDir');
+		throw new LitotexError('E_backupNoTemplateDir');
 		self::recursiveCopy($path . '/package/' . $package, $this->_packagesDir . $package);
 		self::recursiveCopy($path . '/template/', $this->_tplDir);
 	}
@@ -945,10 +945,10 @@ class packages {
 			if(file_exists($destination))
 			unlink($destination);
 			copy($source, $destination);
-			$result = package::$pdb->prepare("UPDATE `lttx".package::$pdbn."_file_hash` SET `hash` = ? WHERE `file` = ?");
+			$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_file_hash` SET `hash` = ? WHERE `file` = ?");
 			$result->execute(array(md5_file($source), $destination));
 			if($result->rowCount() <= 0)
-			package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_file_hash` (`hash`, `file`) VALUES (?, ?)")->execute(array(md5_file($source), $destination));
+			Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_file_hash` (`hash`, `file`) VALUES (?, ?)")->execute(array(md5_file($source), $destination));
 			return true;
 		} else if (!is_dir($destination)) {
 			mkdir($destination);
@@ -964,7 +964,7 @@ class packages {
 	public static final function reloadFileHashTable() {
 		$startdir = LITO_FRONTEND_ROOT;
 		//First clear old storage, we will completly rewrite it thought
-		package::$pdb->query("TRUNCATE TABLE `lttx".package::$pdbn."_file_hash`");
+		Package::$pdb->query("TRUNCATE TABLE `lttx".Package::$pdbn."_file_hash`");
 		//Done... write the new data
 		self::_insertFileHashReq($startdir);
 	}
@@ -973,7 +973,7 @@ class packages {
 		if (!file_exists($file))
 		return false;
 		if (!is_dir($file)) {
-			package::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_file_hash` (`file`, `hash`) VALUES (?, ?)")->execute(array(str_replace('//', '/', $file), md5_file($file)));
+			Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_file_hash` (`file`, `hash`) VALUES (?, ?)")->execute(array(str_replace('//', '/', $file), md5_file($file)));
 			return true;
 		}
 		$dir = opendir($file);
@@ -989,7 +989,7 @@ class packages {
 		if (!file_exists(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName) || is_dir(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName))
 		return true;
 		//The file exists, check if its original
-		$result = package::$pdb->prepare("SELECT `hash` FROM `lttx".package::$pdbn."_file_hash` WHERE `file` = ?");
+		$result = Package::$pdb->prepare("SELECT `hash` FROM `lttx".Package::$pdbn."_file_hash` WHERE `file` = ?");
 		$result->execute(array(str_replace('//', '/', LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName)));
 		if ($result->rowCount() < 1 || !isset($result[0]))
 		return false;

@@ -25,6 +25,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-class installer_login extends installer{
+class installer_login extends Installer{
 	protected function _freeInstall(){}
 }

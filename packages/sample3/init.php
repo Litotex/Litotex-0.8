@@ -32,7 +32,7 @@
  * @author: Martin Lantzsch <martin@linux-doku.de>
  * @copyright: 2010
  */
-class package_sample3 extends package {
+class package_sample3 extends Package {
     /**
      * Package name
      * @var string
@@ -86,7 +86,7 @@ class package_sample3 extends package {
         return true;
     }
     public static function __hook_sample3() {
-		package::$tpl->display(self::getTplDir('sample3') . 'table.tpl');
+		Package::$tpl->display(self::getTplDir('sample3') . 'table.tpl');
 		return true;
     }
 

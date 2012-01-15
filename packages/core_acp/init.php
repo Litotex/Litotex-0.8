@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class package_core_acp extends package {
+class package_core_acp extends Package {
 
 	/**
 	 * Name of the module, please do not change this!
@@ -57,7 +57,7 @@ class package_core_acp extends package {
 		foreach((array)$_POST['tpl'] as $sPos => $aTplMods ){
 			$iPosition = 0;
 			foreach((array)$aTplMods as $iTplModId ){
-				$oTplMod = new tplModSort($iTplModId);
+				$oTplMod = new TemplateModSort($iTplModId);
 				$oTplMod->position = $sPos;
 				$oTplMod->sort = $iPosition;
 				$oTplMod->save();
@@ -72,11 +72,11 @@ class package_core_acp extends package {
 
 	public function __action_tplModSort(){
 
-		$oUser = package::$user;
+		$oUser = Package::$user;
 		$bAccess = $oUser->isAcpLogin();
 
 		if( $bAccess === false ){
-			throw new lttxError('tplmods_no_access');
+			throw new LitotexError('tplmods_no_access');
 		}
 
 		self::addJsFile('jquery-1.4.2.min.js');
@@ -86,8 +86,8 @@ class package_core_acp extends package {
 		self::addJsFile('tplmod.js', 'core_acp');
 		self::addCssFile('tplmod.css', 'core_acp');
 
-		$aElements = tplModSort::getList('none');
-		package::$tpl->assign('aElements', $aElements);
+		$aElements = TemplateModSort::getList('none');
+		Package::$tpl->assign('aElements', $aElements);
 
 		return true;
 	}
@@ -118,10 +118,10 @@ class package_core_acp extends package {
 			$sPosition = 'inactive';
 		}
 
-		$iTplID = tplModSort::searchId($aFunc[0], $aFunc[1]);
+		$iTplID = TemplateModSort::searchId($aFunc[0], $aFunc[1]);
 		$sDescription = '<p>';
-		$sDescription .= package::getLanguageVar('tplmods_class').': '.$aFunc[0].'<br/>';
-		$sDescription .= package::getLanguageVar('tplmods_function').': '.$aFunc[1];
+		$sDescription .= Package::getLanguageVar('tplmods_class').': '.$aFunc[0].'<br/>';
+		$sDescription .= Package::getLanguageVar('tplmods_function').': '.$aFunc[1];
 		$sDescription .= '</p>';
 		$sHtml = '<div class="tplmods_draggable ui-widget-content" id="tpl['.$sPosition.']_'.$iTplID.'">'.$sDescription.'</div>';
 		

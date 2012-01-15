@@ -25,25 +25,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-class userGroupPerm extends perm {
 
-	protected $_oGroup;
+class LitotexError extends Exception {
 
- 	/**
-	 * This will set up permission handlich for a userGroup
-	 * @param userGroup $oGroup
-	 * @return void
-	 */
-	public function  __construct($oGroup) {
+    public function __construct($messageCode) {
+        $args = func_get_args();
+        $messageCode = $args[0];
+        Package::loadLang(Package::$tpl);
+        if (Package::getLanguageVar($messageCode) != '')
+            $this->message = Package::getLanguageVar($messageCode);
+        else
+            $this->message = $messageCode;
+        $argstr = '';
+        foreach ($args as $i => $arg) {
+            if ($i == 0)
+                continue;
+            $argstr = ',$args['.$i.']';
+        }
+        eval("\$this->message = sprintf(\$this->message$argstr);");
+        if (DEVDEBUG == true) {
+            $this->message .= "<br /><b>DEVDEBUG active</b><br />";
+            foreach ($this->getTrace() as $trace) {
+                @$this->message .= '<p>'.$trace['class'].':'.$trace['function'].': '.$trace['file'].':'.$trace['line'].'</p>';
+            }
+        }
+    }
 
-		if(!is_a($oGroup, 'userGroup')) {
-			throw new Exception('UserGroup class has to be passed');
-			return;
-		}
-
-		$this->_iAssociateID	= $oGroup->getID();
-		$this->_iAssociateType	= 2;
-		
-		$this->_oGroup = $oGroup;
-	}
 }

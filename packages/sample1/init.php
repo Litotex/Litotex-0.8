@@ -32,7 +32,7 @@
  * @author: Martin Lantzsch <martin@linux-doku.de>
  * @copyright: 2010
  */
-class package_sample1 extends package {
+class package_sample1 extends Package {
     public static $version = '0.8.10';
     /**
      * Package name

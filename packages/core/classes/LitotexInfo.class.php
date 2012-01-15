@@ -25,42 +25,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-/**
- * It's a simple login module
- *
- * @author: Litotex Team
- * @copyright: 2010
- */
-class package_acp_login extends acpPackage {
-    /**
-     * Package name
-     * @var string
-     */
-    protected $_packageName = 'acp_login';
-    /**
-     * Avaibilbe actions in this package
-     * @var array
-     */
-    protected $_availableActions = array('main','loginSubmit');
-    /**
-     * Register all hooks of this package
-     * @return bool
-     */
-    public function __action_main() {
-        return true;
-    }
-    public function __action_loginSubmit(){
-    	if(!(isset($_POST['username']) && isset($_POST['password']) && $_POST['username'] && $_POST['password']))
-    		throw new LitotexInfo('acp_login_UsernamePasswordMissing');
-    	$controllUser = User::login($_POST['username'], $_POST['password']);
 
-       	if(!$controllUser || !User::compare(Package::$user, $controllUser)){
-    		throw new LitotexInfo('acp_login_UsernamePasswordWrong');
-    	}
+class LitotexInfo extends Exception {
 
-    	Package::$user->setAcpLogin();
-    	header('Location:index.php');
-    	exit();
-    	return true;
+    public function __construct($messageCode) {
+        $args = func_get_args();
+        $messageCode = $args[0];
+        Package::loadLang(Package::$tpl);
+        $this->message = Package::getLanguageVar($messageCode);
+        $argstr = '';
+        foreach ($args as $i => $arg) {
+            if ($i == 0)
+                continue;
+            $argstr = ',$args['.$i.']';
+        }
+        eval("\$this->message = sprintf(\$this->message$argstr);");
     }
+
 }

@@ -77,7 +77,7 @@ class package_acp_options extends acpPackage {
         
         // so, let us look if there is a result
         if($state->rowCount() < 1) {
-            throw new lttxError('LN_OPTION_OPTION_NOT_EXISTS');
+            throw new LitotexError('LN_OPTION_OPTION_NOT_EXISTS');
             return true;
         }
         
@@ -117,7 +117,7 @@ class package_acp_options extends acpPackage {
         
         // save
         $result = $state->fetch();
-        $option = new option($result['package'], true);
+        $option = new Option($result['package'], true);
         if($value == '') {
             $option->reset($result['key']);
         } else {

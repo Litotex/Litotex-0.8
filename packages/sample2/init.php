@@ -32,7 +32,7 @@
  * @author: Martin Lantzsch <martin@linux-doku.de>
  * @copyright: 2010
  */
-class package_sample2 extends package {
+class package_sample2 extends Package {
     /**
      * Package name
      * @var string

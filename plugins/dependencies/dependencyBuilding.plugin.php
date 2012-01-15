@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class plugin_dependencyBuilding extends plugin{
+class plugin_dependencyBuilding extends Plugin{
 	public static $handlerName = 'dependencies';
 	public static $name = 'Ressource';
 	public static $availableFunctions = array('checkDependency');

@@ -32,7 +32,7 @@
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  * @hooks None (yet)
  */
-class package_main extends package{
+class package_main extends Package{
 	/**
 	 * Name of the module, please do not change this!
 	 * @var string

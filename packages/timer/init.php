@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class package_timer extends package{
+class package_timer extends Package{
 	protected $_availableActions = array();
 	private static $_startTime = false;
 	public function __action_main(){

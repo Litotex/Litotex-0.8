@@ -29,7 +29,7 @@
  * @package impressum
 
  */
-class package_impressum extends package {
+class package_impressum extends Package {
     /**
      * Package name
      * @var string
@@ -55,7 +55,7 @@ class package_impressum extends package {
      */
     public function __action_main() {
 		if(!self::$_options)
-            self::$_options = new option('impressum');
+            self::$_options = new Option('impressum');
         $this->_initialized = true;
 	
 	

@@ -46,11 +46,11 @@ class package_acp_diff extends acpPackage {
     public function __action_main() {
         $this->addCssFile('diff.css', $this->_packageName);
         if(!isset($_GET['oldFile']) || !isset($_GET['newFile']))
-            throw new lttxError ('E_noFilesToCompare');
+            throw new LitotexError ('E_noFilesToCompare');
         if(!file_exists($_GET['oldFile']))
-            throw new lttxError ('E_couldNotFindFile', $_GET['oldFile']);
+            throw new LitotexError ('E_couldNotFindFile', $_GET['oldFile']);
         if(!file_exists($_GET['newFile']))
-                throw new lttxError ('E_couldNotFindFile', $_GET['newFile']);
+                throw new LitotexError ('E_couldNotFindFile', $_GET['newFile']);
         $diff = new diff;
         $diffOut = $diff->inline($_GET['oldFile'], $_GET['newFile']);
         self::$tpl->assign('diff', $diffOut);

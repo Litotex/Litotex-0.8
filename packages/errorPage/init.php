@@ -29,7 +29,7 @@
 /**
  * @author Jonas Schwabe <jonas.schwabe@gmail.com>
  */
-class package_errorPage extends package{
+class package_errorPage extends Package{
 	/**
 	 * Name of the module, please do not change this!
 	 * @var string
@@ -63,7 +63,7 @@ class package_errorPage extends package{
         public static function __hook_AdoDBResult(ADOConnection $result, $sql){
             $msg = $result->ErrorMsg();
             if($msg && !in_array($msg, self::$_sqlErrors)){
-                    self::$pdb->prepare("INSERT INTO `lttx".package::$pdbn."_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)")->execute(array((self::$user)?self::$user->getUserID ():0, $msg . "\nquery was:\n" . $sql, 1));
+                    self::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `message`, `log_type`) VALUES (?, ?, ?)")->execute(array((self::$user)?self::$user->getUserID ():0, $msg . "\nquery was:\n" . $sql, 1));
                     self::$_sqlErrors[] = $msg;
             }
         }

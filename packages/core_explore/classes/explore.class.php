@@ -26,14 +26,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-class explorePluginHandler extends plugin_handler{
+class explorePluginHandler extends PluginHandler{
 	protected $_name = "explores";
 	protected $_location = "explores";
 	protected $_cacheLocation = "../cache/explore.cache.php";
 	protected $_currentFile = __FILE__;
 }
 
-class exploreDependencyPluginHandler extends plugin_handler{
+class exploreDependencyPluginHandler extends PluginHandler{
 	protected $_name = 'dependencies';
 	protected $_location = 'dependencies';
 	protected $_cacheLocation = "../cache/exploreDependencies.cache.php";
@@ -51,7 +51,7 @@ class explore{
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
 	public function __construct($exploreID){
-		$data = package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".package::$pdbn."_explores` WHERE `ID` = ?");
+		$data = Package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".Package::$pdbn."_explores` WHERE `ID` = ?");
 		$data->execute(array($exploreID));
 		if($data->rowCount() < 1)
 			throw new Exception('Explore ' . $exploreID .' was not found');
@@ -90,7 +90,7 @@ class explore{
 			return false;
 		$resource = new ressource($this->_data['race'], 'explore', $this->_ID, false, true);
 		$resource->useFormula($level);
-		package::$packages->callHook('manipulateExploreCost', array(&$resource));
+		Package::$packages->callHook('manipulateExploreCost', array(&$resource));
 		return $resource;
 	}
 	public function initialized(){
@@ -113,22 +113,22 @@ class explore{
 		return $return;
 	}
 	public function getBuildTime($level){
-		if(!math::verifyFormula($this->_timeFormula))
+		if(!Math::verifyFormula($this->_timeFormula))
 			return false;
-		$formula = math::replaceX($this->_timeFormula, (int)$level);
-		return math::calculateString($formula);
+		$formula = Math::replaceX($this->_timeFormula, (int)$level);
+		return Math::calculateString($formula);
 	}
 	public function getPoints($level){
-		if(!math::verifyFormula($this->_pointsFormula))
+		if(!Math::verifyFormula($this->_pointsFormula))
 			return false;
-		$formula = math::replaceX($this->_pointsFormula, (int)$level);
-		return math::calculateString($formula);
+		$formula = Math::replaceX($this->_pointsFormula, (int)$level);
+		return Math::calculateString($formula);
 	}
 	public function increaseExploreLevel($level, territory $territory){
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".package::$pdbn."_explore_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
+		$dep = Package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".Package::$pdbn."_explore_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
 		$dep->execute(array($this->_ID, (int)$level));
 		$return = array();
 
@@ -147,7 +147,7 @@ class explore{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = package::$pdb->prepare("SELECT `ID` FROM `lttx".package::$pdbn."_explores` WHERE `race` = ?");
+		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_explores` WHERE `race` = ?");
 		$result->execute(array($race));
 		$return = array();
 		
