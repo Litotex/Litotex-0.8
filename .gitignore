@@ -2,6 +2,7 @@ tpl_c/*
 .project
 .buildpath
 packages/core/config/*
+acp/packages/core/config/*
 .settings/*
 packages/core/cache/*
 acp/tpl_c/*
