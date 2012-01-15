@@ -36,6 +36,7 @@ header("Content-Type: text/html; charset=utf-8");
 
 session_start();
 
+require_once MODULES_DIRECTORY.'core/classes/Basis/entry.class.php';
 require_once MODULES_DIRECTORY.'core/autoloader.php';
 
 try {
@@ -136,14 +137,14 @@ try {
 } catch (Exception $e) {
     if (isset($package) && is_a($package, 'package'))
         $package->setTemplatePolicy(false);
-    if (is_a($e, 'lttxFatalError'))
+    if (is_a($e, 'LitotexFatalError'))
         $e->setTraced(false);
     $tpl = Package::$tpl;
     $tpl->assign('errorMessage', $e->getMessage());
     Package::loadLang($tpl);
-    if (is_a($e, 'lttxError') || is_a($e, 'lttxFatalError'))
+    if (is_a($e, 'LitotexError') || is_a($e, 'lttxFatalError'))
         $tpl->display(Package::getTplDir('main').'CoreError.tpl');
-    else if (is_a($e, 'lttxInfo'))
+    else if (is_a($e, 'LitotexInfo'))
         $tpl->display(Package::getTplDir('main').'CoreInfo.tpl');
     else
         throw $e;
