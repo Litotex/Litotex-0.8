@@ -144,12 +144,11 @@ abstract class installer {
     protected abstract function _freeInstall();
 
     private static final function _generateFileListReq($file, $fileAdd, &$return) {
-        if (!file_exists($file . '/' . $fileAdd))
-            return false;
-        if (!is_dir($file . '/' . $fileAdd)) {
-            return false;
-        }
-        $dir = @opendir($file . '/' . $fileAdd);
+    	$generateFile = $file . '/' . $fileAdd;
+   		if (!file_exists($generateFile)) return false;
+    	if (!is_dir($generateFile)) return false;
+    	
+   	 	$dir = @opendir($generateFile);
         if (!$dir)
             return false;
         while ($readf = readdir($dir)) {
