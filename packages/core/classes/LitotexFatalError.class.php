@@ -28,7 +28,7 @@
 
 class LitotexFatalError extends Exception {
 
-    private $_oID = false;
+    private $_logID = false;
 
     public function __construct($message = '', $package = false) {
         Package::loadLang(Package::$tpl);
@@ -38,14 +38,15 @@ class LitotexFatalError extends Exception {
     }
 
     private function _log($message, $package) {
-        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, '##'.$this->getFile().'('.$this->getLine().'):'.$message."\n".$this->getTraceAsString()));
-        $this->_oID = Package::$pdb->lastInsertId();
+        $backtrace = '##'.$this->getFile().'('.$this->getLine().'):'.$message."\n".$this->getTraceAsString();
+        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, $backtrace));
+        $this->_logID = Package::$pdb->lastInsertId();
     }
 
     public function setTraced($option) {
-        if (!$this->_oID)
+        if (!$this->_logID)
             return false;
-        Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_oID));
+        Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_logID));
     }
 
 }

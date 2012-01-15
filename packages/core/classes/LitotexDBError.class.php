@@ -30,10 +30,12 @@ class LitotexDBError extends LitotexError {
 
     public function __construct() {
         $code = Package::$pdb->errorInfo();
-        $sError = 'No Error!';
-        if ($code[2] != NULL)
-            $sError = $code[2];
-        parent::__construct($sError);
+        
+        $message = 'No Error!';
+        if (isset($code[2]))
+            $message = $code[2];
+        
+        parent::__construct($message);
     }
 
 }

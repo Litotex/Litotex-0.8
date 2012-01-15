@@ -30,16 +30,23 @@ class LitotexInfo extends Exception {
 
     public function __construct($messageCode) {
         $args = func_get_args();
+        
         $messageCode = $args[0];
         Package::loadLang(Package::$tpl);
-        $this->message = Package::getLanguageVar($messageCode);
-        $argstr = '';
-        foreach ($args as $i => $arg) {
-            if ($i == 0)
-                continue;
-            $argstr = ',$args['.$i.']';
+        if (package::getLanguageVar($messageCode) != '')
+            $this->message = package::getLanguageVar($messageCode);
+        else
+            $this->message = $messageCode;
+        
+        $messageParams = array_slice($args, 1);
+        $this->message = vsprintf($this->message, $messageParams);
+        
+        if (DEVDEBUG == true) {
+            $this->message .= "<br /><b>DEVDEBUG active</b><br />";
+            foreach ($this->getTrace() as $trace) {
+                @$this->message .= '<p>'.$trace['class'].':'.$trace['function'].': '.$trace['file'].':'.$trace['line'].'</p>';
+            }
         }
-        eval("\$this->message = sprintf(\$this->message$argstr);");
     }
 
 }
