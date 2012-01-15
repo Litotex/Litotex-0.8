@@ -235,7 +235,7 @@ class Permission {
 		$sPackage = $mPackage;
 
 		if(is_object($mPackage)){
-			if(!in_array(get_parent_class($mPackage), array('acpPackage', 'package'))){
+			if(!in_array(get_parent_class($mPackage), array('acpPackage', 'Package'))){
 				return false;
 			} else {
 				$sPackage = $mPackage->getPackageName();
