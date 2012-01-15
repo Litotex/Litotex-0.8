@@ -26,10 +26,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-
-require_once("userPerm.class.php");
-require_once("userGroupPerm.class.php");
-
 class Permission {
 
 	protected $_iAssociateType 	= 0;
