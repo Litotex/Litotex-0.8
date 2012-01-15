@@ -31,5 +31,6 @@ define('LITO_INSIDE', true);
 
 require_once '../packages/core/config/path.php';
 require_once 'packages/core/config/const.php';
+require_once '../packages/core/config/const.php';
 
 require '../packages/core/global.php';
