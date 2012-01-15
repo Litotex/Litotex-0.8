@@ -118,7 +118,7 @@ abstract class Installer {
                             $this->_patchDatabase(false, $blackList);
                         }
                     } catch (Exception $e) {
-                        
+                        echo 'Fehler beim Patchen der Datenbank:<br />',  $e->getMessage();
                     }
                     return false;
                 }
