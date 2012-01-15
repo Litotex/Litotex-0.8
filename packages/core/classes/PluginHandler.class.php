@@ -96,7 +96,7 @@ class PluginHandler {
                 trigger_error("The plugin '" . $pluginname . "' was not found. Please check if the file contains the " . $classname . ' class', E_USER_NOTICE);
             return false;
         }
-        if (get_parent_class($classname) != 'Pugin') {
+        if (get_parent_class($classname) != 'Plugin') {
             if (DEVDEBUG)
                 trigger_error("The plugin '" . $pluginname . "' was found but does not extend the Plugin class", E_USER_NOTICE);
             return false;
