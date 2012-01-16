@@ -37,7 +37,6 @@
  */
 
 class Logger {
-	private static $_logFile = null;
 	public static function debug($message = '', $priority = LOG_WARNING) {
     	if ($priority > LOG_LEVEL)
     		return false;
@@ -57,7 +56,7 @@ class Logger {
         
         Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`) VALUES (?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority));
     }
-    
+
     private static function _initDisk(){
     	if(!self::$_logFile){
     		$curdate=date('c', time());
