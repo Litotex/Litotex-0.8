@@ -1,4 +1,47 @@
 {include file=$HEADER}
+
+{literal} 
+
+
+<script>
+$.validator.setDefaults({
+	submitHandler: function() { form.submit() },
+	highlight: function(input) {
+		$(input).addClass("ui-state-highlight");
+	},
+	unhighlight: function(input) {
+		$(input).removeClass("ui-state-highlight");
+	}
+});
+
+
+  $(document).ready(function(){
+    $("#commentform").validate({
+  		rules: {
+			author: {
+				required: true,
+				minlength: 5
+			},
+			author_mail: {
+				required: true,
+				email: true
+			},
+				rules:"required"
+			},
+		messages: {
+			author: {
+				required: "Bitte trage hier einen Usernamen ein",
+				minlength: "Der Username muss mindestes 5 Zeichen haben"
+			},
+			author_mail: "Bitte trage eine richtige Mailadresse ein"
+			}
+  });
+  
+
+  });
+  </script>
+{/literal} 
+
 <h2>{$newsItem->getTitle()}</h2>
 <div class="inhalt_box1">
 <p>{$newsItem->getText()}</p>
@@ -27,20 +70,30 @@
 </ul>
 
 </div>
+<form class="commentform" id="commentform" method="post" action="index.php?package=new&amp;action=comment_submit">
 {if $comment_guest == 1}
-
-	<textarea id="author" style="width: 50%; height: 20px;" name="author"></textarea>
-	<label for="author"><small>{#LN_NEWS_COMMENT_AUTHOR_NAME#}</small></label>
-
+	<p>
+	<textarea id="author" class="required ui-widget-content" style="width: 50%; height: 20px;" name="author"></textarea>
+	<label for="author"><small>{#LN_NEWS_COMMENT_AUTHOR_NAME#}</small></label><br>
+	</p>
+	<p>
 	<textarea id="author_mail" style="width: 50%; height: 20px;" name="author_mail"></textarea>
-	<label for="author_mail"><small>{#LN_NEWS_COMMENT_AUTHOR_MAIL#}</small></label>
-
+	<label for="author_mail"><small>{#LN_NEWS_COMMENT_AUTHOR_MAIL#}</small></label><br>
+	</p>
+<p>
 	<textarea id="author_web" style="width: 50%; height: 20px;" name="author_web"></textarea>
 	<label for="author_web"><small>{#LN_NEWS_COMMENT_AUTHOR_WEB#}</small></label>
-{/if}
+</p>
+<p class="error">
+        An error occurred while adding spog: 
+        <span class="emessage">ooo</span>
+    </p>
+
+	
+	{/if}
 
 <textarea id="kommentar" class="ui-autocomplete-input" style="width:95%; height: 120px;" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true"></textarea>
 
 <input id="button" type="submit" value="{#LN_NEWS_COMMENT_SEND#}" /></p>
-
+</form>
 {include file=$FOOTER}
