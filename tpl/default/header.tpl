@@ -14,6 +14,7 @@
 <script type="text/javascript" src="{$CORE_JS_URL}jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="{$CORE_JS_URL}jquery-ui-1.8.6.custom.min.js"></script>
 <script type="text/javascript" src="{$CORE_JS_URL}jquery.validate.min.js"></script>
+<script type="text/javascript" src="{$CORE_JS_URL}litotex.js"></script>
 {foreach from=$JS_FILES item=JS_FILE}
 	<script type="text/javascript" src="{$JS_FILE}"></script>
 {/foreach}
