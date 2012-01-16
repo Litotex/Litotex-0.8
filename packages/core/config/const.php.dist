@@ -85,3 +85,5 @@ if(!defined('LITO_BACKEND_URL'))
 	define('LITO_BACKEND_URL', $frontendUrl . 'acp/');
 if(!defined('LITO_ERROR_MODULE'))
 	define('LITO_ERROR_MODULE', 'errorPage');
+if(!defined('LOG_LEVEL'))
+	define('LOG_LEVEL', LOG_DEBUG);

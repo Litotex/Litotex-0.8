@@ -25,23 +25,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+/* Log-Levels:
+ * LOG_EMERG	system is unusable					0
+ * LOG_ALERT	action must be taken immediately	1
+ * LOG_CRIT		critical conditions					2
+ * LOG_ERR		error conditions					3
+ * LOG_WARNING	warning conditions					4
+ * LOG_NOTICE	normal, but significant, condition	5
+ * LOG_INFO		informational message				6
+ * LOG_DEBUG	debug-level message					7
+ */
 
 class Logger {
-
-    public function __construct() {
-        
-    }
-
-    public function debug($message = '') {
+	public static function debug($message = '', $priority = LOG_WARNING) {
+    	if ($priority > LOG_LEVEL)
+    		return false;
+    	
+    	// Package details - Package detection is a Workaround!
+    	$message = $_GET['package'] . ' (' . Package::getAction() . '): ' . $message;
+    	
+    	// get User
         $currentUser = 0;
         if (Package::$user) {
             $currentUser = Package::$user->getUserID();
         }
         
+        // get Time
         $date = new Date(time());
         $currentTime = $date->getDbTime();
         
-        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`) VALUES (?, ?, ?)")->execute(array($currentUser, $currentTime, $message));
+        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`) VALUES (?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority));
     }
-
 }

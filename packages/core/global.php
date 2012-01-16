@@ -64,9 +64,6 @@ try {
         $packageManager = new PackageManager();
         Package::setPackageManagerClass($packageManager);
 
-        $log = new Logger();
-        Package::setlttxLogClass($log);
-
         require_once 'classes/thirdparty/Smarty/Smarty.class.php';
 
         //Smarty settings... next
