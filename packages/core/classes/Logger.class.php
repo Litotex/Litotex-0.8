@@ -37,6 +37,7 @@
  */
 
 class Logger {
+	private static $_logFile = null;
 	public static function debug($message = '', $priority = LOG_WARNING) {
     	if ($priority > LOG_LEVEL)
     		return false;
@@ -55,5 +56,22 @@ class Logger {
         $currentTime = $date->getDbTime();
         
         Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`) VALUES (?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority));
+    }
+    
+    private static function _initDisk(){
+    	if(self::$_logFile == null){
+    		self::$_logFile = fopen(LITO_FRONTEND_ROOT.'log/'.date('c', time()) . '_' . sha1(microtime()), 'w');
+    	}
+    }
+    
+    public static function debugDisk($message = '', $priority = LOG_WARNING){
+    	self::_initDisk();
+    	fwrite(self::$_logFile, $priority . ':' . $message . "\n");
+    }
+    
+    public static function debugStartup($message){
+    	if(DEVDEBUG){
+    		self::debugDisk('STARTUP ' . $message, LOG_INFO);
+    	}
     }
 }

@@ -385,9 +385,14 @@ class PackageManager {
 	 * @return bool on failure | instance of class | true if not initialized
 	 */
 	public function loadPackage($packageName, $tplEnable = true, $initialize = true, $loadDep = true) {
+		Logger::debugStartup('Load package: ' . $packageName);
 		if (!in_array($packageName, $this->_loadedLang) && is_a(Package::$tpl, 'Smarty')) {
 			$this->_loadedLang[] = $packageName;
 			Package::loadLang(Package::$tpl, $packageName);
+		}
+		//Debug
+		if(DEVDEBUG){
+			Logger::debugStartup(print_r($this->_dependencyCache, true));
 		}
 		$dep = array();
 		if (isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true) {
@@ -396,20 +401,27 @@ class PackageManager {
 				Package::loadLang(Package::$tpl, $packageName);
 			}
 			include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
+			Logger::debugStartup('Packagefile loaded correctly');
+			Logger::debugStartup('Load dependency');
 			if ($loadDep)
-			$dep = $this->_getPackageDependencies($packageName, -1);
+				$dep = $this->_getPackageDependencies($packageName, -1);
 			$pack = new $this->_dependencyCache[$packageName][1](false, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			if ($loadDep)
-			$dep = $this->_getPackageDependencies($packageName, 1);
+				$dep = $this->_getPackageDependencies($packageName, 1);
 			$pack->displayTpl();
 			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			$pack->displayTpl();
+			Logger::debugStartup('TPL Displayed.');
+			if(DEVDEBUG){
+				Logger::debugStartup(print_r($pack, true));
+			}
 			return $pack;
 		} else {
+			Logger::debugStartup('Package ' . $packageName . ' not found! bad one.');
 			return false;
 		}
 	}
