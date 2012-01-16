@@ -48,11 +48,6 @@ abstract class Package {
      */
     public static $tpl;
     /**
-     * This will keep an instance of the lttxLog.log classes
-     * @var lttxLog
-     */
-    public static $log;
-    /**
      * This will keep an instance of the package and hook manager for usage in extending classes
      * @var PackageManager
      */
@@ -138,6 +133,21 @@ abstract class Package {
      * @var string
      */
     public static $version = '0.0.0';
+    /**
+     * contains the action of the package being loaded
+     * @var string
+     */
+    protected static $_action = NULL;
+
+    public static function getAction () {
+        if (!is_null(self::$_action))
+            return self::$_action;
+        if (!isset($_GET['action']))
+            self::$_action = 'main';
+        else
+            self::$_action = $_GET['action'];
+        return self::$_action;
+    }
 
     /**
      * This function registers the class into the package manager and loads the casted action
@@ -145,15 +155,11 @@ abstract class Package {
      */
     public final function __construct($init = true, $dep = array()) {
         $this->_dep = $dep;
-        if (!$init
-            )return;
+        if (!$init)
+            return;
         $this->_tplDir = self::getTplDir();
         $this->setTemplateSettings(self::$tpl, $this->_packageName);
-        if (!isset($_GET['action']))
-            $action = 'main';
-        else
-            $action = $_GET['action'];
-        $this->_returnValue = $this->_castAction($action);
+        $this->_returnValue = $this->_castAction(self::getAction());
         if (!is_bool($this->_returnValue)) {
             $this->_returnValue = (bool) $this->_returnValue;
         }
@@ -271,18 +277,6 @@ abstract class Package {
         $return = self::$packages->registerTplModification($class, $function, $file, $packageName);
         if (!$return)
             trigger_error('Packagemanager was unable to load tplModification function "__tpl_' . $function . '"', E_USER_ERROR);
-    }
-
-    /**
-     * This will save a database instance in the root class
-     * Attention! Only allowed on package class
-     * @return bool
-     */
-    static public final function setlttxLogClass($log) {
-        if (__CLASS__ != 'Package')
-            return false;
-        Package::$log = $log;
-        return true;
     }
 
     /**
@@ -630,9 +624,9 @@ abstract class Package {
         return $this->_availableActions;
     }
 
-    public function debug($message = '') {
-        self::$log->debug($message);
-        return true;
+
+    public function debug($message = '', $priority = LOG_LEVEL) {
+        return (Logger::debug($message, $priority));
     }
 
     /**
