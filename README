@@ -26,7 +26,7 @@ You can use this on a Linux-Shell
 cp packages/core/config/const.php.dist packages/core/config/const.php
 cp packages/core/config/database.conf.php.dist packages/core/config/database.conf.php
 cp packages/core/config/path.php.dist packages/core/config/path.php
-cp acp/packages/core/config/path.php.dist acp/packages/core/config/path.php
+cp acp/packages/core/config/const.php.dist acp/packages/core/config/const.php
 ```
 
 * Set write permissions (0777) to the following folders and create them if needed:
