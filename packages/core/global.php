@@ -80,11 +80,6 @@ try {
         } else {
             $smarty->assign('FOOTER', Package::getTplDir(false, 'default').'footer.tpl');
         }
-        //Check for AJAX Lock
-        $smarty->assign('CONTENTONLY', false);
-        if (isset($_GET['ajaxLock']) && isset($_SESSION['ajaxLocks'][$_GET['ajaxLock']])) {
-            $smarty->assign('CONTENTONLY', true);
-        }
         $smarty->assign('TITLE', 'Litotex 0.8 Core Engine');
         Package::setTemplateClass($smarty);
     } catch (Exception $e) {
