@@ -1,4 +1,5 @@
 tpl_c/*
+log/
 .project
 .buildpath
 packages/core/config/*
