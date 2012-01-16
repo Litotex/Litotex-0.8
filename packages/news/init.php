@@ -84,6 +84,13 @@ class package_news extends Package {
             $this->_referMain();
         }
         $comments = comment::getAll($newsItem);
+		
+		if(Package::$user)
+			$comment_guest=0;
+		else
+			$comment_guest=1;
+
+		Package::$tpl->assign('comment_guest', $comment_guest);
         Package::$tpl->assign('comments', $comments);
         Package::$tpl->assign('newsItem', $newsItem);
         return true;
