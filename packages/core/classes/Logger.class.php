@@ -59,8 +59,10 @@ class Logger {
     }
     
     private static function _initDisk(){
-    	if(self::$_logFile == null){
+    	if(!self::$_logFile){
     		self::$_logFile = fopen(LITO_FRONTEND_ROOT.'log/'.date('c', time()) . '_' . sha1(microtime()), 'w');
+    		if(!self::$_logFile)
+    			throw new LitotexFatalError('Could not log to disk.');
     	}
     }
     
