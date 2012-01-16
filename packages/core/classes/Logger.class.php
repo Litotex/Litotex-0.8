@@ -60,7 +60,10 @@ class Logger {
     
     private static function _initDisk(){
     	if(self::$_logFile == null){
-    		self::$_logFile = fopen(LITO_FRONTEND_ROOT.'log/'.date('c', time()) . '_' . sha1(microtime()), 'w');
+			$curdate=date('c', time());
+			$curdate = str_replace(":", "_", $curdate);
+
+    		self::$_logFile = fopen(LITO_FRONTEND_ROOT.'log/'.$curdate. '_' . sha1(microtime()), 'w');
     	}
     }
     
