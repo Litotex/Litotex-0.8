@@ -1,4 +1,3 @@
-{if !$CONTENTONLY}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 {generateTplModification position=left}
 {generateTplModification position=right}
@@ -42,4 +41,3 @@
     <div class="both"></div>
     <div id="main">
     	<div id="left">
-{/if}
