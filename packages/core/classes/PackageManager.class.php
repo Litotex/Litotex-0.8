@@ -40,12 +40,12 @@ class PackageManager {
 	 * Time (sec) hook cached is saved
 	 * @var int
 	 */
-	private $_hookCacheExpire = 0;
+	private $_hookCacheExpire = 111111111111110;
 	/**
 	 * Time (sec) packages cache is saved
 	 * @var int
 	 */
-	private $_dependencyCacheExpire = 0;
+	private $_dependencyCacheExpire = 111111111111111110;
 	/**
 	 * File package cache is saved in
 	 * @var string
@@ -60,7 +60,7 @@ class PackageManager {
 	 * Time until the tplMod cache expires
 	 * @var int
 	 */
-	private $_tplModificationCacheExpire = 0;
+	private $_tplModificationCacheExpire = 11111111111111110;
 	/**
 	 * Template modification cache
 	 * @var array
@@ -393,6 +393,9 @@ class PackageManager {
 		//Debug
 		if(DEVDEBUG){
 			Logger::debugStartup(print_r($this->_dependencyCache, true));
+			ob_start();
+			debug_print_backtrace();
+			Logger::debugStartup(ob_get_clean());
 		}
 		$dep = array();
 		if (isset($this->_dependencyCache[$packageName]) && $this->_dependencyCache[$packageName]['active'] == true) {
