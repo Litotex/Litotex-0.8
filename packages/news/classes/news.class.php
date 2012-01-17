@@ -480,7 +480,7 @@ class news{
      * @return int
      */
 	private function _getCommentCount($ID){
-		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ?");	
+		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ? and read_allowed='1'");	
 		$result->execute(array($ID));
 		if($result->rowCount() < 1)
             return 0;

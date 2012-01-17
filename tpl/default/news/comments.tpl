@@ -1,8 +1,5 @@
 {include file=$HEADER}
-
 {literal} 
-
-
 <script>
 $.validator.setDefaults({
 	submitHandler: function() { form.submit() },
@@ -13,8 +10,6 @@ $.validator.setDefaults({
 		$(input).removeClass("ui-state-highlight");
 	}
 });
-
-
   $(document).ready(function(){
     $("#commentform").validate({
   		rules: {
@@ -36,7 +31,6 @@ $.validator.setDefaults({
 			author_mail: "Bitte trage eine richtige Mailadresse ein"
 			}
   });
-  
 
   });
   </script>
@@ -70,7 +64,7 @@ $.validator.setDefaults({
 </ul>
 
 </div>
-<form class="commentform" id="commentform" method="post" action="index.php?package=new&amp;action=comment_submit">
+<form class="commentform" id="commentform" method="post" action="index.php?package=news&action=comment_submit&id={$news_id}">
 {if $comment_guest == 1}
 	<p>
 	<textarea id="author" class="required ui-widget-content" style="width: 50%; height: 20px;" name="author"></textarea>
@@ -80,19 +74,13 @@ $.validator.setDefaults({
 	<textarea id="author_mail" style="width: 50%; height: 20px;" name="author_mail"></textarea>
 	<label for="author_mail"><small>{#LN_NEWS_COMMENT_AUTHOR_MAIL#}</small></label><br>
 	</p>
-<p>
+	<p>
 	<textarea id="author_web" style="width: 50%; height: 20px;" name="author_web"></textarea>
 	<label for="author_web"><small>{#LN_NEWS_COMMENT_AUTHOR_WEB#}</small></label>
-</p>
-<p class="error">
-        An error occurred while adding spog: 
-        <span class="emessage">ooo</span>
-    </p>
+	</p>
+{/if}
 
-	
-	{/if}
-
-<textarea id="kommentar" class="ui-autocomplete-input" style="width:95%; height: 120px;" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true"></textarea>
+<textarea id="new_comment" name="new_comment" class="ui-autocomplete-input" style="width:95%; height: 120px;" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true"></textarea>
 
 <input id="button" type="submit" value="{#LN_NEWS_COMMENT_SEND#}" /></p>
 </form>

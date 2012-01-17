@@ -414,10 +414,7 @@ class User {
 			$this->_writeBuffer[$key] = $newValue;
 			return true;
 		}
-		$result = Package::$pdb->prepare("
-            UPDATE `lttx".Package::$pdbn."_users`
-            SET `" . $key . "` = ?
-            WHERE `ID` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_users` SET `" . $key . "` = ? WHERE `ID` = ?");
 		$result->execute(array($newValue, $this->_currentID));
 		self::$_readCache[$this->_currentID][$key] = $newValue;
 		return true;
@@ -532,7 +529,7 @@ class User {
 		return false;
 		if(count($this->_writeBuffer) <= 0)
 		return true;
-		$queryString = 'UPDATE `lttx".package::$pdbn."_users` SET ';
+		$queryString = "UPDATE `lttx".package::$pdbn."_users` SET ";
 		$values = array();
 		$i = 0;
 		foreach($this->_writeBuffer as $key => $value) {

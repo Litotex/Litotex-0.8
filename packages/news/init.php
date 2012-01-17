@@ -30,10 +30,10 @@ require_once('classes/category.class.php');
 require_once('classes/news.class.php');
 require_once('classes/comment.class.php');
 class package_news extends Package {
-    protected $_packageName = 'news';
-    protected $_availableActions = array('main', 'showComments');
+		protected $_packageName = 'news';
+		protected $_availableActions = array('main', 'showComments','comment_submit');
     
-	private static function _newsPageExists($page, $category = false, $newsPerSite = false) {
+		private static function _newsPageExists($page, $category = false, $newsPerSite = false) {
         if($category !== false && !is_a($category, 'category'))
             return false;
         if($newsPerSite === false) {
@@ -47,7 +47,8 @@ class package_news extends Package {
             return true;
         return false;
     }
-    public function __action_main() {
+
+	public function __action_main() {
 		Package::addCssFile('news.css', 'news');	
         $category = false;
         $page = 1;
@@ -72,14 +73,20 @@ class package_news extends Package {
     	self::_registerTplModification(__CLASS__, 'showNewsBlock', 'news');
     	return true;
     }
-	
+
+    /**
+     * This will show a selected news and all comments
+     * @param id from news 
+     * @return bool
+     */
     public function __action_showComments() {
         
 		if(!isset($_GET['id']))
             $this->_referMain();
-        $this->_theme = 'comments.tpl';
+        $current_news_id=$_GET['id'];
+		$this->_theme = 'comments.tpl';
         try {
-            $newsItem = new news($_GET['id']);
+            $newsItem = new news($current_news_id);
         }catch (Exception $error) {
             $this->_referMain();
         }
@@ -90,19 +97,28 @@ class package_news extends Package {
 		else
 			$comment_guest=1;
 
+		Package::$tpl->assign('news_id',$current_news_id);
 		Package::$tpl->assign('comment_guest', $comment_guest);
         Package::$tpl->assign('comments', $comments);
         Package::$tpl->assign('newsItem', $newsItem);
         return true;
     }
-    public static function getNews($category = false, $page = 1, $newsPerSite = false) {
+ 
+    /**
+     * This will show all news
+     * @return boolean
+     */
+ 
+	public static function getNews($category = false, $page = 1, $newsPerSite = false) {
         if($category && !is_a($category, 'category'))
             return false;
         if(!self::_newsPageExists($page, $category, $newsPerSite))
             return false;
         return news::getAll($category, $page, $newsPerSite);
     }
-    public static function __hook_getNews(&$news, $n) {
+    
+	
+	public static function __hook_getNews(&$news, $n) {
 	
         $news = self::getNews(false, 1, $n);
         return true;
@@ -121,4 +137,40 @@ class package_news extends Package {
 	public static function  __tpl_showNewsBlock() {
         return self::__hook_showNewsBlock(-1);
     }
+	
+	
+	 /**
+     * Comment a news
+     * @param news id 
+     * @return boolean
+     */
+
+	
+	public function __action_comment_submit(){
+		if(isset($_GET['id']))
+			$news_id=$_GET['id'];
+		else
+			throw new LitotexError('LN_NEWS_ERROR_ID');
+		
+		//check for guests or registered users 
+		if(Package::$user){
+			if(!isset($_POST['new_comment'])){
+				throw new LitotexError('LN_NEWS_ERROR');
+			}else{
+				$saveUserID=Package::$user->getUserID();
+				$commentNews=$_POST['new_comment'];
+			}
+		}else{
+			if(!isset($_POST['author']) || !isset($_POST['author_mail'])){
+					throw new LitotexError('LN_NEWS_ERROR');
+			}
+		}
+	    $news=new news($news_id);
+		$comments_ret = comment::publish($news,$saveUserID,$commentNews);
+		if ($comments_ret==true)
+			throw new LitotexInfo('LN_NEWS_COMMENT_OK');
+		else
+			throw new LitotexError('LN_NEWS_COMMENT_ERROR');
+	}
+	
 }

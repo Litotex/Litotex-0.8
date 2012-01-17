@@ -95,10 +95,10 @@ class comment {
      * @return void
      */
     public function  __construct($ID) {
-        if(!$this->_get($ID)){
-            throw new Exception('Comment item ' . $ID . ' could not be found');
-            return;
-        }
+			if(!$this->_get($ID)){
+				throw new Exception('Comment item ' . $ID . ' could not be found');
+				return;
+			}
         if(!self::$_options)
             self::$_options = new Option('news');
         $this->_initialized = true;
@@ -229,20 +229,23 @@ class comment {
     }
     /**
      * This will create a new comment and return it's object
-     * @param string $title
-     * @param string $text
      * @param news $news
-     * @param User $writer
-     * @return bool on failure | comment
-     */
-    public static function publish($title, $text, $news, $writer) {
+     * @param string $writer_id
+     * @param string $text
+	 * @param string $author_name
+     * @param string $author_mail
+	 * @return bool 
+	 * $author_name and $author_mail is only for guest comments 
+	 */
+    public static function publish($news,$author_id=0,$text,$author_name='',$author_mail='') {
         if(!is_a($news, 'news'))
                 return false;
-        if(!is_a($writer, 'user'))
-                return false;
-        $result = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_news_comments` (`title`, `text`, `date`, `news`, `writer`, `IP`) VALUES (?, ?, " . ", ?, ?, ?");
-        $result->execute(array($title, $text, $news->getID(), $writer->getID(), Session::getIPAdress()));
-        return ($result->rowCount() <= 0)?false:new comment(Package::$pdb->lastInsertId());
+		$date = new Date(time());
+        $currentTime = $date->getDbTime();
+		$writer_IP=Session::getIPAdress();
+        $result = Package::$pdb->prepare("INSERT INTO `lttx1_news_comments` (`title`,`text`, `date`, `news`, `writer`,`read_allowed`, `IP`) VALUES (?, ?, ?, ?, ?,?)");
+        $result->execute(array( '',$text, $currentTime, $news->getID(), $author_id, 0,$writer_IP));
+ 		return ($result->rowCount() <= 0)?false:true;
     }
     /**
      * This will return all the comments sorted by news
@@ -264,7 +267,7 @@ class comment {
             $offset = -1;
         }
         if($news){
-            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ? ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` WHERE read_allowed='1' and `news` = ? ORDER BY `date` DESC");
 			$result->bindParam(':offset', $start, PDO::PARAM_INT);
 			$result->bindParam(':max', $offset, PDO::PARAM_INT);
 			$result->execute(array($news->getID()));
