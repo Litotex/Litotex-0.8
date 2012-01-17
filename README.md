@@ -1,6 +1,6 @@
 # Litotex-Developer Preview Version
 
-This version is for developers who knwo what they are doing
+This version is for developers who know what they are doing
 We don't assume liability of any kind
 For help, support or just talking, you can
 
@@ -8,7 +8,7 @@ For help, support or just talking, you can
 * visit our [github](https:github.com/Litotex) repository
 * or join our IRC-Cannel at [Freenode](irc://freenode.net/#litotex)
 
-Your Litotex Team 
+Your Litotex Team
 
 ## Installation
 * Place your files properly (in most cases your webspace)
