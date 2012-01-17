@@ -55,10 +55,25 @@ class comment {
      */
     private $_date;
     /**
-     * Written by
+     * Written by user
      * @var User
      */
     private $_writer;
+	/**
+     * Written by registered User_id
+     * @var User_id
+     */
+	private $_writer_id;
+    /**
+     * Written by Guest Username
+     * @var Author
+     */
+    private $_author_name;
+    /**
+     * Written by Guest Mailadress
+     * @var Author_mail
+     */
+    private $_author_mail;
     /**
      * ID of comment
      * @var int
@@ -89,7 +104,9 @@ class comment {
      * @var Option
      */
     private static $_options = false;
-    /**
+    
+	
+	/**
      * Initialize the comment object
      * @param int $ID
      * @return void
@@ -104,7 +121,8 @@ class comment {
         $this->_initialized = true;
         return;
     }
-    /**
+    
+	/**
      * EMPTY
      * @return void
      */
@@ -181,7 +199,10 @@ class comment {
     public function getAuthorName() {
         if(!$this->_initialized)
             return false;
-        return $this->_writer->getUsername();
+		if ($this->_writer_id > 0 )
+			return $this->_writer->getUsername();
+		else
+			return $this->_author_name;
     }
     /**
      * Returns the id of the comment
@@ -243,8 +264,8 @@ class comment {
 		$date = new Date(time());
         $currentTime = $date->getDbTime();
 		$writer_IP=Session::getIPAdress();
-        $result = Package::$pdb->prepare("INSERT INTO `lttx1_news_comments` (`title`,`text`, `date`, `news`, `writer`,`read_allowed`, `IP`) VALUES (?, ?, ?, ?, ?,?)");
-        $result->execute(array( '',$text, $currentTime, $news->getID(), $author_id, 0,$writer_IP));
+        $result = Package::$pdb->prepare("INSERT INTO `lttx1_news_comments` (`title`,`text`, `date`, `news`, `writer`,`read_allowed`, `IP`,`author_name`,`author_mail`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $result->execute(array( '',$text, $currentTime, $news->getID(), $author_id, 0,$writer_IP,$author_name,$author_mail));
  		return ($result->rowCount() <= 0)?false:true;
     }
     /**
@@ -267,31 +288,37 @@ class comment {
             $offset = -1;
         }
         if($news){
-            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` WHERE read_allowed='1' and `news` = ? ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`, `author_name`, `author_mail` FROM `lttx".Package::$pdbn."_news_comments` WHERE read_allowed='1' and `news` = ? ORDER BY `date` DESC");
 			$result->bindParam(':offset', $start, PDO::PARAM_INT);
 			$result->bindParam(':max', $offset, PDO::PARAM_INT);
 			$result->execute(array($news->getID()));
 		}else{
-            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`, `author_name`, `author_mail` FROM `lttx".Package::$pdbn."_news_comments` ORDER BY `date` DESC");
 			$result->bindParam(':offset', $start, PDO::PARAM_INT);
 			$result->bindParam(':max', $offset, PDO::PARAM_INT);
 		}
 		if(!$result)
             return false;
 		foreach($result as $comments){
-            self::_writeCache($comments[0], $comments[1], $comments[2], $comments[3], new news($comments[4]), new User($comments[5]), $comments[6]);
+            self::_writeCache($comments[0], $comments[1], $comments[2], $comments[3], new news($comments[4]), new User($comments[5]), $comments[6],$comments[7],$comments[8]);
             $return[] = new comment($comments[0]);
         }
         return $return;
     }
+
+	/**
+    * get number of comments 
+    * @param int $ID
+    * @return void
+    */
     public static function getNumber($news = false){
         if($news && !is_a($news, 'news'))
                 return false;
         if($news){
-            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ?");
+            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ? and read_allowed='1' ");
             $result->execute(array($news->getID()));
         }else{
-            $result = Package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments`");
+            $result = Package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` where read_allowed='1' ");
         }
         if($result->rowCount() < 1)
             return false;
@@ -299,11 +326,17 @@ class comment {
         $result = $result->fetch();
         return $result[0]*1;
     }
+	
+	/**
+    * get comment by Number
+    * @param int $ID
+    * @return void
+    */
     private function _get($ID) {
         if($this->_getCommentCached($ID))
                 return true;
         $ID = (int)$ID;
-        $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP` FROM `lttx".Package::$pdbn."_news_comments` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`,`author_name`,`author_mail` FROM `lttx".Package::$pdbn."_news_comments` WHERE `ID` = ?");
         $result->execute(array($ID));
         if($result->rowCount() < 1)
             return false;
@@ -319,15 +352,31 @@ class comment {
             $this->_writeNewsCache($this->_news);
         }
         $this->_writer = new User($result[5]);
+		$this->_writer_id=$result[5];
         $this->_writer->setLocalBufferPolicy(false);
         $this->_IP = $result[6];
-		$this->_image_url=self::_buildImageURL( $result[0]);
-        $this->_writeCache($this->_ID, $this->_title, $this->_text, $this->_date, $this->_news, $this->_writer, $this->_IP);
+		$this->_author_name = $result[7];
+		$this->_author_mail = $result[8];
+		$this->_image_url=self::_buildImageURL( $result[0],$this->_writer,$result[8]);
+        $this->_writeCache($this->_ID, $this->_title, $this->_text, $this->_date, $this->_news, $this->_writer, $this->_IP,$this->_author_name,$this->_author_mail);
         return true;
     }
-	private function _buildImageURL($ID){
-		//future integration of gravatar
-		$curImageUrl =Package::getTplURL('news')."img/news_anonym.png";
+	
+	 /**
+     * This function will build the immage URL
+     * @param comment_id, $user_id(registered),author_mail(Guest)
+     * @return URL
+     */
+	private function _buildImageURL($comment_ID,$user,$author_mail){
+		if ($user->getUserID() > 0 ){
+			//return userimage
+			$curImageUrl =Package::getTplURL('news')."img/news_anonym.png";
+		}else{
+			//build Gravata Image
+			//http://de.gravatar.com/site/implement
+			$gravatarhash= md5( strtolower( trim($author_mail)));
+			$curImageUrl ="http://www.gravatar.com/avatar/".$gravatarhash."?sisz=60";
+		}
 		return $curImageUrl ;
 	}
 	
@@ -335,7 +384,9 @@ class comment {
     private function _getNewsCached($ID) {
         return (isset(self::$_newsCache[$ID]))?self::$_newsCache[$ID]:false;
     }
-    private function _getCommentCached($ID){
+
+	
+	private function _getCommentCached($ID){
         if(!isset(self::$_commentsCache[$ID]))
             return false;
         $this->_title = self::$_commentsCache[$ID]['title'];
@@ -344,6 +395,8 @@ class comment {
         $this->_news = self::$_commentsCache[$ID]['news'];
         $this->_writer = self::$_commentsCache[$ID]['writer'];
         $this->_IP = self::$_commentsCache[$ID]['IP'];
+		$this->_author_name = self::$_commentsCache[$ID]['author_name'];
+		$this->_author_mail = self::$_commentsCache[$ID]['author_mail'];
         $this->_ID = $ID;
     }
     private function _writeNewsCache($news) {
@@ -352,7 +405,7 @@ class comment {
         self::$_newsCache[$news->getID()] = $news;
         return true;
     }
-    private static function _writeCache($ID, $title, $text, $date, $news, $writer, $IP){
+    private static function _writeCache($ID, $title, $text, $date, $news, $writer, $IP,$author_name,$author_mail){
         if(!is_a($date, 'Date'))
                 return false;
         if(!is_a($news, 'news'))
@@ -361,13 +414,15 @@ class comment {
                 return false;
         $writer->setLocalBufferPolicy(false);
         self::$_commentsCache[(int)$ID] = array(
-            'title'     =>  $title,
-            'text'      =>  $text,
-            'date'      =>  $date,
-            'news'      =>  $news,
-            'writer'    =>  $writer,
-			'image_url' =>  self::_buildImageURL($ID),
-            'IP'        =>  $IP
+            'title'     	=>  $title,
+            'text'      	=>  $text,
+            'date'      	=>  $date,
+            'news'     	 	=>  $news,
+            'writer'    	=>  $writer,
+			'image_url' 	=>  self::_buildImageURL($ID,$writer,$author_mail),
+            'IP'        	=>  $IP,
+			'author_name'  	=>  $author_name,
+			'author_mail'	=>  $author_mail
         );
         return true;
     }
