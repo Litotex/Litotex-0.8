@@ -1,0 +1,1 @@
+ALTER TABLE `lttx1_log`  ADD COLUMN `package` VARCHAR(255) NULL AFTER `log_type`,  ADD COLUMN `package_action` VARCHAR(255) NULL AFTER `package`;

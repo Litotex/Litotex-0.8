@@ -40,7 +40,7 @@ class LitotexError extends Exception {
         
         $messageParams = array_slice($args, 1);
         $this->message = vsprintf($this->message, $messageParams);
-        
+         Package::debug($this->message,LOG_ALERT) ;
         if (DEVDEBUG == true) {
             $this->message .= "<br /><b>DEVDEBUG active</b><br />";
             foreach ($this->getTrace() as $trace) {

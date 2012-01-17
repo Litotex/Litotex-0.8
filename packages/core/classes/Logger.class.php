@@ -42,8 +42,8 @@ class Logger {
     		return false;
     	
     	// Package details - Package detection is a Workaround!
-    	$message = $_GET['package'] . ' (' . Package::getAction() . '): ' . $message;
-    	
+    	$package=$_GET['package'];
+		$action=Package::getAction();
     	// get User
         $currentUser = 0;
         if (Package::$user) {
@@ -54,7 +54,7 @@ class Logger {
         $date = new Date(time());
         $currentTime = $date->getDbTime();
         
-        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`) VALUES (?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority));
+        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority,$package,$action));
     }
 
     private static function _initDisk(){
