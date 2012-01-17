@@ -171,6 +171,16 @@ class Permission {
 					`lttx".Package::$pdbn."_permissions`
 				SET
 			".$sSqlSetPart;
+			
+			$aSql = array(
+						(int)$iLevel, 
+						$this->_iAssociateType, 
+						(int)$this->_iAssociateID, 
+						$sPackage, 
+						$sFunction, 
+						$sClass
+						
+					);
 
 		} else {
 
@@ -179,29 +189,29 @@ class Permission {
 					`lttx".Package::$pdbn."_permissions`
 				SET
 					".$sSqlSetPart."   
-				WHERE   
+				WHERE  
 					`associateType` = ? AND 
 					`associateID` = ? AND 
 					`package` = ? AND 
 					`function` = ? AND
 					`class` = ?			
 			";
-		}
-
+			
 		$aSql = array(
 						(int)$iLevel, 
 						$this->_iAssociateType, 
 						(int)$this->_iAssociateID, 
 						$sPackage, 
 						$sFunction, 
-						$sClass, 
+						$sClass,
 						$this->_iAssociateType, 
 						(int)$this->_iAssociateID, 
 						$sPackage, 
 						$sFunction, 
 						$sClass
-					);
-	
+					);	
+		}
+
 	   	Package::$pdb->prepare($sSql)->execute($aSql);
 
 		return true;
