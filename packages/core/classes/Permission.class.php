@@ -296,7 +296,8 @@ class Permission {
 					";
 				
 			$aSelect = Package::$pdb->prepare($sSql);
-			$aResult = $aSelect->fetch(PDO::FETCH_ASSOC);
+			$aSelect->execute();
+			$aResult = $aSelect->fetchAll();
 			if(!empty($aResult)){
 				self::$_aAvailablePermissons = $aResult;
 			}
