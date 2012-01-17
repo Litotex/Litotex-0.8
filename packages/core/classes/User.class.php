@@ -529,7 +529,7 @@ class User {
 		return false;
 		if(count($this->_writeBuffer) <= 0)
 		return true;
-		$queryString = 'UPDATE `lttx".package::$pdbn."_users` SET ';
+		$queryString = "UPDATE `lttx".package::$pdbn."_users` SET ";
 		$values = array();
 		$i = 0;
 		foreach($this->_writeBuffer as $key => $value) {
