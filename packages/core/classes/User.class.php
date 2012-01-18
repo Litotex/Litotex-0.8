@@ -169,18 +169,14 @@ class User {
 		$iUserId = (int)$this->getData('ID');
 
 		// check for PW
-		if(
-		isset($aData['password']) &&
-		!empty($aData['password'])
-		){
-			$aPasswordSalted 		= self::_saltString($aData['password']);
-			$aData['password'] 		= hash('sha512', $aPasswordSalted[1]);
-			$aData['dynamicSalt'] 	= $aPasswordSalted[0];
-		} else if(
-		isset($aData['password']) &&
-		empty($aData['password'])
-		){
-			unset($aData['password']);
+		if(isset($aData['password']) &&
+                !empty($aData['password'])) {
+            $aPasswordSalted        = self::_saltString($aData['password']);
+            $aData['password']      = hash('sha512', $aPasswordSalted[1]);
+            $aData['dynamicSalt']   = $aPasswordSalted[0];
+        } else if (isset($aData['password']) &&
+            empty($aData['password'])) {
+            unset($aData['password']);
 		}
 			
 		$sSql = "";
@@ -296,12 +292,15 @@ class User {
 
 		if(!$user){
 			self::$sLastLoginError = 'login_incorrect';
+            Package::debug('Login failed! Unknown user: ' . $username, LOG_INFO);
 			return false;
 		} else if($user->checkUserBanned()){
 			self::$sLastLoginError = 'login_user_banned';
+			Package::debug('Login failed! Banned user: ' . $username, LOG_INFO);
 			return false;
 		} else if(!$user->checkUserActive()){
 			self::$sLastLoginError = 'login_user_inactive';
+			Package::debug('Login failed! Inactive user: ' . $username, LOG_INFO);
 			return false;
 		} else if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
 			$user->setUsersInstance();
@@ -310,6 +309,8 @@ class User {
 			return $user;
 		}
 		self::$sLastLoginError = 'login_incorrect';
+		Package::debug('Login failed! Another error; user: ' . $username . '; Salt: ' . 
+            (int)self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt')), LOG_INFO);
 		return false;
 	}
 	/**

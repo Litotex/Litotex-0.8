@@ -174,7 +174,7 @@ class package_login extends Package {
 		$user = User::login($_POST['username'],$_POST['password']);
 		if(!$user){
 			$sError = User::$sLastLoginError;
-			throw new LitotexError($sError);
+			throw new LitotexInfo($sError);
 		}
 		Package::debug('user '.$_POST['username'].' logged in') ;
 		header("Location:index.php");

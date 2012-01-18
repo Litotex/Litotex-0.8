@@ -47,6 +47,8 @@ class LitotexInfo extends Exception {
                 @$this->message .= '<p>'.$trace['class'].':'.$trace['function'].': '.$trace['file'].':'.$trace['line'].'</p>';
             }
         }
+        
+        Package::debug($this->message, LOG_INFO);
     }
 
 }
