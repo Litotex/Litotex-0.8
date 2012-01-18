@@ -40,13 +40,19 @@ class LitotexError extends Exception {
         
         $messageParams = array_slice($args, 1);
         $this->message = vsprintf($this->message, $messageParams);
+<<<<<<< HEAD
         Package::debug($this->message,$priority) ;
+=======
+        
+>>>>>>> 6241669bbf23256b01d33dcd4197e7deffc54de9
         if (DEVDEBUG == true) {
             $this->message .= "<br /><b>DEVDEBUG active</b><br />";
             foreach ($this->getTrace() as $trace) {
                 @$this->message .= '<p>'.$trace['class'].':'.$trace['function'].': '.$trace['file'].':'.$trace['line'].'</p>';
             }
         }
+        
+        Package::debug($this->message, LOG_ERR);
     }
 
 }

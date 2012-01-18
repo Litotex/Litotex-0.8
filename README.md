@@ -1,6 +1,6 @@
 # Litotex-Developer Preview Version
 
-This version is for developers who knwo what they are doing
+This version is for developers who know what they are doing
 We don't assume liability of any kind
 For help, support or just talking, you can
 
@@ -8,7 +8,7 @@ For help, support or just talking, you can
 * visit our [github](https:github.com/Litotex) repository
 * or join our IRC-Cannel at [Freenode](irc://freenode.net/#litotex)
 
-Your Litotex Team 
+Your Litotex Team
 
 ## Installation
 * Place your files properly (in most cases your webspace)
@@ -26,7 +26,7 @@ You can use this on a Linux-Shell
 cp packages/core/config/const.php.dist packages/core/config/const.php
 cp packages/core/config/database.conf.php.dist packages/core/config/database.conf.php
 cp packages/core/config/path.php.dist packages/core/config/path.php
-cp acp/packages/core/config/path.php.dist acp/packages/core/config/path.php
+cp acp/packages/core/config/const.php.dist acp/packages/core/config/const.php
 ```
 
 * Set write permissions (0777) to the following folders and create them if needed:
@@ -46,3 +46,7 @@ chmod 777 packages/core/cache/ files/cache/ files/packages/cache/ tpl_c/ acp/tpl
 ```
 
 * Create a database (and adjust the settings in the config file) and import all data from `dbUpdates/litotex.sql`
+
+```bash
+mysql -D litotexDB -u litotexUser -p < dbUpdates/litotex.sql
+```

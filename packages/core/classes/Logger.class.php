@@ -37,6 +37,12 @@
  */
 
 class Logger {
+    
+    /*
+     * will be filled with the current timestamp
+     */
+    private static $_logFile = NULL;
+    
 	public static function debug($message = '', $priority = LOG_WARNING) {
     	if ($priority > LOG_LEVEL)
     		return false;
@@ -45,16 +51,17 @@ class Logger {
     	$package=$_GET['package'];
 		$action=Package::getAction();
     	// get User
-        $currentUser = 0;
-        if (Package::$user) {
+        $currentUser = NULL;
+        if (Package::$user)
             $currentUser = Package::$user->getUserID();
-        }
         
         // get Time
         $date = new Date(time());
         $currentTime = $date->getDbTime();
         
-        Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority,$package,$action));
+        // when Db isnt working write to disk
+        if (!Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority,$package,$action)))
+            self::debugDisk($message);
     }
 
     private static function _initDisk(){
@@ -69,8 +76,23 @@ class Logger {
     }
     
     public static function debugDisk($message = '', $priority = LOG_WARNING){
+        if ($priority > LOG_LEVEL)
+    		return false;
+    	
+    	// Package details - Package detection is a Workaround!
+    	$package=$_GET['package'];
+		$action=Package::getAction();
+    	// get User
+        $currentUser = NULL;
+        if (Package::$user)
+            $currentUser = Package::$user->getUserID();
+        
+        // get Time
+        $date = new Date(time());
+        $currentTime = $date->getDbTime();
+        
     	self::_initDisk();
-    	fwrite(self::$_logFile, $priority . ':' . $message . "\n");
+    	fwrite(self::$_logFile, $priority . ':' . $currentTime . ':' . $package . ':' . $action . ':' . $currentUser . ':' . $message . "\n");
     }
     
     public static function debugStartup($message){
