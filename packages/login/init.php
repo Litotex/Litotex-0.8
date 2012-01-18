@@ -98,7 +98,7 @@ class package_login extends Package {
 	}
 	
 	public function __action_forget_submit() {
-		$email= ($_POST['email']);		
+                $email= ($_POST['email']);		
 
 		$pos = strpos ($email, "@");
 		if ($pos < 1 ) { 
@@ -174,7 +174,7 @@ class package_login extends Package {
 		$user = User::login($_POST['username'],$_POST['password']);
 		if(!$user){
 			$sError = User::$sLastLoginError;
-			throw new LitotexError($sError);
+			throw new LitotexError($sError );
 		}
 		Package::debug('user '.$_POST['username'].' logged in') ;
 		header("Location:index.php");

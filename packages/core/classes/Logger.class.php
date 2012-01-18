@@ -27,11 +27,11 @@
  */
 /* Log-Levels:
  * LOG_EMERG	system is unusable					0
- * LOG_ALERT	action must be taken immediately	1
- * LOG_CRIT		critical conditions					2
- * LOG_ERR		error conditions					3
+ * LOG_ALERT	action must be taken immediately                        1
+ * LOG_CRIT		critical conditions				2
+ * LOG_ERR		error conditions				3
  * LOG_WARNING	warning conditions					4
- * LOG_NOTICE	normal, but significant, condition	5
+ * LOG_NOTICE	normal, but significant, condition                      5
  * LOG_INFO		informational message				6
  * LOG_DEBUG	debug-level message					7
  */
