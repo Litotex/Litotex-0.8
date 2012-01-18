@@ -15,7 +15,10 @@
 	</div>	
 	{literal} 
 	<script type="text/javascript">
-				
+                                if (CKEDITOR.instances['news_text']) {
+                                    CKEDITOR.remove(CKEDITOR.instances['news_text']);
+                                }
+                        
 				CKEDITOR.replace( 'news_text',
 					{
 						

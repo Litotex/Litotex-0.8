@@ -126,7 +126,7 @@ if (!defined('MINIFY_USE_CACHE')) {
    * Whether or not Minify should use a disk-based cache to increase
    * performance.
    */
-  define('MINIFY_USE_CACHE', true);
+  define('MINIFY_USE_CACHE', false);
 }
 
 /**

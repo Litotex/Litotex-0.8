@@ -48,6 +48,8 @@ class package_news extends Package {
         return false;
     }
 
+    
+  
 	public function __action_main() {
 		Package::addCssFile('news.css', 'news');	
         $category = false;
@@ -147,6 +149,9 @@ class package_news extends Package {
 
 	
 	public function __action_comment_submit(){
+		$commentAuthor='';
+		$commentAuthor_mail='';
+		
 		if(isset($_GET['id']))
 			$news_id=$_GET['id'];
 		else
@@ -163,10 +168,15 @@ class package_news extends Package {
 		}else{
 			if(!isset($_POST['author']) || !isset($_POST['author_mail'])){
 					throw new LitotexError('LN_NEWS_ERROR');
+			}else{
+				$saveUserID=0;
+				$commentNews=$_POST['new_comment'];
+				$commentAuthor=$_POST['author'];
+				$commentAuthor_mail=$_POST['author_mail'];
 			}
 		}
 	    $news=new news($news_id);
-		$comments_ret = comment::publish($news,$saveUserID,$commentNews);
+		$comments_ret = comment::publish($news,$saveUserID,$commentNews,$commentAuthor,$commentAuthor_mail);
 		if ($comments_ret==true)
 			throw new LitotexInfo('LN_NEWS_COMMENT_OK');
 		else

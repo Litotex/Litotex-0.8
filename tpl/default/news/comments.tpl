@@ -46,7 +46,7 @@ $.validator.setDefaults({
 		<li class="NewsComment">
 			<div class="author">
 				<div class="avatar">
-					<img alt='news_anonym.png' src='{$comment->getImageURL()}' height='60' width='60' />			
+					<img alt='image' src='{$comment->getImageURL()}' height='60' width='60' />			
 				</div>
 				<div class="name">
 					{$comment->getAuthorName()}
