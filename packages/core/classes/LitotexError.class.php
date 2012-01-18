@@ -28,7 +28,7 @@
 
 class LitotexError extends Exception {
 
-    public function __construct($messageCode,$priority = LOG_INFO) {
+    public function __construct($messageCode, $priority = LOG_ERR) {
         $args = func_get_args();
         
         $messageCode = $args[0];
@@ -40,11 +40,9 @@ class LitotexError extends Exception {
         
         $messageParams = array_slice($args, 1);
         $this->message = vsprintf($this->message, $messageParams);
-<<<<<<< HEAD
-        Package::debug($this->message,$priority) ;
-=======
         
->>>>>>> 6241669bbf23256b01d33dcd4197e7deffc54de9
+        Package::debug($this->message,$priority) ;
+        
         if (DEVDEBUG == true) {
             $this->message .= "<br /><b>DEVDEBUG active</b><br />";
             foreach ($this->getTrace() as $trace) {
@@ -52,7 +50,7 @@ class LitotexError extends Exception {
             }
         }
         
-        Package::debug($this->message, LOG_ERR);
+        Package::debug($this->message, $priority);
     }
 
 }
