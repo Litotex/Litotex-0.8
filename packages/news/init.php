@@ -48,6 +48,8 @@ class package_news extends Package {
         return false;
     }
 
+    
+  
 	public function __action_main() {
 		Package::addCssFile('news.css', 'news');	
         $category = false;
