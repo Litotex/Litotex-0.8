@@ -51,7 +51,7 @@ class Logger {
     	$package=$_GET['package'];
 		$action=Package::getAction();
     	// get User
-        $currentUser = NULL;
+        $currentUser = 0;
         if (Package::$user)
             $currentUser = Package::$user->getUserID();
         

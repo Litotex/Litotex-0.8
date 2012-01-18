@@ -168,8 +168,8 @@ class news{
 	   }
 	   
 	   foreach($news as $rows){
-			$CommentsCount=self::_getCommentCount($rows[0]);
-			self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $CommentsCount, new User($rows[5]), $rows[6], $rows[7]);
+			$CommentsCount=0;
+                        self::_writeCache($rows[0], $rows[1], $rows[2], $category, $rows[4], $CommentsCount, new User($rows[5]), $rows[6], $rows[7]);
 			$return[] = new news($rows[0]);
         }
         return $return;
@@ -413,11 +413,11 @@ class news{
         $this->_text = $news[1];
         $this->_category = new category($news[2]);
         $this->_date= new Date(Date::fromDbDate($news[3]));
-		$this->_commentNum = self::_getCommentCount($ID);
+	$this->_commentNum = self::_getCommentCount($ID);
         $this->_writtenBy = new User($news[5]);
         $this->_writtenBy->setLocalBufferPolicy(false);
         $this->_active = $news[5];
-		$this->_allow_comments = $news[6];
+	$this->_allow_comments = $news[6];
         self::_writeCache($ID, $this->_title, $this->_text, $this->_category, $this->_date, $this->_commentNum, $this->_writtenBy, $this->_active,$this->_allow_comments);
         return true;
     }
@@ -472,7 +472,7 @@ class news{
             'commentNum'=> $commentNum,
             'writtenBy' => $writtenBy,
             'active' 	=> $active,
-			'allow_comments' => $allow_comments);
+            'allow_comments' => $allow_comments);
         return true;
     }
     /**

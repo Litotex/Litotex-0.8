@@ -374,7 +374,9 @@ class User {
 	public function getData($key, $cached = true, $buffered = true) {
 		if(!$this->_initialized)
 		return false;
-		if($cached && $this->_cacheActive) {
+		if ($this->_currentID == 0)
+                    return false;
+                if($cached && $this->_cacheActive) {
 			if(isset(self::$_readCache[$this->_currentID][$key])) {
 				return self::$_readCache[$this->_currentID][$key];
 			}
