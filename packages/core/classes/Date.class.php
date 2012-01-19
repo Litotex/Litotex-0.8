@@ -77,7 +77,4 @@ class Date {
     	return Date($dateTime->getTimestamp());
     }
 
-    public static function fromDbTime($time){
-		$dateTime = new DateTime($date);
-    	return Date($dateTime->getTimestamp());    }
 }
