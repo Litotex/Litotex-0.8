@@ -217,7 +217,12 @@ abstract class Package {
             throw new LitotexError('E_noPermission');
         }
         $this->runtime();
-        return $this->$functionName();
+        self::$packages->callHook($this->_packageName . '_before_' . $action, array());
+        $result = $this->$functionName();
+        if($result){
+        	self::$packages->callHook($this->_packageName . '_after_' . $action, array());
+        }
+        return $result;
     }
 
     /**

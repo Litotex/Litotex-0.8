@@ -59,6 +59,7 @@ class package_sample1 extends Package {
      */
     public static function registerHooks(){
         self::_registerHook(__CLASS__, 'sample1', 0);
+        self::_registerHook(__CLASS__, 'main_after_main', 0);
         return true;
     }
    public static function registerTplModifications(){
@@ -74,6 +75,12 @@ class package_sample1 extends Package {
         echo '<p><br>Hello World! (sample1)</p>';
         return true;
     }
+    
+    public static function __hook_main_after_main(){
+    	echo '<!--Main wurde ausgeführt und ich bin sample1-->';
+    	return true;
+    }
+    
 	public static function  __tpl_sample1() {
         return self::__hook_sample1(2);
     }
