@@ -200,7 +200,7 @@ class PackageManager {
 		foreach ($this->_tplModificationCache as $position => $list) {
 			$n = 0;
 			foreach ($list as $item) {
-				Package::$pdb->prepare("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($item[0], $item[1], $position, $item[4], $n, $this->_packagePrefix));
+				Package::$pdb->prepare("INSERT INTO `lttx1_tpl_modification_sort` (`class`, `function`, `position`, `active`, `sort`, `packageDir`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($item[0], $item[1], $position, intval($item[4]), $n, $this->_packagePrefix));
 				$n++;
 			}
 		}
