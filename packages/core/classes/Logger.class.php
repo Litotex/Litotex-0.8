@@ -27,11 +27,11 @@
  */
 /* Log-Levels:
  * LOG_EMERG	system is unusable					0
- * LOG_ALERT	action must be taken immediately                        1
- * LOG_CRIT		critical conditions				2
- * LOG_ERR		error conditions				3
+ * LOG_ALERT	action must be taken immediately	1
+ * LOG_CRIT		critical conditions					2
+ * LOG_ERR		error conditions					3
  * LOG_WARNING	warning conditions					4
- * LOG_NOTICE	normal, but significant, condition                      5
+ * LOG_NOTICE	normal, but significant, condition	5
  * LOG_INFO		informational message				6
  * LOG_DEBUG	debug-level message					7
  */
@@ -48,19 +48,23 @@ class Logger {
     		return false;
     	
     	// Package details - Package detection is a Workaround!
-    	$package=isset($_GET['package'])?$_GET['package']:'main';
-		$action=Package::getAction();
+		$action = Package::$pdb->quote(Package::getAction());
+    	$package = isset($_GET['package'])?$_GET['package']:'main';
+    	
     	// get User
         $currentUser = 0;
         if (Package::$user)
-            $currentUser = Package::$user->getUserID();
+            $currentUser = Package::$pdb->quote(Package::$user->getUserID());
         
         // get Time
         $date = new Date(time());
-        $currentTime = $date->getDbTime();
+        $currentTime = Package::$pdb->quote($date->getDbTime());
+        
+        $message = Package::$pdb->quote($message);
         
         // when Db isnt working write to disk
-        if (!Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority,$package,$action)))
+        // we won't use a prepared statement here to avoid recursion
+        if (Package::$pdb->exec("INSERT INTO `lttx1_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (".$currentUser.", ".$currentTime.", ".$message.", ".$priority.", ".$package.", ".$action.")", FALSE) === FALSE)
             self::debugDisk($message);
     }
 
