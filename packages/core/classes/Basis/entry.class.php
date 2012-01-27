@@ -28,7 +28,7 @@
 class Basis_Entry {
 
 	protected $_aData = array();
-	protected $_sTableName = 'lttx_DB_TABLENAME';
+	protected $_sTableName = 'lttx1_DB_TABLENAME';
 	
 	private static $_aInstance = array();
 	protected static $_sClassName = 'Basis_Entry';

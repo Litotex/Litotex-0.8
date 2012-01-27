@@ -47,15 +47,15 @@ class race{
 	}
 	
 	public function setName($name){
-		Package::$pdb->AutoExecute('lttx_races', array('name' => $name), 'UPDATE', '`id` = ' . $this->getID());
+		Package::$pdb->AutoExecute('lttx1_races', array('name' => $name), 'UPDATE', '`id` = ' . $this->getID());
 		$this->_name = $name;
 	}
 	public function setImage($image){
-		Package::$pdb->AutoExecute('lttx_races', array('image' => $image), 'UPDATE', '`id` = ' . $this->getID());
+		Package::$pdb->AutoExecute('lttx1_races', array('image' => $image), 'UPDATE', '`id` = ' . $this->getID());
 		$this->_image = $image;
 	}
 	public function setDescription($description){
-		Package::$pdb->AutoExecute('lttx_races', array('description' => $description), 'UPDATE', '`id` = ' . $this->getID());
+		Package::$pdb->AutoExecute('lttx1_races', array('description' => $description), 'UPDATE', '`id` = ' . $this->getID());
 		$this->_description = $description;
 	}
 	private function _getRaceData($raceID){
