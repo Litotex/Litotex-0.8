@@ -28,7 +28,7 @@
 
 class UserField extends Basis_Entry {
 	protected $_pluginHandler = NULL;
-	protected $_sTableName = 'lttx_userfields';
+	protected $_sTableName = 'lttx1_userfields';
 	static protected $_sClassName = 'userField';
 	
 	public function  __construct($iFieldId = 0) {
