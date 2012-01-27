@@ -115,7 +115,7 @@ class package_login extends Package {
 		
 		$result = Package::$pdb->prepare("
             SELECT *
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `email` = ?");
 		$result->execute(array($email));
 		

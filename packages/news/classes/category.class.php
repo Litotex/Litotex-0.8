@@ -78,7 +78,7 @@ class category {
      */
     private function exists($ID) {
         $ID *= 1;
-        $result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("SELECT `ID` FROM `lttx1_news_categories` WHERE `ID` = ?");
         $result->execute(array($ID));
         return ($result->rowCount() > 0)?true:false;
     }
@@ -88,7 +88,7 @@ class category {
      * @return bool
      */
     public static function titleExists($title){
-        $result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_news_categories` WHERE `title` = ?");
+        $result = Package::$pdb->prepare("SELECT `ID` FROM `lttx1_news_categories` WHERE `title` = ?");
         $result->execute(array($title));
         return($result->rowCount() > 0)?true:false;
     }
@@ -101,7 +101,7 @@ class category {
     public static function create($title, $description) {
         if(self::titleExists($title))
             return false;
-        $result = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_news_categories` (`title`, `description`, `newsNum`, `newsLastDate`) VALUES (?, ?, ?, ".Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).")");
+        $result = Package::$pdb->prepare("INSERT INTO `lttx1_news_categories` (`title`, `description`, `newsNum`, `newsLastDate`) VALUES (?, ?, ?, ".Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())).")");
         $result->execute(array($title, $description, 0));
         return ($result->rowCount() <= 0)?false:new category(Package::$pdb->lastInsertId());
     }
@@ -112,7 +112,7 @@ class category {
     public function delete() {
         if(!$this->_initialized)
                 return false;
-        $result = Package::$pdb->prepare("DELETE FROM `lttx".Package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("DELETE FROM `lttx1_news_categories` WHERE `ID` = ?");
         $result->execute(array($this->_ID));
         $this->_initialized = false;
         return ($result->rowCount() <= 0)?false:true;
@@ -123,7 +123,7 @@ class category {
      */
     public static function getAll() {
         $return = array();
-        $categories = Package::$pdb->query("SELECT `ID` FROM `lttx".Package::$pdbn."_news_categories`");
+        $categories = Package::$pdb->query("SELECT `ID` FROM `lttx1_news_categories`");
         foreach($categories as $item) {
             $return[] = new category($item[0]);
         }
@@ -143,7 +143,7 @@ class category {
     public function getDescription() {
         if(!$this->_initialized)
             return false;
-        $desc = Package::$pdb->prepare("SELECT `description` FROM `lttx".Package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $desc = Package::$pdb->prepare("SELECT `description` FROM `lttx1_news_categories` WHERE `ID` = ?");
         $desc->execute(array($this->_ID));
         if($desc->rowCount() < 1)
             return false;
@@ -167,7 +167,7 @@ class category {
     public function getTitle() {
         if(!$this->_initialized)
             return false;
-        $title = Package::$pdb->prepare("SELECT `title` FROM `lttx".Package::$pdbn."_news_categories` WHERE `ID` = ?");
+        $title = Package::$pdb->prepare("SELECT `title` FROM `lttx1_news_categories` WHERE `ID` = ?");
         $title->execute(array($this->_ID));
 
         if($title->rowCount() < 1)
@@ -181,7 +181,7 @@ class category {
      * @return bool
      */
     public function updateTimestamp(){
-        $result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_news_categories` SET `newsLastDate` = " . Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())) . " WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("UPDATE `lttx1_news_categories` SET `newsLastDate` = " . Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())) . " WHERE `ID` = ?");
         $result->execute(array($this->_ID));
         return ($result->rowCount() <= 0)?false:true;
     }

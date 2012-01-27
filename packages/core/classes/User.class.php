@@ -202,7 +202,7 @@ class User {
 		if($iUserId > 0  &&	self::userExists($iUserId)){
 
 			$sSql = " UPDATE
-    						`lttx".Package::$pdbn."_users`
+    						`lttx1_users`
     					SET
     						".$sSqlSetPart."
     					WHERE
@@ -215,7 +215,7 @@ class User {
 		} else if($iUserId == 0){
 
 			$sSql = " INSERT INTO
-    						`lttx".Package::$pdbn."_users`
+    						`lttx1_users`
     					SET
     					".$sSqlSetPart;
 			// Insert
@@ -252,7 +252,7 @@ class User {
 		return -1;
 		$result = Package::$pdb->prepare("
             SELECT COUNT(`ID`)
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `email` = ?");
 		$result->execute(array($email));
 		if($result->rowCount() < 1) {
@@ -270,7 +270,7 @@ class User {
 			$additionalDataColumns .= ', `' . $key . '`';
 		}
 		$result = Package::$pdb->prepare("
-            INSERT INTO `lttx".Package::$pdbn."_users`
+            INSERT INTO `lttx1_users`
             (`bannedReason`,`userGroup`,`serverAdmin`,`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
             VALUES
             (? ,? ,? ,?, ?, ?, ?" . $additionalDataPointer . ")");
@@ -352,7 +352,7 @@ class User {
 		}
 		$result = Package::$pdb->prepare("
             SELECT `ID`
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `username` = ?");
 		$result->execute(array($username));
 		
@@ -388,7 +388,7 @@ class User {
 		//Nothing was cached... read manually
 		$result = Package::$pdb->prepare("
             SELECT `" . $key . "`
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -417,7 +417,7 @@ class User {
 			$this->_writeBuffer[$key] = $newValue;
 			return true;
 		}
-		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_users` SET `" . $key . "` = ? WHERE `ID` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx1_users` SET `" . $key . "` = ? WHERE `ID` = ?");
 		$result->execute(array($newValue, $this->_currentID));
 		self::$_readCache[$this->_currentID][$key] = $newValue;
 		return true;
@@ -482,7 +482,7 @@ class User {
 
 		$result = Package::$pdb->prepare("
             SELECT *
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		$result = $result->fetch();
@@ -512,7 +512,7 @@ class User {
 		}
 		$result = Package::$pdb->prepare("
             SELECT " . $fields . "
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -564,13 +564,13 @@ class User {
 			
 			$result = Package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".Package::$pdbn."_users`
+                FROM `lttx1_users`
                 WHERE `ID` = ?");
 			$result->execute(array($user));
 		} else {
 			$result = Package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".Package::$pdbn."_users`
+                FROM `lttx1_users`
                 WHERE `username` = ?");
 			$result->execute(array($user));
 		}
@@ -773,7 +773,7 @@ class User {
 	 */
 	public function setPassword($password){
 		$salted = $this->_saltString($password);
-		Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
+		Package::$pdb->prepare("UPDATE `lttx1_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
 		return true;
 	}
 
@@ -865,7 +865,7 @@ class User {
 		//We absolutly need to stop buffering every entry! This would be the perfect overkill
 		$return = array();
 		$match = array();
-		$searchResults = Package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx".Package::$pdbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
+		$searchResults = Package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx1_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
 		$searchResults->execute(array('%' . $request . '%'));
 		if(!$searchResults){
 			throw new LitotexDBError();
@@ -885,7 +885,7 @@ class User {
 	}
 
 	public function saveUserFieldData($iFieldId, $mValue){
-		$sSql = " REPLACE INTO `lttx".Package::$pdbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
+		$sSql = " REPLACE INTO `lttx1_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'), $mValue);
 		Package::$pdb->prepare($sSql)->execute($aSql);
 	}
@@ -898,7 +898,7 @@ class User {
 	}
 
 	public function getUserFieldData($iFieldId){
-		$sSql = " SELECT `value` FROM `lttx".Package::$pdbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
+		$sSql = " SELECT `value` FROM `lttx1_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'));
 		$mValue = Package::$pdb->prepare($sSql);
 		$mValue->execute($aSql);

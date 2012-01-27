@@ -144,7 +144,7 @@ class UserGroup extends Basis_Entry {
         if($ID === false)
             return false;
         $result = Package::$pdb->prepare("
-            DELETE FROM `lttx".Package::$pdbn."_userGroupConnections`
+            DELETE FROM `lttx1_userGroupConnections`
             WHERE `userID` = ?
             AND `groupID` = ?");
 		$result->execute(array($ID, $this->ID));

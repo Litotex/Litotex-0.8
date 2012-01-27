@@ -164,7 +164,7 @@ class news {
         if (!is_a($category, 'category'))
             return false;
         $title = htmlspecialchars($title);
-        $insert = Package::$pdb->prepare("INSERT INTO `lttx" . Package::$pdbn . "_news` (`title`, `text`, `category`, `date`, `writtenBy`, `active`) VALUES (?, ?, ?, " . Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())) . ", ?, ?)");
+        $insert = Package::$pdb->prepare("INSERT INTO `lttx1_news` (`title`, `text`, `category`, `date`, `writtenBy`, `active`) VALUES (?, ?, ?, " . Package::$pdb->DBTimeStamp(date("Y-m-d H:m:s", time())) . ", ?, ?)");
         $insert->execute(array($title, $text, $category->getID(), (Package::$user) ? Package::$user->getID() : false, (bool) $active));
         $category->updateTimestamp();
         return ($insert->rowCount() < 1) ? false : new news(Package::$pdb->lastInsertId());
@@ -193,12 +193,12 @@ class news {
         }
         $return = array();
         if ($category) {
-            $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx" . Package::$pdbn . "_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE  n.category = ? AND n.active = ? ORDER BY ndate DESC");
+            $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE  n.category = ? AND n.active = ? ORDER BY ndate DESC");
             $news->bindParam(':offset', $start, PDO::PARAM_INT);
             $news->bindParam(':max', $offset, PDO::PARAM_INT);
             $news->execute(array($category->getID(), true));
         } else {
-            $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx" . Package::$pdbn . "_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE `active` = ? ORDER BY n.date DESC");
+            $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE `active` = ? ORDER BY n.date DESC");
             $news->bindParam(':offset', $start, PDO::PARAM_INT);
             $news->bindParam(':max', $offset, PDO::PARAM_INT);
             $news->execute(array(true));
@@ -331,7 +331,7 @@ class news {
         if (!$this->_initialized)
             return false;
         $value = (bool) $value;
-        $result = Package::$pdb->prepare("UPDATE `lttx" . Package::$pdbn . "_news` SET `active` = ? WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("UPDATE `lttx1_news` SET `active` = ? WHERE `ID` = ?");
         $result->execute(array($value, $this->_news_ID));
         if ($result->rowCount() < 1)
             return false;
@@ -356,7 +356,7 @@ class news {
     public function delete() {
         if (!$this->_initialized)
             return false;
-        $result = Package::$pdb->prepare("DELETE FROM `lttx" . Package::$pdbn . "_news` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("DELETE FROM `lttx1_news` WHERE `ID` = ?");
         $result->execute(array($this->_news_ID));
         return ($result->rowCount() <= 0) ? false : true;
     }
@@ -423,7 +423,7 @@ class news {
     private function _get($ID) {
         if ($this->_getCache($ID))
             return true;
-        $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx" . Package::$pdbn . "_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE n.ID = ?");
+        $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE n.ID = ?");
         $news->execute(array($ID));
         if ($news->rowCount() < 1)
             return false;
@@ -516,7 +516,7 @@ class news {
      * @return int
      */
     private function _getCommentCount($ID) {
-        $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx" . Package::$pdbn . "_news_comments` WHERE `news` = ? and read_allowed='1'");
+        $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx1_news_comments` WHERE `news` = ? and read_allowed='1'");
         $result->execute(array($ID));
         if ($result->rowCount() < 1)
             return 0;

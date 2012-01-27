@@ -95,7 +95,7 @@ class ressource{
 			$add .= ', `increaseFormula`';
 		if($limit)
 			$add .= ', `limit`';
-		$res = Package::$pdb->prepare("SELECT `resID`, `resNum`" . $add . " FROM `lttx".Package::$pdbn."_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?");
+		$res = Package::$pdb->prepare("SELECT `resID`, `resNum`" . $add . " FROM `lttx1_" . $table . "_ressources` WHERE `sourceID` = ? AND `raceID` = ?");
 		$res->execute(array($id, $race));
 		if($res->rowCount() < 1)
 			throw new Exception('Selected ressource table "' . $table . '" was not found or incompatible');
@@ -109,13 +109,13 @@ class ressource{
 				$this->_limit[$element[0]] = $element[$i++];
 			}
 		}
-		$checkRes = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_ressources` WHERE `raceID` = ?");
+		$checkRes = Package::$pdb->prepare("SELECT `ID` FROM `lttx1_ressources` WHERE `raceID` = ?");
 		$checkRes->execute(array($race));
 		foreach($checkRes as $element){
 			if(isset($this->_res[$element[0]])){
 				continue;
 			}
-			Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)")->execute(array($element[0], $race, $id));
+			Package::$pdb->prepare("INSERT INTO `lttx1_".$table."Ressources` (`resID`, `raceID`, `sourceID`) VALUES (?, ?, ?)")->execute(array($element[0], $race, $id));
 			$this->_res[$element[0]] = 0;
 		}
 		$this->_race = $race;
@@ -224,7 +224,7 @@ class ressource{
 		if(!isset($this->_limit[$resID]))
 			return false;
 		$this->_limit[$resID] = $newValue;
-		Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?")->execute(array($newValue, $resID, $this->_race, $this->_src));
+		Package::$pdb->prepare("UPDATE `lttx1_" . $this->_table . "Ressources` SET `limit` = ? WHERE `resID` = ?, `raceID` = ?, `sourceID` = ?")->execute(array($newValue, $resID, $this->_race, $this->_src));
 		return true;
 	}
 	/**
@@ -266,7 +266,7 @@ class ressource{
 	 * @return array
 	 */
 	public function getAllRessName(){
-		$names = Package::$pdb->prepare("SELECT `ID`, `name` FROM `lttx".Package::$pdbn."_ressources` WHERE `raceID` = ?");
+		$names = Package::$pdb->prepare("SELECT `ID`, `name` FROM `lttx1_ressources` WHERE `raceID` = ?");
 		$names->execute(array($this->_race));
 		$return = array();
 		foreach($names as $name){

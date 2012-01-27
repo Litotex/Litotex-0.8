@@ -37,7 +37,7 @@ class UserField extends Basis_Entry {
 	}
 	
 	public static function getList(){
-		$sSql = " SELECT `ID`, `key`, IF (extra='','empty' ,extra) as extra ,`optional`, `display`, `editable`, IF (package='','empty' ,package) as package, `position` FROM `lttx".Package::$pdbn."_userfields` ORDER BY `position` ASC";
+		$sSql = " SELECT `ID`, `key`, IF (extra='','empty' ,extra) as extra ,`optional`, `display`, `editable`, IF (package='','empty' ,package) as package, `position` FROM `lttx1_userfields` ORDER BY `position` ASC";
 		$aSql = array();
 		
 		$aResult = Package::$pdb->prepare($sSql);

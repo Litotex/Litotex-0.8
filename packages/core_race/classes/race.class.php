@@ -59,7 +59,7 @@ class race{
 		$this->_description = $description;
 	}
 	private function _getRaceData($raceID){
-		$result = Package::$pdb->prepare("SELECT `id`, `name`, `image`, `description` FROM `lttx".Package::$pdbn."_races` WHERE `id` = ?");
+		$result = Package::$pdb->prepare("SELECT `id`, `name`, `image`, `description` FROM `lttx1_races` WHERE `id` = ?");
 		$result->execute(array($raceID));
 		if($result->rowCount() < 1)
 			throw new LitotexError('E_race_not_found', $raceID);
