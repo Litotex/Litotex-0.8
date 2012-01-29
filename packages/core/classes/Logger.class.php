@@ -48,7 +48,7 @@ class Logger {
     		return false;
     	
     	// Package details - Package detection is a Workaround!
-    	$package=$_GET['package'];
+    	$package=isset($_GET['package'])?$_GET['package']:'main';
 		$action=Package::getAction();
     	// get User
         $currentUser = 0;
