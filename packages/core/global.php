@@ -36,7 +36,6 @@ header("Content-Type: text/html; charset=utf-8");
 
 session_start();
 
-require_once MODULES_FRONTEND_DIRECTORY.'core/classes/Basis/entry.class.php'; //TODO: Workaround, delete later
 require_once MODULES_DIRECTORY.'core/autoloader.php';
 
 try {
