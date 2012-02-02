@@ -21,3 +21,4 @@ E_couldNotOpenCachePackage = "Die Datei %s konnte nicht geschrieben werden, übe
 userField_noPlugin = "Konnte Userfeld Plugin %s nicht finden!"
 E_user_couldNotValidateUserField = "Konnte das Userfeld %s nicht validieren"
 E_UserGroupNotFound = "Usergruppe %i konnte nicht gefunden werden"
+E_UserFieldNotFound = "Userfeld %i wurde nicht gefunden"
