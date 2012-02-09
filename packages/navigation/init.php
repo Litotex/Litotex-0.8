@@ -73,8 +73,12 @@ class package_navigation extends Package {
 		
 			$package_name=$element['package'];
 			if ($package_name =="") $package_name="main"; 
-			$element['link'] = "index.php?package=".$package_name."&menu=".$element['ID'];
-			
+                        //Check of external link
+                        if (strpos($package_name, 'http') !== false)
+                            $element['link'] = $package_name;
+			else
+                            $element['link'] = "index.php?package=".$package_name."&menu=".$element['ID'];
+                            
 			$elements[] = $element;
         }
 		
@@ -109,8 +113,13 @@ class package_navigation extends Package {
 			if ($package_name =="") $package_name="main"; 
 			if ($action_name =="") $action_name="main"; 
 			
-			$element['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$element['ID']."&action=".$action_name;
-			if($element[0] == $submenu_item)
+                        //Check of external link
+                        if (strpos($package_name, 'http') !== false)
+                            $element['link'] = $package_name;
+			else
+                            $element['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$element['ID']."&action=".$action_name;
+			
+                        if($element[0] == $submenu_item)
 				$element['active'] = true;
 			else
 				$element['active'] = false;
