@@ -48,7 +48,7 @@ chmod 777 packages/core/cache/ files/cache/ files/packages/cache/ tpl_c/ acp/tpl
 * Create a database (and adjust the settings in the config file) and import all data from `dbUpdates/litotex.sql`
 
 ```bash
-mysql -D litotexDB -u litotexUser -p < dbUpdates/litotex.sql
+mysql -D litotexDB -u litotexUser -p < dbUpdate/litotex.sql
 ```
 Default Uername: 11111
 Default Password:11111
