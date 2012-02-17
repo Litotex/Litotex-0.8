@@ -114,7 +114,7 @@ class package_navigation extends Package {
 			if ($action_name =="") $action_name="main"; 
 			
                         //Check of external link
-                        if (strpos($package_name, 'http') !== false)
+                        if (preg_match('/^([a-z]*\:\/\/.*)/', $package_name))
                             $element['link'] = $package_name;
 			else
                             $element['link'] = "index.php?package=".$package_name."&menu=".$menu_item."&submenu=".$element['ID']."&action=".$action_name;
