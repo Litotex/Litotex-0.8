@@ -4,7 +4,7 @@ class UserGroup{
 	private $_data = array();
 	
 	public function __construct($ID){
-		$ID *= 1;
+		$ID = intval($ID);
 		if(!self::exists($ID)){
 			throw new LitotexError('E_UserGroupNotFound', $ID);
 		}
@@ -33,7 +33,7 @@ class UserGroup{
 		$return = array();
 		$result = Package::$pdb->query("SELECT `ID` FROM `lttx1_user_groups`");
 		foreach($result as $group){
-			$return[] = new UserGroup($group);
+			$return[] = new UserGroup($group['ID']);
 		}
 		return $return;
 	}
