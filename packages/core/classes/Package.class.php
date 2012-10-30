@@ -630,7 +630,7 @@ abstract class Package {
     }
 
 
-    public function debug($message = '', $priority = LOG_LEVEL) {
+    public static function debug($message = '', $priority = LOG_LEVEL) {
         return (Logger::debug($message, $priority));
     }
 
