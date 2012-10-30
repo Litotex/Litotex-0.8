@@ -86,8 +86,7 @@ class package_acp_users extends acpPackage {
         $aFields = UserField::getList();
         Package::$tpl->assign('aFields', $aFields);
 
-        $field = new UserField(0);
-        Package::$tpl->assign('fieldTypes', $field->getTypes());
+        Package::$tpl->assign('fieldTypes', UserField::getTypes());
 
         return true;
     }

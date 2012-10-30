@@ -26,6 +26,7 @@ class UserField{
 		$data = package::$pdb->prepare("SELECT * FROM `lttx1_userfields` WHERE `ID` = ?");
 		$data->execute(array($ID));
 		if($data->rowCount() < 1){
+			var_dump($ID);
 			throw new LitotexError("E_UserFieldNotFound", $ID);
 		}
 		$this->_ID = $ID;
@@ -38,13 +39,13 @@ class UserField{
 		return self::$_pluginHandler->callPluginFunc($this->getType(), 'getHTML', array($this, package::$user));
 	}
 
-	public static function getTypeNameByType($type){
+	public function getTypeName(){
+		return self::$_pluginHandler->getLangVar($this->getType(), 'typeName');
+	}
+	
+	public static function getTypeNameStatic($type){
 		self::setPluginHandler();
 		return self::$_pluginHandler->getLangVar($type, 'typeName');
-	}
-
-	public function getTypeName(){
-		return self::$_pluginHandler->getLangVar($this->getType, 'typeName');
 	}
 
 	public function getType(){
@@ -57,8 +58,26 @@ class UserField{
 		}
 		return true;
 	}
+	
+	public static function getTypes(){
+		self::setPluginHandler();
+		$list = self::$_pluginHandler->getPluginList();
+		$return = array();
+		foreach($list as $type){
+			$return[] = array($type, self::getTypeNameStatic($type));
+		}
+		return $return;
+	}
 
 	public function validate($value) {
 		return self::$_pluginHandler->callPluginFunc($this->getType(), 'validateContent', array($value));
+	}
+	
+	public function getKey(){
+		return $this->_data['key'];
+	}
+	
+	public function getID(){
+		return $this->_ID;
 	}
 }
