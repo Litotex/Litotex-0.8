@@ -40,13 +40,13 @@ $(function() {
 <div class="column" id="userFields">
 
 	{foreach item=oField from=$aFields}
-		<div class="portlet" id="userField_{$oField->ID}">
+		<div class="portlet" id="userField_{$oField->getID()}">
 			<div class="portlet-header">
 				<div style="float: left;">
-					{$oField->key} ({$oField->getTypeName()})
+					{$oField->getKey()} ({$oField->getTypeName()})
 				</div>
 				<div style="float: right; margin-top: 5px; cursor: pointer;">
-					<a onclick="deleteUserField({$oField->ID}, '{#users_field_confirm_delete#}'); return false;">
+					<a onclick="deleteUserField({$oField->getID()}, '{#users_field_confirm_delete#}'); return false;">
 						<img src="{$IMG_URL}cross.png" alt="{#users_field_delete#}" title="{#users_field_delete#}"/>
 					</a>
 				</div>

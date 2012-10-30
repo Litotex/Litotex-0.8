@@ -35,7 +35,7 @@
 		<h3><a href="#">{#users_additionalfields#}</a></h3>
 		<div>
 			{foreach item=oField from=$aFields}
-                                <label>{$oField->key}:</label>{$oField->getHTML($oUser)}
+                                <label>{$oField->getKey()}:</label>{$oField->getHTML($oUser)}
 				<br/>
 			{/foreach}
 		</div>
