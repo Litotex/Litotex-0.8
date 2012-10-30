@@ -8,9 +8,9 @@
     	<div id="footer_left">
         	<h2 style="color:#ffffff;">Yes YOU can!</h2>
             <div style="margin-top: 10px;">
-            Dass wir gerade einen Entwicklerengpass haben, 
-            konntet ihr ja bereits in einigen Themen bereits lesen, 
-            genauso, dass wir nun auf der Suche nach kompetenten Mitarbeitern.
+            Dass wir gerade einen Entwicklerengpass haben
+            konntet ihr ja bereits in einigen Themen bereits lesen,
+            genauso, dass wir nun auf der Suche nach kompetenten Mitarbeitern
             </div>
         </div>
         <div id="footer_right">

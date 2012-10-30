@@ -178,7 +178,8 @@ class package_login extends Package {
 		}
 		Package::debug('user '.$_POST['username'].' logged in') ;
 		header("Location:index.php");
-		exit();
+		return true ;
+                
     }
 	
 }
