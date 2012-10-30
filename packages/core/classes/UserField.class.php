@@ -1,88 +1,104 @@
 <?php
-/*
- * Copyright (c) 2010 Litotex
- * 
- * Permission is hereby granted, free of charge,
- * to any person obtaining a copy of this software and
- * associated documentation files (the "Software"),
- * to deal in the Software without restriction,
- * including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit
- * persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- * 
- * The above copyright notice and this permission notice
- * shall be included in all copies or substantial portions
- * of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-
-class UserField extends Basis_Entry {
-	protected $_pluginHandler = NULL;
-	protected $_sTableName = 'lttx1_userfields';
-	static protected $_sClassName = 'userField';
-	
-	public function  __construct($iFieldId = 0) {
-		parent::__construct($iFieldId);
-		$this->_pluginHandler = new PluginHandler($name = 'userFields', $location = 'userFields', $cacheLocation = 'userFields.plugin.cache.php', $currentFile = __FILE__);
-	}
-	
+class UserField{
+	/**
+	 * Plugin Handler for userfields
+	 * @var PluginHandler
+	 */
+	protected static $_pluginHandler = NULL;
+	private $_data = array();
+	private $_ID = 0;
 	public static function getList(){
-		$sSql = " SELECT `ID`, `key`, IF (extra='','empty' ,extra) as extra ,`optional`, `display`, `editable`, IF (package='','empty' ,package) as package, `position` FROM `lttx".Package::$pdbn."_userfields` ORDER BY `position` ASC";
-		$aSql = array();
-		
-		$aResult = Package::$pdb->prepare($sSql);
-		$aResult->execute($aSql);
-		$aResult = $aResult->fetch(PDO::FETCH_ASSOC);
-
-		$aBack = array();
-		if(!empty($aResult)){
-			foreach((array)$aResult as $aData){
-				$aBack[] = new self($aData['ID']);
-			}
+		$return = array();
+		$result = package::$pdb->query("SELECT `ID` FROM `lttx1_userfields` ORDER BY `position`"); //TODO: Cache
+		foreach($result as $item){
+			$return[] = new UserField($item[0]);
 		}
-
-		return $aBack;
+		return $return;
+	}
+	
+	private static function setPluginHandler(){
+		if(self::$_pluginHandler == NULL){
+			self::$_pluginHandler = new PluginHandler($name = 'userFields', $location = 'userFields', $cacheLocation = 'userFields.plugin.cache.php', $currentFile = __FILE__);
+		}
 	}
 
-        public function getHTML($user){
-            return $this->_pluginHandler->callPluginFunc($this->type, 'getHTML', array($this, $user));
-        }
-
-	public function getTypeName($type = false){
-                if($type === false)
-                    $type = $this->type;
-		return $this->_pluginHandler->getLangVar($type, 'typeName');
+	public function __construct($ID){
+		$data = package::$pdb->prepare("SELECT * FROM `lttx1_userfields` WHERE `ID` = ?");
+		$data->execute(array($ID));
+		if($data->rowCount() < 1){
+			throw new LitotexError("E_UserFieldNotFound", $ID);
+		}
+		$this->_ID = $ID;
+		$this->_data = $data->fetch();
+		self::setPluginHandler();
+		$this->pluginValidate();
 	}
 
-        public function  validate() {
-            if(!$this->_pluginHandler->pluginExists($this->type)){
-                throw new LitotexError ('userField_noPlugin', $this->type);
-                return false;
-            }
-            return parent::validate();
-        }
+	public function getHTML(){
+		return self::$_pluginHandler->callPluginFunc($this->getType(), 'getHTML', array($this, package::$user));
+	}
 
-        public function getTypes(){
-            $list = $this->_pluginHandler->getPluginList();
-            $return = array();
-            foreach($list as $type){
-                $return[] = array($type, $this->getTypeName($type));
-            }
-            return $return;
-        }
+	public function getTypeName(){
+		return self::$_pluginHandler->getLangVar($this->getType(), 'typeName');
+	}
+	
+	public static function getTypeNameStatic($type){
+		self::setPluginHandler();
+		return self::$_pluginHandler->getLangVar($type, 'typeName');
+	}
 
-        public function  validateContent($value) {
-            return $this->_pluginHandler->callPluginFunc($this->type, 'validateContent', array($value));
-            return parent::validateContent($value);
-        }
-    }
+	public function getType(){
+		return $this->_data['type'];
+	}
+
+	public function pluginValidate() {
+		if(!self::$_pluginHandler->pluginExists($this->getType())){
+			throw new LitotexError ('userField_noPlugin', $this->getType());
+		}
+		return true;
+	}
+	
+	public static function getTypes(){
+		self::setPluginHandler();
+		$list = self::$_pluginHandler->getPluginList();
+		$return = array();
+		foreach($list as $type){
+			$return[] = array($type, self::getTypeNameStatic($type));
+		}
+		return $return;
+	}
+
+	public function validate($value) {
+		return self::$_pluginHandler->callPluginFunc($this->getType(), 'validateContent', array($value));
+	}
+	
+	public function getKey(){
+		return $this->_data['key'];
+	}
+	
+	public function getID(){
+		return $this->_ID;
+	}
+	
+	public static function create($key, $type, $extra, $package, $optional, $display, $editable){
+		if(!$key || $key == '')
+			return false;
+		$result = package::$pdb->prepare("INSERT INTO `lttx1_userfields` (
+				`key`, `type`, `extra`, `optional`, `display`, `editable`, `package`, `position`
+				) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		if(!$result->execute(array($key, $type, $extra, $optional, $display, $editable, $package, 0)))
+			return false;
+		$insertID = package::$pdb->lastInsertId();
+		return new UserField($insertID);
+	}
+	
+	public function delete(){
+		$result = package::$pdb->prepare("DELETE FROM `lttx1_userfields` WHERE `ID` = ?");
+		$result->execute(array($this->getID()));
+	}
+	
+	public function setPosition($pos){
+		$result = package::$pdb->prepare("UPDATE `lttx1_userfields` SET `position` = ? WHERE `ID` = ?");
+		$result->execute(array(intval($pos), $this->getID()));
+	}
+}

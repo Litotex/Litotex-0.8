@@ -20,4 +20,6 @@ E_couldNotLoadPackage = "Konnte Paket nicht downloaden, es scheint ein Problem m
 E_couldNotOpenCachePackage = "Die Datei %s konnte nicht geschrieben werden, überprüfen sie die Berechtigungen."
 userField_noPlugin = "Konnte Userfeld Plugin %s nicht finden!"
 E_user_couldNotValidateUserField = "Konnte das Userfeld %s nicht validieren"
+E_UserGroupNotFound = "Usergruppe %d konnte nicht gefunden werden"
+E_UserFieldNotFound = "Userfeld %d wurde nicht gefunden"
 I_TIMEZONE_NOT_FOUND = "Konnte die Zeitzone %s nicht finden, es wird UTC verwendet"
