@@ -26,6 +26,11 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+if(!date_default_timezone_set(LITO_TIMEZONE)){
+	date_default_timezone_set("UTC");
+	throw new LitotexInfo("I_TIMEZONE_NOT_FOUND", LITO_TIMEZONE);
+}
+
 class Date {
     
     /**
