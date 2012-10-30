@@ -77,7 +77,6 @@ function redirect(url) {
     });
 }
 
-<!--
 /*
 var oldTitle = '';
 var oldDescription = '';
@@ -112,4 +111,3 @@ $(function() {
     });
 });
 */
-//-->
