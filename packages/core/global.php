@@ -56,6 +56,7 @@ try {
         }
         try {
             $db = new PDO('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
+            $db->query("SET NAMES 'utf8'");
         } catch (PDOException $e) {
             die('Database connection failed! '.$e->getMessage());
         }
