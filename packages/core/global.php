@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-// define("DEVDEBUG", true);
+define("DEVDEBUG", true);
 
 if (DEVDEBUG == true) {
     error_reporting(E_ALL);
