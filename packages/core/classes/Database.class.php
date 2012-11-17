@@ -45,7 +45,11 @@ class Database extends PDO {
 								$username=null, 
 								$password=null, 
 								$driver_options=null) {
-		parent::__construct($dsn, $username, $password, $driver_options);
+		try {
+			parent::__construct($dsn, $username, $password, $driver_options);
+		} catch (PDOException $e) {
+			throw new LitotexFatalError('Could not connect to Dabase via PDO: '.$e->message.'; Settings:'.$dsn.';'.$username.';'.$password.';'.$driver_options);
+		}
         try {
         	// throw exceptions instead of raise warnings
 			$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
@@ -61,19 +65,27 @@ class Database extends PDO {
      */
 	public function exec($sql, $logIt = true) {
 		$sql = str_replace('lttx1_', 'lttx' . Package::$pdbn . '_', $sql);
-		if ($logIt)
-			Logger::debug($sql, LOG_DEBUG);
 		$this->queryCount++;
-		return parent::exec($sql);
+		$retValue = parent::exec($sql);
+//		if ($retValue === FALSE) {
+			if ($logIt)
+				Logger::debug($sql, LOG_DEBUG, TRUE);
+/*			else
+				Logger::debug($sql, LOG_DEBUG, FALSE);
+		}
+*/		return $retValue;
 	}
 	public function query($sql) {
-		Logger::debug($sql, LOG_DEBUG);
+		echo "A prepared Statement";
+		Logger::debug('Query: '. $sql, LOG_DEBUG);
 		$this->queryCount++;
 		return parent::query($sql);
 	}
 	public function prepare($statement, $options = array()) {
-		Logger::debug('SQL: '.$statement.' Options: ' . var_export($options, true), LOG_DEBUG);
-		return parent::prepare($statement, $options);
+			// replace all tabs and multiple whitespaces with just one space
+		Logger::debug('Prepare: '.preg_replace('/\s\s+|\t/', ' ', $statement).' Options: ' . implode(',',$options), LOG_DEBUG);
+		$retValue = parent::prepare($statement, $options);
+		return $retValue;
 	}
 	
 	/* Get an associative array of results for the query
@@ -109,7 +121,7 @@ class DBStatement extends PDOStatement {
 	}
 
 	public function execute($params = array()) {
-//		Logger::debug(implode($params), LOG_DEBUG);
+//		Logger::debug('execute: '.implode($params), LOG_DEBUG);
 		return parent::execute($params);
 	}
 }
