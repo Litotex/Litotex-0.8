@@ -122,6 +122,11 @@ class news {
      * @var array
      */
     private static $_newsCache = array();
+    
+    /**
+     * @var User
+     */
+    private $_writtenBy = null;
 
     /**
      * This will load news context and caches data
@@ -461,7 +466,7 @@ class news {
         $this->_news_category_id = self::$_newsCache[$ID]['news_category_id'];
         $this->_news_date = self::$_newsCache[$ID]['news_date'];
         $this->_news_commentNum = self::$_newsCache[$ID]['news_commentNum'];
-        $this->_news_writtenBy = self::$_newsCache[$ID]['news_writtenBy'];
+        $this->_writtenBy = self::$_newsCache[$ID]['news_writtenBy'];
         $this->_news_active = self::$_newsCache[$ID]['news_active'];
         $this->_news_allow_comments = self::$_newsCache[$ID]['news_allow_comments'];
         $this->_category_tiltle = self::$_newsCache[$ID]['categroy_title'];
