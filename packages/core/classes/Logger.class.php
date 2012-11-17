@@ -43,18 +43,18 @@ class Logger {
      */
     private static $_logFile = NULL;
     
-	public static function debug($message = '', $priority = LOG_WARNING) {
+	public static function debug($message = '', $priority = LOG_WARNING, $toDB = TRUE) {
     	if ($priority > LOG_LEVEL)
     		return false;
     	
     	// Package details - Package detection is a Workaround!
-		$action = Package::$pdb->quote(Package::getAction());
-    	$package = isset($_GET['package'])?$_GET['package']:'main';
+		$action = Package::$pdb->quote(Package::$pdb->quote(Package::getAction()));
+    	$package = Package::$pdb->quote(isset($_GET['package'])?$_GET['package']:'main');
     	
     	// get User
         $currentUser = 0;
         if (Package::$user)
-            $currentUser = Package::$pdb->quote(Package::$user->getUserID());
+            $currentUser = Package::$pdb->quote(Package::$pdb->quote(Package::$user->getUserID()));
         
         // get Time
         $date = new Date(time());
@@ -64,8 +64,9 @@ class Logger {
         
         // when Db isnt working write to disk
         // we won't use a prepared statement here to avoid recursion
-        if (Package::$pdb->exec("INSERT INTO `lttx1_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (".$currentUser.", ".$currentTime.", ".$message.", ".$priority.", ".$package.", ".$action.")", FALSE) === FALSE)
-            self::debugDisk($message);
+//        echo "INSERT INTO `lttx1_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (".$currentUser.", ".$currentTime.", ".$message.", ".$priority.", ".$package.", ".$action.")";
+        if (!$toDB || Package::$pdb->exec("INSERT INTO `lttx1_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (".$currentUser.", ".$currentTime.", ".$message.", ".$priority.", ".$package.", ".$action.")", FALSE) === FALSE)
+            self::debugDisk($currentUser." @ ".$currentTime.": ".$message." (".$priority.") in ".$package." / ".$action);
     }
 
     private static function _initDisk(){
