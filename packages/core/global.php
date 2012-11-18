@@ -55,7 +55,7 @@ try {
             exit();
         }
         try {
-            $db = new PDO('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
+            $db = new LitotexPDO('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
             $db->query("SET NAMES 'utf8'");
         } catch (PDOException $e) {
             die('Database connection failed! '.$e->getMessage());
@@ -77,6 +77,7 @@ try {
             $smarty->assign('HEADER', Package::getTplDir(false, 'default').'header.tpl');
         }
         if (file_exists(Package::getTplDir().'footer.tpl')) {
+			$smarty->assign('QueryCount', $db->getQueryCount());
             $smarty->assign('FOOTER', Package::getTplDir().'footer.tpl');
         } else {
             $smarty->assign('FOOTER', Package::getTplDir(false, 'default').'footer.tpl');
