@@ -375,7 +375,7 @@ abstract class Package {
      * @param bool $usePackageDir true if not in object context or if you want to use /tpldir/css, else default package template folder will be used
      * @return bool
      */
-    public function addCssFile($href, $package = false) {
+    public static function addCssFile($href, $package = false) {
         if (file_exists(self::getCssDir($package) . $href)) {
             if (!in_array(self::getCssUrl($package) . $href, self::$_cssFiles))
                 self::$_cssFiles[] = self::getCssUrl($package) . $href;
@@ -479,31 +479,31 @@ abstract class Package {
         return $return;
     }
 
-    public function getImgUrl($package = false, $tpl = false) {
+    public static function getImgUrl($package = false, $tpl = false) {
         return self::getTplURL($package, $tpl) . IMG_DIR;
     }
 
-    public function getJsUrl($package = false, $tpl = false) {
+    public static function getJsUrl($package = false, $tpl = false) {
         return self::getTplURL($package, $tpl) . JS_DIR;
     }
 
-    public function getCssUrl($package = false, $tpl = false) {
+    public static function getCssUrl($package = false, $tpl = false) {
         return self::getTplURL($package, $tpl) . CSS_DIR;
     }
 
-    public function getImgDir($package = false, $tpl = false) {
+    public static function getImgDir($package = false, $tpl = false) {
         return self::getTplDir($package, $tpl) . IMG_DIR;
     }
 
-    public function getJsDir($package = false, $tpl = false) {
+    public static function getJsDir($package = false, $tpl = false) {
         return self::getTplDir($package, $tpl) . JS_DIR;
     }
 
-    public function getCssDir($package = false, $tpl = false) {
+    public static function getCssDir($package = false, $tpl = false) {
         return self::getTplDir($package, $tpl) . CSS_DIR;
     }
 
-    public function getLangPath($package = false, $tpl = false) {
+    public static function getLangPath($package = false, $tpl = false) {
         if (is_dir(self::getTplDir($package, $tpl) . LANG_DIR)) {
             return self::getTplDir($package, $tpl) . LANG_DIR;
         } else {
@@ -630,7 +630,7 @@ abstract class Package {
     }
 
 
-    public function debug($message = '', $priority = LOG_LEVEL) {
+    public static function debug($message = '', $priority = LOG_LEVEL) {
         return (Logger::debug($message, $priority));
     }
 

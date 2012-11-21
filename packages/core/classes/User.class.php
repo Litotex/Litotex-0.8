@@ -892,8 +892,8 @@ class User {
 
 	public function validateFieldData($iFieldId, $mValue){
 		$field = new UserField($iFieldId);
-		if(!$field->validateContent($mValue)){
-			throw new LitotexError('E_user_couldNotValidateUserField', $field->key);
+		if(!$field->validate($mValue)){
+			throw new LitotexError('E_user_couldNotValidateUserField', $field->getKey());
 		}
 	}
 

@@ -14,14 +14,16 @@
             </div>
         </div>
         <div id="footer_right">
-        	1 070 Mitglieder<br />
+			1 070 Mitglieder<br />
             1 915 Themen<br />
             15 972 Beiträge<br />
-        </div>
+			<br />
+			{$QueryCount} SQL Abfragen
+
+			</div>
     </div>
 
 </div>
-
 
 
 </body>

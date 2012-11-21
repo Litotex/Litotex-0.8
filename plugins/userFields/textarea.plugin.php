@@ -30,7 +30,7 @@ class plugin_textarea extends Plugin{
 	public static $name = 'textarea';
 	public static $availableFunctions = array('getHTML', 'checkValid', 'setContent', 'getContent');
 	public static function getHTML(UserField $field, User $user){
-		return '<textarea name="userfield['.$user->getUserID().']['.$field->ID.']">'.self::getContent($user->getUserFieldData($field->ID)).'</textarea>';
+		return '<textarea name="userfield['.$user->getUserID().']['.$field->getID().']">'.self::getContent($user->getUserFieldData($field->getID())).'</textarea>';
 	}
 	public static function checkValid($value){
 		return true;

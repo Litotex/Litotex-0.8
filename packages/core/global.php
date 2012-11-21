@@ -30,13 +30,13 @@ define("DEVDEBUG", true);
 
 if (DEVDEBUG == true) {
     error_reporting(E_ALL);
+    ini_set('display_errors', true);
 }
 
 header("Content-Type: text/html; charset=utf-8");
 
 session_start();
 
-require_once MODULES_FRONTEND_DIRECTORY.'core/classes/Basis/entry.class.php'; //TODO: Workaround, delete later
 require_once MODULES_DIRECTORY.'core/autoloader.php';
 
 try {
@@ -76,6 +76,7 @@ try {
             $smarty->assign('HEADER', Package::getTplDir(false, 'default').'header.tpl');
         }
         if (file_exists(Package::getTplDir().'footer.tpl')) {
+			$smarty->assign('QueryCount', $db->getQueryCount());
             $smarty->assign('FOOTER', Package::getTplDir().'footer.tpl');
         } else {
             $smarty->assign('FOOTER', Package::getTplDir(false, 'default').'footer.tpl');

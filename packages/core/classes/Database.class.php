@@ -47,6 +47,7 @@ class Database extends PDO {
 								$driver_options=null) {
 		try {
 			parent::__construct($dsn, $username, $password, $driver_options);
+			parent::query("SET NAMES 'utf8'");
 		} catch (PDOException $e) {
 			throw new LitotexFatalError('Could not connect to Dabase via PDO: '.$e->message.'; Settings:'.$dsn.';'.$username.';'.$password.';'.$driver_options);
 		}

@@ -25,6 +25,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+if (!defined('LITO_TIMEZONE')){
+	define('LITO_TIMEZONE', 'UTC');
+}
+if(!date_default_timezone_set(LITO_TIMEZONE)){
+	date_default_timezone_set("UTC");
+	throw new LitotexInfo("I_TIMEZONE_NOT_FOUND", LITO_TIMEZONE);
+}
 
 class Date {
     
