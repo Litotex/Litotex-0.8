@@ -43,7 +43,7 @@ class LitotexError extends Exception {
         
         Package::debug($this->message,$priority) ;
         
-        if (DEVDEBUG == true) {
+        if (defined('DEVDEBUG') && DEVDEBUG == true) {
             $this->message .= "<br /><b>DEVDEBUG active</b><br />";
             foreach ($this->getTrace() as $trace) {
                 @$this->message .= '<p>'.$trace['class'].':'.$trace['function'].': '.$trace['file'].':'.$trace['line'].'</p>';

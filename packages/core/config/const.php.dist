@@ -87,3 +87,5 @@ if(!defined('LITO_ERROR_MODULE'))
 	define('LITO_ERROR_MODULE', 'errorPage');
 if(!defined('LOG_LEVEL'))
 	define('LOG_LEVEL', LOG_DEBUG);
+if(!defined('LITO_TIMEZONE'))
+	define('LITO_TIMEZONE', 'Europe/Berlin');
