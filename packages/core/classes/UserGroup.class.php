@@ -2,23 +2,25 @@
 class UserGroup{
 	private $_ID = 0;
 	private $_data = array();
-	
+
 	public function __construct($ID){
 		$ID = intval($ID);
+		$this->_ID = $ID;
 		if(!self::exists($ID)){
+			if(!defined('DEVDEBUG') || DEVDEBUG == true)
+				$this->deleteAllUsers();
 			throw new LitotexError('E_UserGroupNotFound', $ID);
 		}
-		$this->_ID = $ID;
 		$result = Package::$pdb->prepare("SELECT * FROM `lttx1_user_groups` WHERE `ID` = ?");
 		$result->execute(array($ID));
 		$this->_data = $result->fetch();
 	}
-	
+
 	private static function exists($ID){
 		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx1_user_groups` WHERE `ID` = ?");
 		$result->execute(array($ID));
 		$result = $result->fetch();
-		
+
 		if($result[0] < 1){
 			return false;
 		}
@@ -135,11 +137,12 @@ class UserGroup{
 	public function removeUser(User $user){
 		$ID = $user->getUserID();
 		if($ID === false)
-		return false;
-		$result = Package::$pdb->prepare("DELETE FROM `lttx".Package::$pdbn."_userGroupConnections` WHERE `userID` = ? AND `groupID` = ?");
+			return false;
+		$result = Package::$pdb->prepare("DELETE FROM `lttx".Package::$pdbn."_user_group_connections` WHERE `userID` = ? AND `groupID` = ?");
 		$result->execute(array($ID, $this->getID()));
 		if($result->rowCount() < 1)
-		return false;
+			return false;
+		return true;
 	}
 
 	public function deleteAllUsers(){
@@ -159,8 +162,8 @@ class UserGroup{
 		}
 
 		Package::$pdb->prepare("
-	DELETE FROM `lttx1_user_group_connections`
-	WHERE `groupID` = ?")->execute(array($this->getID()));
+				DELETE FROM `lttx1_user_group_connections`
+				WHERE `groupID` = ?")->execute(array($this->getID()));
 
 		parent::delete();
 
@@ -172,7 +175,7 @@ class UserGroup{
 		$result->execute(array(1));
 
 		if($result->rowCount() < 1)
-		return false;
+			return false;
 		foreach($result as $group){
 			$return[] = new UserGroup($group[0]);
 		}
