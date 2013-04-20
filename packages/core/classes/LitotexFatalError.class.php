@@ -35,6 +35,7 @@ class LitotexFatalError extends Exception {
         $this->message = Package::getLanguageVar('E_fatalErrorOccured');
         $this->message .= '<br /><b>'.nl2br($message).'</b>';
         $this->_log($message, $package);
+        debug_print_backtrace();
     }
 
     private function _log($message, $package) {

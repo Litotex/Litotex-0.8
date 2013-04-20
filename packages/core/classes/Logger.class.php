@@ -48,13 +48,20 @@ class Logger {
     		return false;
     	
     	// Package details - Package detection is a Workaround!
-		$action = Package::$pdb->quote(Package::$pdb->quote(Package::getAction()));
+		$action = Package::$pdb->quote(Package::getAction());
     	$package = Package::$pdb->quote(isset($_GET['package'])?$_GET['package']:'main');
     	
-    	// get User
+    	// get User-ID
+    	// Default is Guest (ID: 0), otherwise get ID from Package Class
+    	// @MARK_REMOVE: Convert should never happen, therefore log it; 2nd: make this shorter
         $currentUser = 0;
-        if (Package::$user)
-            $currentUser = Package::$pdb->quote(Package::$pdb->quote(Package::$user->getUserID()));
+        if (Package::$user) {
+        	$currentUser = Package::$user->getUserID();
+        	if (!is_int($currentUser)) {
+        		$currentUser = Package::$pdb->quote($currentUser);
+        		self::debug('UserID not integer', LOG_ERR);
+        	}
+        }
         
         // get Time
         $date = new Date(time());
