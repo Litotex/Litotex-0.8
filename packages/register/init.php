@@ -66,7 +66,7 @@ class package_register extends Package {
         Package::$tpl->display(self::getTplDir('register') . 'register.tpl');
         return true;
     }
- 	public function __action_register_submit(){
+	public function __action_register_submit(){
 		if(!isset($_POST['confirm_password']) || !isset($_POST['password']) || !isset($_POST['email']) || !isset($_POST['username']) || !isset($_POST['rules'])){
                     throw new LitotexError('E_notAllInformationPassed');
                 }
@@ -74,10 +74,10 @@ class package_register extends Package {
                 if(is_a($result, 'user')){
                     throw new LitotexInfo('registrationComplete');
                 }
-                if($result == -2){
+                if($result == -1){
                     throw new LitotexError('E_userNameAlreadyExists');
                 }
-                if($result == -1){
+                if($result == -2){
                     throw new LitotexError('E_emailAlreadyExists');
                 }
                 if($result == -3){
