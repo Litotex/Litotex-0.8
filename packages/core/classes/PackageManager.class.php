@@ -397,12 +397,12 @@ class PackageManager {
 			}
 			include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
 			if ($loadDep)
-			$dep = $this->_getPackageDependencies($packageName, -1);
+				$dep = $this->_getPackageDependencies($packageName, -1);
 			$pack = new $this->_dependencyCache[$packageName][1](false, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			if ($loadDep)
-			$dep = $this->_getPackageDependencies($packageName, 1);
+				$dep = $this->_getPackageDependencies($packageName, 1);
 			$pack->displayTpl();
 			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
 			$pack->setTemplatePolicy($tplEnable);
