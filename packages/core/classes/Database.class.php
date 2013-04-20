@@ -51,19 +51,19 @@ class Database extends PDO {
 		} catch (PDOException $e) {
 			throw new LitotexFatalError('Could not connect to Dabase via PDO: '.$e->message.'; Settings:'.$dsn.';'.$username.';'.$password.';'.$driver_options);
 		}
-        try {
-        	// throw exceptions instead of raise warnings
+		try {
+			// throw exceptions instead of raise warnings
 			$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 			// use our own (extended) Statement Class
 			$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('DBStatement', array($this)));
 		} catch (PDOException $e) {
 			throw new LitotexError("Could not set Attributes on PDO: " . $e->getMessage());
 		}
-    }
-    
-    /*
-     * Extending the execution methods for logging and counting
-     */
+	}
+	
+	/*
+	 * Extending the execution methods for logging and counting
+	 */
 	public function exec($sql, $logIt = true) {
 		$sql = str_replace('lttx1_', 'lttx' . Package::$pdbn . '_', $sql);
 		$this->queryCount++;
@@ -77,14 +77,13 @@ class Database extends PDO {
 */		return $retValue;
 	}
 	public function query($sql) {
-		echo "A prepared Statement";
 		Logger::debug('Query: '. $sql, LOG_DEBUG);
 		$this->queryCount++;
 		return parent::query($sql);
 	}
-	public function prepare($statement, $options = array()) {
-			// replace all tabs and multiple whitespaces with just one space
-		Logger::debug('Prepare: '.preg_replace('/\s\s+|\t/', ' ', $statement).' Options: ' . implode(',',$options), LOG_DEBUG);
+	public function prepare($statement, $options = array(), $logIt = True) {
+		if ($logIt)	// replace all tabs and multiple whitespaces with just one space
+			Logger::debug('Prepare: '.preg_replace('/\s\s+|\t/', ' ', $statement).' Options: ' . implode(',', $options), LOG_DEBUG);
 		$retValue = parent::prepare($statement, $options);
 		return $retValue;
 	}
@@ -100,7 +99,7 @@ class Database extends PDO {
 			return $stmt->fetchAll(PDO::FETCH_ASSOC);
 		} catch (Exception $e) {
 			throw new LitotexException(
-	  			__METHOD__ . ' Exception Raised for this SQL: ' . implode($sql) .
+				__METHOD__ . ' Exception Raised for this SQL: ' . implode($sql) .
 				' Params: ' . var_export($params, true) .
 				' Error_Info: ' . var_export($this->errorInfo(), true) . $e);
 		}
@@ -122,7 +121,7 @@ class DBStatement extends PDOStatement {
 	}
 
 	public function execute($params = array()) {
-//		Logger::debug('execute: '.implode($params), LOG_DEBUG);
+		Logger::debug('DBStatement execute: '.implode(', ', $params), LOG_DEBUG);
 		return parent::execute($params);
 	}
 }
