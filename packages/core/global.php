@@ -55,8 +55,7 @@ try {
             exit();
         }
         try {
-            $db = new LitotexPDO('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
-            $db->query("SET NAMES 'utf8'");
+            $db = new Database('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
         } catch (PDOException $e) {
             die('Database connection failed! '.$e->getMessage());
         }

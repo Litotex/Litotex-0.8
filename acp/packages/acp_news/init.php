@@ -384,7 +384,7 @@ class package_acp_news extends acpPackage{
 * @return int
 */
 	private function _getCommentCount($ID){
-		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx".Package::$pdbn."_news_comments` WHERE `news` = ?");	
+		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx1_news_comments` WHERE `news` = ?");	
 		$result->execute(array($ID));
 		if($result->rowCount() < 1)
             return 0;

@@ -27,11 +27,11 @@
  */
 /* Log-Levels:
  * LOG_EMERG	system is unusable					0
- * LOG_ALERT	action must be taken immediately                        1
- * LOG_CRIT		critical conditions				2
- * LOG_ERR		error conditions				3
+ * LOG_ALERT	action must be taken immediately	1
+ * LOG_CRIT		critical conditions					2
+ * LOG_ERR		error conditions					3
  * LOG_WARNING	warning conditions					4
- * LOG_NOTICE	normal, but significant, condition                      5
+ * LOG_NOTICE	normal, but significant, condition	5
  * LOG_INFO		informational message				6
  * LOG_DEBUG	debug-level message					7
  */
@@ -43,25 +43,37 @@ class Logger {
      */
     private static $_logFile = NULL;
     
-	public static function debug($message = '', $priority = LOG_WARNING) {
+	public static function debug($message = '', $priority = LOG_WARNING, $toDB = TRUE) {
     	if ($priority > LOG_LEVEL)
     		return false;
     	
     	// Package details - Package detection is a Workaround!
-    	$package=isset($_GET['package'])?$_GET['package']:'main';
-		$action=Package::getAction();
-    	// get User
+		$action = Package::$pdb->quote(Package::getAction());
+    	$package = Package::$pdb->quote(isset($_GET['package'])?$_GET['package']:'main');
+    	
+    	// get User-ID
+    	// Default is Guest (ID: 0), otherwise get ID from Package Class
+    	// @MARK_REMOVE: Convert should never happen, therefore log it; 2nd: make this shorter
         $currentUser = 0;
-        if (Package::$user)
-            $currentUser = Package::$user->getUserID();
+        if (Package::$user) {
+        	$currentUser = Package::$user->getUserID();
+        	if (!is_int($currentUser)) {
+        		$currentUser = Package::$pdb->quote($currentUser);
+        		self::debug('UserID not integer', LOG_ERR);
+        	}
+        }
         
         // get Time
         $date = new Date(time());
-        $currentTime = $date->getDbTime();
+        $currentTime = Package::$pdb->quote($date->getDbTime());
+        
+        $message = Package::$pdb->quote($message);
         
         // when Db isnt working write to disk
-        if (!Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (?, ?, ?, ?, ?, ?)")->execute(array($currentUser, $currentTime, $message, $priority,$package,$action)))
-            self::debugDisk($message);
+        // we won't use a prepared statement here to avoid recursion
+//        echo "INSERT INTO `lttx1_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (".$currentUser.", ".$currentTime.", ".$message.", ".$priority.", ".$package.", ".$action.")";
+        if (!$toDB || Package::$pdb->exec("INSERT INTO `lttx1_log` (`userid`, `logdate`, `message`, `log_type`,`package`,`package_action`) VALUES (".$currentUser.", ".$currentTime.", ".$message.", ".$priority.", ".$package.", ".$action.")", FALSE) === FALSE)
+            self::debugDisk($currentUser." @ ".$currentTime.": ".$message." (".$priority.") in ".$package." / ".$action);
     }
 
     private static function _initDisk(){

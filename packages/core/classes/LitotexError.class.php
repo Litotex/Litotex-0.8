@@ -30,7 +30,7 @@ class LitotexError extends Exception {
 
     public function __construct($messageCode, $priority = LOG_ERR) {
         $args = func_get_args();
-        
+        debug_print_backtrace();
         $messageCode = $args[0];
         package::loadLang(package::$tpl);
         if (package::getLanguageVar($messageCode) != '')
@@ -40,8 +40,6 @@ class LitotexError extends Exception {
         
         $messageParams = array_slice($args, 1);
         $this->message = vsprintf($this->message, $messageParams);
-        
-        Package::debug($this->message,$priority) ;
         
         if (defined('DEVDEBUG') && DEVDEBUG == true) {
             $this->message .= "<br /><b>DEVDEBUG active</b><br />";

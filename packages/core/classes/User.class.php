@@ -130,11 +130,10 @@ class User {
 	public function __construct($userID) {
 		//if($userID == 0)
 		//	return;
-
-
+		
 		$userID = intval($userID);
 		if(!self::userExists($userID) && $userID > 0)
-		throw new LitotexFatalError('User ' . $userID . ' was not found');
+			throw new LitotexFatalError('User ' . $userID . ' was not found');
 		$this->_currentID = $userID;
 		$this->_initialized = true;
 		$this->_bufferActive = self::$_globalBufferActive;
@@ -147,7 +146,7 @@ class User {
 	 */
 	public function __destruct() {
 		if(!$this->_initialized)
-		return;
+			return;
 		$this->_saveWriteBuffer();
 	}
 	/**
@@ -156,7 +155,7 @@ class User {
 	 */
 	public function __toString() {
 		if(!$this->_initialized)
-		return false;
+			return false;
 		return $this->getData('username');
 	}
 
@@ -169,45 +168,32 @@ class User {
 		$iUserId = (int)$this->getData('ID');
 
 		// check for PW
-		if(isset($aData['password']) &&
-                !empty($aData['password'])) {
-            $aPasswordSalted        = self::_saltString($aData['password']);
-            $aData['password']      = hash('sha512', $aPasswordSalted[1]);
-            $aData['dynamicSalt']   = $aPasswordSalted[0];
-        } else if (isset($aData['password']) &&
-            empty($aData['password'])) {
-            unset($aData['password']);
+		if(isset($aData['password']) && !empty($aData['password'])) {
+			$aPasswordSalted        = self::_saltString($aData['password']);
+			$aData['password']      = hash('sha512', $aPasswordSalted[1]);
+			$aData['dynamicSalt']   = $aPasswordSalted[0];
+		} else if (isset($aData['password']) && empty($aData['password'])) {
+			unset($aData['password']);
 		}
 			
 		$sSql = "";
 		$aSql = "";
-			
 		$sSqlSetPart = "";
-
+		
 		// write SET Part
 		foreach((array)$aData as $sField => $mValue){
-
 			$sSqlSetPart .= "`".$sField."` = ?, ";
 			$aSql[] = $mValue;
 			// cache
 			$this->setData($sField, $mValue, true);
-
 		}
-
+		
 		// remove last ","
 		$sSqlSetPart = rtrim($sSqlSetPart, ', ');
-			
 		$bSuccess = true;
-			
 		if($iUserId > 0  &&	self::userExists($iUserId)){
-
-			$sSql = " UPDATE
-    						`lttx".Package::$pdbn."_users`
-    					SET
-    						".$sSqlSetPart."
-    					WHERE
-    						`ID` = ?
-    				";
+		
+			$sSql = " UPDATE `lttx1_users` SET ".$sSqlSetPart." WHERE `ID` = ? ";
 			$aSql[] = $iUserId;
 			// Update
 			$bSuccess = Package::$pdb->prepare($sSql)->execute($aSql);
@@ -215,18 +201,15 @@ class User {
 		} else if($iUserId == 0){
 
 			$sSql = " INSERT INTO
-    						`lttx".Package::$pdbn."_users`
+    						`lttx1_users`
     					SET
     					".$sSqlSetPart;
 			// Insert
-
 			$bSuccess = Package::$pdb->prepare($sSql)->execute($aSql);
 			// get ID
 			$iUserId = Package::$pdb->lastInsertId();
-
 			// set New ID
 			$this->_currentID = $iUserId;
-
 		} else {
 			throw new LitotexError('E_unknownUser');
 		}
@@ -240,44 +223,41 @@ class User {
 	}
 
 	/**
-	 * This function will create a new user and return an instance of the created user immediatelly
-	 * @param string $username username
-	 * @param string $password unhashed password
+	 * This function will create a new user and return an instance of the created user immediately
+	 * @param string $username
+	 * @param string $password (unhashed)
 	 * @param array $data array of data that should be written to the database
-	 * @return int on failure [-1 username exists -2 email exists -3 unknown error] | user
+	 * @return int on failure [-1 username exists -2 email exists -3 unknown error]
+	 			instance of User class otherwise
 	 */
 	public static function register($username, $password, $email, $data) {
 		$passwordSalted = self::_saltString($password);
+			// Doeas the Username already exist?
 		if(self::userExists($username))
-		return -1;
-		$result = Package::$pdb->prepare("
-            SELECT COUNT(`ID`)
-            FROM `lttx".Package::$pdbn."_users`
-            WHERE `email` = ?");
+			return -1;
+			// Check for free Email_Adress
+		$result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx1_users` WHERE `email` = ?");
 		$result->execute(array($email));
-		if($result->rowCount() < 1) {
+		if($result->rowCount() != 1) // COUNT should give exactely one line
 			return -3;
-		}
 		$result = $result->fetch();
-		if($result[0] == 1)
-		return -2;
-		$additionalDataColumns = '';
-		$additionalDataPointer = '';
-		$additionalData = array('',0,0,$username, $email, hash('sha512', $passwordSalted[1]), $passwordSalted[0]);
+		if($result[0] > 0) // Email exists
+			return -2;
+		
+		// Additional Data can be (Default in braces): userGroup (0), race (0), lastActive(NULL), isActive(1), registerDate (CURRENT_TIMESTAMP), serverAdmin (0), bannedDate (NULL), bannedReason (NULL)
+		$additionalDataColumns = $additionalDataPointer = '';
+		$additionalData = array($username, $email, hash('sha512', $passwordSalted[1]), $passwordSalted[0]);
 		foreach($data as $key => $value) {
 			$additionalData[] = $value;
 			$additionalDataPointer .= ', ?';
 			$additionalDataColumns .= ', `' . $key . '`';
 		}
-		$result = Package::$pdb->prepare("
-            INSERT INTO `lttx".Package::$pdbn."_users`
-            (`bannedReason`,`userGroup`,`serverAdmin`,`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
-            VALUES
-            (? ,? ,? ,?, ?, ?, ?" . $additionalDataPointer . ")");
+		$result = Package::$pdb->prepare("INSERT INTO `lttx1_users`
+			(`username`, `email`, `password`, `dynamicSalt`" . $additionalDataColumns . ")
+			VALUES (?, ?, ?, ?" . $additionalDataPointer . ")");
 		$result->execute($additionalData);
-		if($result->rowCount() < 1) {
+		if($result->rowCount() < 1) // strange error
 			return -3;
-		}
 		return new User(Package::$pdb->lastInsertId());
 	}
 
@@ -292,7 +272,7 @@ class User {
 
 		if(!$user){
 			self::$sLastLoginError = 'login_incorrect';
-            Package::debug('Login failed! Unknown user: ' . $username, LOG_INFO);
+			Package::debug('Login failed! Unknown user: ' . $username, LOG_INFO);
 			return false;
 		} else if($user->checkUserBanned()){
 			self::$sLastLoginError = 'login_user_banned';
@@ -302,11 +282,17 @@ class User {
 			self::$sLastLoginError = 'login_user_inactive';
 			Package::debug('Login failed! Inactive user: ' . $username, LOG_INFO);
 			return false;
-		} else if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
-			$user->setUsersInstance();
-			$user->setData('lastActive', date('Y-m-d H:i:s'), false);
-			Package::$session->setUserObject($user);
-			return $user;
+		} else {
+			if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
+				$user->setUsersInstance();
+				$user->setData('lastActive', time(), false);
+				Package::$session->setUserObject($user);
+				return $user;
+			} else {
+				self::$sLastLoginError = 'login_incorrect';
+				Package::debug('Login failed! Wrong password: ' . $username, LOG_INFO);
+				return false;
+			}
 		}
 		self::$sLastLoginError = 'login_incorrect';
 		Package::debug('Login failed! Another error; user: ' . $username . '; Salt: ' . 
@@ -352,7 +338,7 @@ class User {
 		}
 		$result = Package::$pdb->prepare("
             SELECT `ID`
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `username` = ?");
 		$result->execute(array($username));
 		
@@ -373,10 +359,10 @@ class User {
 	 */
 	public function getData($key, $cached = true, $buffered = true) {
 		if(!$this->_initialized)
-		return false;
+			return false;
 		if ($this->_currentID == 0)
-                    return false;
-                if($cached && $this->_cacheActive) {
+			return false;
+		if($cached && $this->_cacheActive) {
 			if(isset(self::$_readCache[$this->_currentID][$key])) {
 				return self::$_readCache[$this->_currentID][$key];
 			}
@@ -386,13 +372,10 @@ class User {
 			return $this->getData($key, $cached, false);
 		}
 		//Nothing was cached... read manually
-		$result = Package::$pdb->prepare("
-            SELECT `" . $key . "`
-            FROM `lttx".Package::$pdbn."_users`
-            WHERE `id` = ?");
+		$result = Package::$pdb->prepare("SELECT `" . $key . "` FROM `lttx1_users` WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
-		return false;
+			return false;
 		$result = $result->fetch();
 		self::$_readCache[$this->_currentID][$key] = $result[0];
 		return $result[0];
@@ -417,7 +400,7 @@ class User {
 			$this->_writeBuffer[$key] = $newValue;
 			return true;
 		}
-		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_users` SET `" . $key . "` = ? WHERE `ID` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx1_users` SET `" . $key . "` = ? WHERE `ID` = ?");
 		$result->execute(array($newValue, $this->_currentID));
 		self::$_readCache[$this->_currentID][$key] = $newValue;
 		return true;
@@ -482,10 +465,12 @@ class User {
 
 		$result = Package::$pdb->prepare("
             SELECT *
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		$result = $result->fetch();
+		if (!$result)	// no User
+			return false;
 		foreach ($result as $key => $value) {
 			self::$_readCache[$this->_currentID][$key] = $value;
 		}
@@ -512,7 +497,7 @@ class User {
 		}
 		$result = Package::$pdb->prepare("
             SELECT " . $fields . "
-            FROM `lttx".Package::$pdbn."_users`
+            FROM `lttx1_users`
             WHERE `id` = ?");
 		$result->execute(array($this->_currentID));
 		if($result->rowCount() < 1)
@@ -564,13 +549,13 @@ class User {
 			
 			$result = Package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".Package::$pdbn."_users`
+                FROM `lttx1_users`
                 WHERE `ID` = ?");
 			$result->execute(array($user));
 		} else {
 			$result = Package::$pdb->prepare("
                 SELECT COUNT(`ID`)
-                FROM `lttx".Package::$pdbn."_users`
+                FROM `lttx1_users`
                 WHERE `username` = ?");
 			$result->execute(array($user));
 		}
@@ -736,9 +721,10 @@ class User {
 		}
 
 		foreach($result as $connection){
+#			echo "UserGroup: " . $connection[0];
 			$aGroups[] = new UserGroup($connection[0]);
 		}
-
+		
 		return $aGroups;
 	}
 
@@ -773,7 +759,7 @@ class User {
 	 */
 	public function setPassword($password){
 		$salted = $this->_saltString($password);
-		Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
+		Package::$pdb->prepare("UPDATE `lttx1_users` SET `password` = ?, `dynamicSalt` = ? WHERE `ID` = ?")->execute(array(hash('sha512', $salted[1]), $salted[0], $this->_currentID));
 		return true;
 	}
 
@@ -865,7 +851,7 @@ class User {
 		//We absolutly need to stop buffering every entry! This would be the perfect overkill
 		$return = array();
 		$match = array();
-		$searchResults = Package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx".Package::$pdbn."_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
+		$searchResults = Package::$pdb->prepare("SELECT `ID`, `".$field."` FROM `lttx1_users` WHERE `".$field."` LIKE ? AND `isActive` = 1");
 		$searchResults->execute(array('%' . $request . '%'));
 		if(!$searchResults){
 			throw new LitotexDBError();
@@ -885,7 +871,7 @@ class User {
 	}
 
 	public function saveUserFieldData($iFieldId, $mValue){
-		$sSql = " REPLACE INTO `lttx".Package::$pdbn."_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
+		$sSql = " REPLACE INTO `lttx1_userfields_userdata` SET `field_id` = ?, `user_id` = ?, value = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'), $mValue);
 		Package::$pdb->prepare($sSql)->execute($aSql);
 	}
@@ -898,7 +884,7 @@ class User {
 	}
 
 	public function getUserFieldData($iFieldId){
-		$sSql = " SELECT `value` FROM `lttx".Package::$pdbn."_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
+		$sSql = " SELECT `value` FROM `lttx1_userfields_userdata` WHERE `field_id` = ? AND `user_id` = ? ";
 		$aSql = array($iFieldId, $this->getData('ID'));
 		$mValue = Package::$pdb->prepare($sSql);
 		$mValue->execute($aSql);

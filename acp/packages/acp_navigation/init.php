@@ -56,10 +56,10 @@ class package_acp_navigation extends acpPackage {
         Package::addJsFile('main.js','acp_navigation');
         //package::addJsFile('jquery.effects.core.min.js');
         $elements = array();
-        $data = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx".Package::$pdbn."_acp_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
+        $data = self::$pdb->query("SELECT `ID`, `title`, `description`, `icon`, `package`, `action` FROM `lttx1_acp_navigation` WHERE `parent` IS NULL ORDER BY `sort` ASC");
         foreach($data as $entry) {
             if(!isset($_GET['package'])) $_GET['package'] = 'main';
-            $res = Package::$pdb->prepare("SELECT COUNT(*) FROM `lttx".Package::$pdbn."_acp_navigation` WHERE `parent` = ? AND `package` = ?");
+            $res = Package::$pdb->prepare("SELECT COUNT(*) FROM `lttx1_acp_navigation` WHERE `parent` = ? AND `package` = ?");
             $res->execute(array($entry['ID'], $_GET['package']));
             $res = $res->fetch();
             
@@ -74,17 +74,17 @@ class package_acp_navigation extends acpPackage {
     }
     public static function __tpl_displayAcpSubNavigation(){
         $counter=0;
-        $data = self::$pdb->query("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".Package::$pdbn."_acp_navigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
+        $data = self::$pdb->query("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx1_acp_navigation` WHERE `parent` IS NOT NULL ORDER BY `sort` ASC");
         $elements = array();
         foreach($data as $entry) {
             $counter++;
-            $real = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx".Package::$pdbn."_acp_navigation` WHERE `parent` IS NULL AND `ID` = ?");
+            $real = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx1_acp_navigation` WHERE `parent` IS NULL AND `ID` = ?");
             $real->execute(array($entry['parent']));
             $real = $real->fetch();
             if($real[0] < 1) {
                 continue;
             }
-            $sub = self::$pdb->prepare("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx".Package::$pdbn."_acp_navigation` WHERE `parent` = ? ORDER BY `sort` ASC");
+            $sub = self::$pdb->prepare("SELECT `ID`, `parent`, `title`, `description`, `icon`, `package`, `action`, `tab` FROM `lttx1_acp_navigation` WHERE `parent` = ? ORDER BY `sort` ASC");
             $sub->execute(array($entry['ID']));
             if(!isset($elements[$entry['parent']]))
                 $elements[$entry['parent']] = array('active' => false);

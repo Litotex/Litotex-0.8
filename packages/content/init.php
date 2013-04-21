@@ -31,7 +31,7 @@ class package_content extends Package{
 	protected $_availableActions = array('main');
 	public function __action_main(){
 		$id = (isset($_GET['ID']))?$_GET['ID']:0;
-		$contentData = self::$pdb->prepare("SELECT `title`, `text`, `lastEdit`, `editUser` FROM `lttx".Package::$pdbn."_contents` WHERE `ID` = ?");
+		$contentData = self::$pdb->prepare("SELECT `title`, `text`, `lastEdit`, `editUser` FROM `lttx1_contents` WHERE `ID` = ?");
 		$contentData->execute(array($id));
 		$contentData = $contentData->fetch();
 		if(!isset($contentData[0])){

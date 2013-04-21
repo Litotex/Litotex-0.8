@@ -107,7 +107,7 @@ class package_acp_log_viewer extends acpPackage{
 		$sord = isset($_GET['sord'])?$_GET['sord']:"DESC";
 		
 	
-		$result =  Package::$pdb->query("SELECT COUNT(*) AS count FROM lttx1_log where log_type ='1' ");
+		$result =  Package::$pdb->query("SELECT COUNT(*) AS count FROM lttx1_log WHERE package_action = 'database'");
 		$result = $result->fetch(); 
 		$count = $result['count'];
 		$limit=$count;
@@ -121,8 +121,8 @@ class package_acp_log_viewer extends acpPackage{
 		if ($page > $total_pages) 	$page=$total_pages; 
 		$start = $limit*$page - $limit; // do not put $limit*($page - 1) 
 	
-		$SQL = "SELECT *  FROM lttx1_log  where log_type ='1' ORDER BY $sidx $sord LIMIT $start , $limit"; 
-		$result =  Package::$pdb->query($SQL );
+		$SQL = "SELECT * FROM lttx1_log  WHERE package_action = 'database' ORDER BY $sidx $sord LIMIT $start , $limit"; 
+		$result =  Package::$pdb->query($SQL);
 		
 		$responce->page = $page; 
 		$responce->total = $total_pages; 

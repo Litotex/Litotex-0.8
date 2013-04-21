@@ -397,12 +397,12 @@ class PackageManager {
 			}
 			include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
 			if ($loadDep)
-			$dep = $this->_getPackageDependencies($packageName, -1);
+				$dep = $this->_getPackageDependencies($packageName, -1);
 			$pack = new $this->_dependencyCache[$packageName][1](false, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			if ($loadDep)
-			$dep = $this->_getPackageDependencies($packageName, 1);
+				$dep = $this->_getPackageDependencies($packageName, 1);
 			$pack->displayTpl();
 			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
 			$pack->setTemplatePolicy($tplEnable);
@@ -639,7 +639,7 @@ class PackageManager {
 		}
 		//Every check passed :)
 		//after this we can delete the old database tables...
-		Package::$pdb->query("TRUNCATE TABLE `lttx".Package::$pdbn."_package_list`");
+		Package::$pdb->query("TRUNCATE TABLE `lttx1_package_list`");
 		$dataSection = $xmlData->data;
 		foreach ($dataSection->children() as $package) {
 			$packageAttributes = $package->attributes();
@@ -710,7 +710,7 @@ class PackageManager {
 				$dependency[] = array('name' => (string) $dependencyAttributes['name'], 'minVersion' => (string) $dependencyAttributes['minVersion'], 'installed' => $installedDep);
 			}
 			//Now we have to write all this to the database :)
-			Package::$pdb->prepare("INSERT INTO  `lttx".Package::$pdbn."_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
+			Package::$pdb->prepare("INSERT INTO  `lttx1_package_list` (`ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `releaseDate`, `signInfo`, `dependencies`, `changelog`)
 				VALUES (NULL ,  ?, ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?, ?, ?, ?);")->execute(
 			array($name, $prefix, $installed, $update, $critupdate, $version, $description, $author, $authorMail, $signed, $signedOlder, $fullSigned, $fullSignedOlder, $releaseDate, serialize($signInfo), serialize($dependency), serialize($changelog)));
 		}
@@ -945,10 +945,10 @@ class PackageManager {
 			if(file_exists($destination))
 			unlink($destination);
 			copy($source, $destination);
-			$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_file_hash` SET `hash` = ? WHERE `file` = ?");
+			$result = Package::$pdb->prepare("UPDATE `lttx1_file_hash` SET `hash` = ? WHERE `file` = ?");
 			$result->execute(array(md5_file($source), $destination));
 			if($result->rowCount() <= 0)
-			Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_file_hash` (`hash`, `file`) VALUES (?, ?)")->execute(array(md5_file($source), $destination));
+			Package::$pdb->prepare("INSERT INTO `lttx1_file_hash` (`hash`, `file`) VALUES (?, ?)")->execute(array(md5_file($source), $destination));
 			return true;
 		} else if (!is_dir($destination)) {
 			mkdir($destination);
@@ -964,7 +964,7 @@ class PackageManager {
 	public static final function reloadFileHashTable() {
 		$startdir = LITO_FRONTEND_ROOT;
 		//First clear old storage, we will completly rewrite it thought
-		Package::$pdb->query("TRUNCATE TABLE `lttx".Package::$pdbn."_file_hash`");
+		Package::$pdb->query("TRUNCATE TABLE `lttx1_file_hash`");
 		//Done... write the new data
 		self::_insertFileHashReq($startdir);
 	}
@@ -973,7 +973,7 @@ class PackageManager {
 		if (!file_exists($file))
 		return false;
 		if (!is_dir($file)) {
-			Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_file_hash` (`file`, `hash`) VALUES (?, ?)")->execute(array(str_replace('//', '/', $file), md5_file($file)));
+			Package::$pdb->prepare("INSERT INTO `lttx1_file_hash` (`file`, `hash`) VALUES (?, ?)")->execute(array(str_replace('//', '/', $file), md5_file($file)));
 			return true;
 		}
 		$dir = opendir($file);
@@ -989,7 +989,7 @@ class PackageManager {
 		if (!file_exists(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName) || is_dir(LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName))
 		return true;
 		//The file exists, check if its original
-		$result = Package::$pdb->prepare("SELECT `hash` FROM `lttx".Package::$pdbn."_file_hash` WHERE `file` = ?");
+		$result = Package::$pdb->prepare("SELECT `hash` FROM `lttx1_file_hash` WHERE `file` = ?");
 		$result->execute(array(str_replace('//', '/', LITO_FRONTEND_ROOT . $this->_packagePrefix . '/' . $fileName)));
 		if ($result->rowCount() < 1 || !isset($result[0]))
 		return false;

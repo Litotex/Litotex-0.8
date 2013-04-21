@@ -317,12 +317,12 @@ class comment {
             $offset = -1;
         }
         if ($news) {
-            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`, `author_name`, `author_mail` FROM `lttx" . Package::$pdbn . "_news_comments` WHERE read_allowed='1' and `news` = ? ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`, `author_name`, `author_mail` FROM `lttx1_news_comments` WHERE read_allowed='1' and `news` = ? ORDER BY `date` DESC");
             $result->bindParam(':offset', $start, PDO::PARAM_INT);
             $result->bindParam(':max', $offset, PDO::PARAM_INT);
             $result->execute(array($news->getID()));
         } else {
-            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`, `author_name`, `author_mail` FROM `lttx" . Package::$pdbn . "_news_comments` ORDER BY `date` DESC");
+            $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`, `author_name`, `author_mail` FROM `lttx1_news_comments` ORDER BY `date` DESC");
             $result->bindParam(':offset', $start, PDO::PARAM_INT);
             $result->bindParam(':max', $offset, PDO::PARAM_INT);
         }
@@ -344,10 +344,10 @@ class comment {
         if ($news && !is_a($news, 'news'))
             return false;
         if ($news) {
-            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx" . Package::$pdbn . "_news_comments` WHERE `news` = ? and read_allowed='1' ");
+            $result = Package::$pdb->prepare("SELECT COUNT(`ID`) FROM `lttx1_news_comments` WHERE `news` = ? and read_allowed='1' ");
             $result->execute(array($news->getID()));
         } else {
-            $result = Package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx" . Package::$pdbn . "_news_comments` where read_allowed='1' ");
+            $result = Package::$pdb->query("SELECT COUNT(`ID`) FROM `lttx1_news_comments` where read_allowed='1' ");
         }
         if ($result->rowCount() < 1)
             return false;
@@ -365,7 +365,7 @@ class comment {
         if ($this->_getCommentCached($ID))
             return true;
         $ID = (int) $ID;
-        $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`,`author_name`,`author_mail` FROM `lttx" . Package::$pdbn . "_news_comments` WHERE `ID` = ?");
+        $result = Package::$pdb->prepare("SELECT `ID`, `title`, `text`, `date`, `news`, `writer`, `IP`,`author_name`,`author_mail` FROM `lttx1_news_comments` WHERE `ID` = ?");
         $result->execute(array($ID));
         if ($result->rowCount() < 1)
             return false;

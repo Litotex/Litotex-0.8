@@ -60,7 +60,7 @@ class Option{
 		if(!Package::$packages->exists($package) && !($allowOtherPackageSpace && $otherSpace->exists($package)))
 		return false;
 		$this->_package = $package;
-		$cache = Package::$pdb->prepare("SELECT `key`, `value`, `default` FROM `lttx".Package::$pdbn."_options` WHERE `package` = ?");
+		$cache = Package::$pdb->prepare("SELECT `key`, `value`, `default` FROM `lttx1_options` WHERE `package` = ?");
 		$cache->execute(array($package));
 		if($cache->rowCount() < 1){
 			throw new LitotexFatalError('Options of ' . $package . ' could not be found');
@@ -92,7 +92,7 @@ class Option{
 	public function set($key, $value){
 		if(!isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_options` SET `value` = ? WHERE `package` = ? AND `key` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx1_options` SET `value` = ? WHERE `package` = ? AND `key` = ?");
 		$result->execute(array($value, $this->_package, $key));
 		if($result->rowCount() <= 0){
 			return false;
@@ -110,7 +110,7 @@ class Option{
 	public function add($key, $value, $default){
 		if(isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)");
+		$result = Package::$pdb->prepare("INSERT INTO `lttx1_options` (`package`, `key`, `value`, `default`) VALUES (?, ?, ?, ?)");
 		$result->execute(array($this->_package, $key, $value, $default));
 		if($result->rowCount() <= 0){
 			return false;
@@ -127,7 +127,7 @@ class Option{
 	public function reset($key){
 		if(!isset(self::$_cache[$this->_package][$key][0]))
 		return false;
-		$result = Package::$pdb->prepare("UPDATE `lttx".Package::$pdbn."_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?");
+		$result = Package::$pdb->prepare("UPDATE `lttx1_options` SET `value` = `default` WHERE `package` = ? AND `key` = ?");
 		$result->execute(array($this->_package, $key));
 		if($result->rowCount() <= 0)
 		return false;

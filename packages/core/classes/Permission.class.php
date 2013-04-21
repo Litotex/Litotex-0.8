@@ -105,7 +105,7 @@ class Permission {
 	 **/
 	public function deleteAllPerissions(){
 		$sSql = " DELETE FROM
-						`lttx".Package::$pdbn."_permissions` 
+						`lttx1_permissions` 
 					WHERE
 						`associateType` = ? AND 
 						`associateID` = ? ";
@@ -168,7 +168,7 @@ class Permission {
 
 			$sSql = "
 				INSERT INTO
-					`lttx".Package::$pdbn."_permissions`
+					`lttx1_permissions`
 				SET
 			".$sSqlSetPart;
 			
@@ -186,7 +186,7 @@ class Permission {
 
 			$sSql = "
 				UPDATE
-					`lttx".Package::$pdbn."_permissions`
+					`lttx1_permissions`
 				SET
 					".$sSqlSetPart."   
 				WHERE  
@@ -256,7 +256,7 @@ class Permission {
 				SELECT 
 					`permissionLevel`
 				FROM 
-					`lttx".Package::$pdbn."_permissions`
+					`lttx1_permissions`
 				WHERE 
 					`associateType` = ? AND 
 					`associateID` = ? AND 
@@ -300,7 +300,7 @@ class Permission {
 					SELECT 
 						*
 					FROM 
-						`lttx".Package::$pdbn."_permissions_available`
+						`lttx1_permissions_available`
 					ORDER BY
 						`package`, `function`
 					";
@@ -315,11 +315,11 @@ class Permission {
 	}
 
         public static function clearAvailableTable($packageDir, $type = 2){
-        	$delete = Package::$pdb->prepare("DELETE FROM `lttx".Package::$pdbn."_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
+        	$delete = Package::$pdb->prepare("DELETE FROM `lttx1_permissions_available` WHERE `type` = ? AND `packageDir` = ?");
             $delete->execute(array($type, $packageDir));
         }
         public static function registerAvailable($name, $class, $function, $packageDir, $type = 2){
-        	$insert = Package::$pdb->prepare("INSERT INTO `lttx".Package::$pdbn."_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
+        	$insert = Package::$pdb->prepare("INSERT INTO `lttx1_permissions_available` (`type`, `package`, `class`, `function`, `packageDir`) VALUES (?, ?, ?, ?, ?)");
         	$insert->execute(array($type, $name, $class, $function, $packageDir));
         }
 }

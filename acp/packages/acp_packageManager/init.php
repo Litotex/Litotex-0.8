@@ -64,7 +64,7 @@ class package_acp_packageManager extends acpPackage {
     public function __action_listUpdates() {
         self::addJsFile('checkbox.js', $this->_packageName);
         $packages = array();
-        $result = self::$pdb->query("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx".Package::$pdbn."_package_list` WHERE `update` = 1");
+        $result = self::$pdb->query("SELECT `ID`, `name`, `update`, `critupdate`, `description`, `author`, `authorMail`, `releaseDate`, `changelog` FROM `lttx1_package_list` WHERE `update` = 1");
         foreach ($result as $element) {
             $element['changelog'] = unserialize($element['changelog']);
             $packages[] = $element;
@@ -86,7 +86,7 @@ class package_acp_packageManager extends acpPackage {
             header("Location: index.php?package=acp_packageManager&action=listUpdates");
         foreach ($_POST['update'] as $i => $update) {
             $_POST['update'][$i] = (int) $update;
-            $exists = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ? AND `update` = 1");
+            $exists = self::$pdb->prepare("SELECT COUNT(*) FROM `lttx1_package_list` WHERE `ID` = ? AND `update` = 1");
             $exists->execute(array($_POST['update'][$i]));
             $exists = $exists->fetch();
             if ($exists[0] == 0)
@@ -100,7 +100,7 @@ class package_acp_packageManager extends acpPackage {
     private function _addInstallItem(&$items, $newItem) {
         if (in_array($newItem, $items))
             return true;
-        $data = self::$pdb->prepare("SELECT `dependencies`, `name` FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ?");
+        $data = self::$pdb->prepare("SELECT `dependencies`, `name` FROM `lttx1_package_list` WHERE `ID` = ?");
         $data->execute(array($newItem));
         if ($data->rowCount() < 1)
             return false;
@@ -110,7 +110,7 @@ class package_acp_packageManager extends acpPackage {
         foreach ($dep as $depItem) {
             if ($depItem['installed'] >= 1)
                 continue;
-            $itemID = self::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_package_list` WHERE `name` = ?");
+            $itemID = self::$pdb->prepare("SELECT `ID` FROM `lttx1_package_list` WHERE `name` = ?");
             $itemID->execute(array($depItem['name']));
             if ($itemID->rowCount() < 1)
                 return false;
@@ -172,7 +172,7 @@ class package_acp_packageManager extends acpPackage {
         foreach ($_SESSION['updateQueue'] as $installItem) {
             $tplFiles = array();
             $packageFiles = array();
-            $data = self::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ?");
+            $data = self::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx1_package_list` WHERE `ID` = ?");
             $data->execute(array($installItem));
             if ($data->rowCount() < 1)
                 throw new LitotexError('E_updateIDNotFound');
@@ -264,7 +264,7 @@ class package_acp_packageManager extends acpPackage {
         }
         $packages = array();
         foreach ($_POST['update'] as $item) {
-            $data = Package::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx".Package::$pdbn."_package_list` WHERE `ID` = ?");
+            $data = Package::$pdb->prepare("SELECT `ID`, `name`, `prefix`, `installed`, `update`, `critupdate`, `version`, `description`, `author`, `authorMail`, `signed`, `signedOld`, `fullSigned`, `fullSignedOld`, `signInfo`, `releaseDate`, `dependencies`, `changelog` FROM `lttx1_package_list` WHERE `ID` = ?");
             $data->execute(array($item));
             if ($data->rowCount() < 1)
                 continue;

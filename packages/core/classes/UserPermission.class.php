@@ -77,34 +77,31 @@ class UserPermission extends Permission {
 	 * @return bool
 	 */
 	public function checkPerm($mPackage, $sFunction, $sClass = false) {
-
 		if($this->_bServerAdmin) {
 			return true;
 		}
-
+		
 		$iPerm = parent::checkPerm($mPackage, $sFunction, $sClass);
-
+		
 		foreach((array)$this->_aGroups as $oGroup) {
-
 			if(!is_a($oGroup, 'userGroup')){
 				return false;
 			}
-
+			
 			$oGroupPerm = new UserGroupPermission($oGroup);
 			$iGroupPerm = $oGroupPerm->checkPerm($mPackage, $sFunction, $sClass);
-
+			
 			$iPerm = $this->_mergePerm($iPerm, (int)$iGroupPerm);
-
-			if($iPerm == -1){
+			
+			if($iPerm == -1) {
 				return false;
 			}
-
 		}
-
+		
 		if($iPerm == 1){
 			return true;
 		}
-
+		
 		return false;
 	}
 

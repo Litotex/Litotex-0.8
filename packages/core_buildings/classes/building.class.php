@@ -51,7 +51,7 @@ class building{
 	private $_pointsFormula = '';
 	private $_dependencyPluginHandler = false;
 	public function __construct($buildingID){
-		$data = Package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx".Package::$pdbn."_buildings` WHERE `ID` = ?");
+		$data = Package::$pdb->prepare("SELECT `name`, `race`, `plugin`, `pluginPreferences`, `timeFormula`, `pointsFormula` FROM `lttx1_buildings` WHERE `ID` = ?");
 		$data->execute(array($buildingID));
 		if($data->rowCount() < 1)
 			throw new Exception('Building ' . $buildingID .' was not found');
@@ -127,7 +127,7 @@ class building{
 		return $this->castFunction('increaseLevel', array($territory, $level, '$preferences', $this->_ID));
 	}
 	public function getDependencies($level){
-		$dep = Package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx".Package::$pdbn."_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
+		$dep = Package::$pdb->prepare("SELECT `plugin`, `pluginPreferences` FROM `lttx1_building_dependencies` WHERE `sourceID` = ? AND `level` <= ?");
 		$dep->execute(array($this->_ID, (int)$level));
 		$return = array();
 		
@@ -146,12 +146,12 @@ class building{
 		return $return;
 	}
 	public static function getAllByRace($race){
-		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_buildings` WHERE `race` = ?");
+		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx1_buildings` WHERE `race` = ?");
 		$result->execute(array($race));
 		return self::_getByQuery($result);
 	}
 	public static function getAll(){
-		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx".Package::$pdbn."_buildings`");
+		$result = Package::$pdb->prepare("SELECT `ID` FROM `lttx1_buildings`");
 		$result->execute();
 		return self::_getByQuery($result);
 	}

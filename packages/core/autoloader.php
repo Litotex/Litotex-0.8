@@ -40,7 +40,7 @@ function autoload($className) {
         require_once $classPath;
         return true;
     }
-    
+#    Logger::debug("Autoloader: Class ".$className." not found", LOG_ERR);
     return false;
 }
 
