@@ -132,8 +132,10 @@ class User {
 		//	return;
 		
 		$userID = intval($userID);
-		if(!self::userExists($userID) && $userID > 0)
-			throw new LitotexFatalError('User ' . $userID . ' was not found');
+		if(!self::userExists($userID) && $userID > 0){
+                         Package::debug('User ' . $userID . ' was not found', LOG_ERR);
+                         return;
+                }
 		$this->_currentID = $userID;
 		$this->_initialized = true;
 		$this->_bufferActive = self::$_globalBufferActive;

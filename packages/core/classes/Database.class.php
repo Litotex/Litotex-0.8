@@ -65,26 +65,23 @@ class Database extends PDO {
 	/*
 	 * Extending the execution methods for logging and counting
 	 */
-	public function exec($sql, $logIt = true) {
+	public function exec($sql, $logIt = false) {
 		$sql = str_replace('lttx1_', 'lttx' . Package::$pdbn . '_', $sql);
 		$this->queryCount++;
 		$retValue = parent::exec($sql);
-//		if ($retValue === FALSE) {
-			if ($logIt)
-				Logger::debug($sql, LOG_DEBUG, TRUE);
-/*			else
-				Logger::debug($sql, LOG_DEBUG, FALSE);
-		}
-*/		return $retValue;
+            	if ($logIt)
+                    Logger::debug($sql, LOG_DEBUG, TRUE);
+		return $retValue;
 	}
-	public function query($sql) {
-		Logger::debug('Query: '. $sql, LOG_DEBUG);
+	public function query($sql, $logIt = false) {
+                if ($logIt)
+                    Logger::debug('Query: '. $sql, LOG_DEBUG);
 		$this->queryCount++;
 		return parent::query($sql);
 	}
-	public function prepare($statement, $options = array(), $logIt = True) {
+	public function prepare($statement, $options = array(), $logIt = false) {
 		if ($logIt)	// replace all tabs and multiple whitespaces with just one space
-			Logger::debug('Prepare: '.preg_replace('/\s\s+|\t/', ' ', $statement).' Options: ' . implode(',', $options), LOG_DEBUG);
+                    Logger::debug('Prepare: '.preg_replace('/\s\s+|\t/', ' ', $statement).' Options: ' . implode(',', $options), LOG_DEBUG);
 		$retValue = parent::prepare($statement, $options);
 		return $retValue;
 	}
@@ -121,9 +118,10 @@ class DBStatement extends PDOStatement {
 		$this->pdo = $pdo;
 	}
 
-	public function execute($params = array()) {
-		Logger::debug('DBStatement execute: '.implode(', ', $params), LOG_DEBUG);
-		return parent::execute($params);
+	public function execute($params = array(), $logIt = false) {
+                if ($logIt)
+                   Logger::debug('DBStatement execute: '.implode(', ', $params), LOG_DEBUG);
+	return parent::execute($params);
 	}
 }
 

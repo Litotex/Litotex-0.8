@@ -35,19 +35,21 @@ class LitotexFatalError extends Exception {
         $this->message = Package::getLanguageVar('E_fatalErrorOccured');
         $this->message .= '<br /><b>'.nl2br($message).'</b>';
         $this->_log($message, $package);
-        debug_print_backtrace();
+        //debug_print_backtrace();
     }
 
     private function _log($message, $package) {
         $backtrace = '##'.$this->getFile().'('.$this->getLine().'):'.$message."\n".$this->getTraceAsString();
         Package::$pdb->prepare("INSERT INTO `lttx1_error_log` (`package`, `traced`, `backtrace`) VALUES (?, ?, ?)")->execute(array($package, 1, $backtrace));
         $this->_logID = Package::$pdb->lastInsertId();
+        
     }
 
     public function setTraced($option) {
         if (!$this->_logID)
             return false;
-        Package::$pdb->prepare("UPDATE `lttx1_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_logID));
+        //what is that ???
+        //Package::$pdb->prepare("UPDATE `lttx1_error_log` SET `traced` = ? WHERE `ID` = ?")->execute(array($option, $this->_logID));
     }
 
 }

@@ -201,7 +201,7 @@ class news {
             $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE  n.category = ? AND n.active = ? ORDER BY ndate DESC");
             $news->bindParam(':offset', $start, PDO::PARAM_INT);
             $news->bindParam(':max', $offset, PDO::PARAM_INT);
-            $news->execute(array($category->getID(), true));
+            $news->execute(array($category->getID(),true));
         } else {
             $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE `active` = ? ORDER BY n.date DESC");
             $news->bindParam(':offset', $start, PDO::PARAM_INT);
