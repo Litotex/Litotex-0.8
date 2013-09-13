@@ -285,7 +285,7 @@ class User {
 		} else {
 			if(self::_compareSaltString($password, $user->getData('password'), $user->getData('dynamicSalt'))) {
 				$user->setUsersInstance();
-				$user->setData('lastActive', time(), false);
+				$user->setData('lastActive', date("Y-m-d H:i:s",time()), false);
 				Package::$session->setUserObject($user);
 				return $user;
 			} else {

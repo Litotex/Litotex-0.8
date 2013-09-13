@@ -50,5 +50,9 @@ chmod 777 packages/core/cache/ files/cache/ files/packages/cache/ tpl_c/ acp/tpl
 ```bash
 mysql -D litotexDB -u litotexUser -p < dbUpdate/litotex.sql
 ```
-Default Uername: 11111
-Default Password:11111
+Admin Login:
+    Username:admin
+    Password:admin
+User Login:
+    Username:tester
+    Password:tester
