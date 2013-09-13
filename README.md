@@ -53,6 +53,7 @@ mysql -D litotexDB -u litotexUser -p < dbUpdate/litotex.sql
 Admin Login:
     Username:admin
     Password:admin
+
 User Login:
     Username:tester
     Password:tester
