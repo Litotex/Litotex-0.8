@@ -183,8 +183,8 @@ class news {
      * @return array
      */
     public static function getAll($category = false, $page = 1, $offset = false) {
-        if ($category && !is_a($category, 'category'))
-            return false;
+        //if ($category && !is_a($category, 'category'))
+        //    return false;
         if (!self::$_options)
             self::$_options = new Option('news');
         $return = array();
@@ -196,12 +196,13 @@ class news {
             $start = 0;
             $offset = -1;
         }
+           
         $return = array();
         if ($category) {
-            $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE  n.category = ? AND n.active = ? ORDER BY ndate DESC");
+            $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE  n.category = '".$category."' AND n.active = ? ORDER BY n.date DESC");
             $news->bindParam(':offset', $start, PDO::PARAM_INT);
             $news->bindParam(':max', $offset, PDO::PARAM_INT);
-            $news->execute(array($category->getID(),true));
+            $news->execute(array(true));
         } else {
             $news = Package::$pdb->prepare("SELECT n.ID, n.title, n.text, n.category, date_format(n.date, '%d.%m.%Y %H:%i') as new_date , n.writtenBy, n.active,n.allow_comments, l1.title, l1.description, l1.newsLastDate FROM lttx1_news n LEFT OUTER JOIN lttx" . Package::$pdbn . "_news_categories l1 ON (n.category=l1.ID) WHERE `active` = ? ORDER BY n.date DESC");
             $news->bindParam(':offset', $start, PDO::PARAM_INT);

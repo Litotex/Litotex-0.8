@@ -5,7 +5,7 @@
 <div class="NewsPost">
 			<div class="NewsPostHeader">
 				<div class="NewsPostTitleDate">{$item->getFormatedDate()}</div>
-				<div class="NewsPostKat"><a href="{make_link package=news action=showCategory id=$item->getCategoryID()}" title="{#LN_NEWS_TITEL#}" rel="category tag">{$item->getCategoryName()}</a></div>
+				<div class="NewsPostKat">{$item->getCategoryName()}</a></div>
 				<div class="NewsPostTitle"><a href="{make_link package=news action=showComments id=$item->getID()}" title="{#LN_NEWS_PERMALINK_TITEL#}{make_link package=news action=showComments id=$item->getID()}">{$item->getTitle()}</a></div>
 				
 			</div>
@@ -17,7 +17,7 @@
 				{else}
 				<span class="NewsPostComments ">{#LN_NEWS_NO_COMMENTS_ALLOWED#}</span>
 				{/if}
-				<a class="NewsPostReadMore" href="Link"><b><b><b>{#LN_NEWS_MORE_TEXT#}</b></b></b>
+				
 				
 				
 				</a>

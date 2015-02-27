@@ -52,6 +52,7 @@ class package_news extends Package {
     }
 
     public function __action_main() {
+    
         Package::addCssFile('news.css', 'news');
         $category = false;
         $page = 1;
@@ -61,9 +62,11 @@ class package_news extends Package {
             $page = 1;
         if (!self::_newsPageExists($page, $category))
             $page = 1;
-        //$categories = category::getAll();
-        //self::$tpl->assign('categories', $categories);
+            
+        $category=1; 
+       
         $news = news::getAll($category, $page);
+       
         self::$tpl->assign('news', $news);
         return true;
     }
@@ -85,7 +88,6 @@ class package_news extends Package {
      * @return bool
      */
     public function __action_showComments() {
-
         if (!isset($_GET['id']))
             $this->_referMain();
         $current_news_id = $_GET['id'];
@@ -122,16 +124,13 @@ class package_news extends Package {
     }
 
     public static function __hook_getNews(&$news, $n) {
-
         $news = self::getNews(false, 1, $n);
         return true;
     }
 
     public static function __hook_showNewsBlock($n) {
         Package::addCssFile('news.css', 'news');
-
         $news = self::getNews(false, 1, $n);
-
         self::loadLang(self::$tpl, 'news');
         self::$tpl->assign('news', $news);
         self::$tpl->display(self::getTplDir('news') . 'newsblock.tpl');

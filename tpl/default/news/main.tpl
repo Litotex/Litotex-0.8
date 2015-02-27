@@ -1,6 +1,6 @@
 {include file=$HEADER}
 <h2>{#LN_NEWS_OVER#}</h2>
-<p>Seite x von x</p>
+<p>Seite x von xx</p>
           <div class="inhalt_box1">
 <table width="100%"><tr>
 <td><b>Kategorien</td>

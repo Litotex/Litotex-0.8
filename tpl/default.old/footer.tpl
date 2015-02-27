@@ -5,7 +5,7 @@
 		</div>
 				<span class="smallfont_white">
 					time: {package::$packages->callHook('displayTimer', array())} sec<br>
-					query count: {$queryCount}
+					query count: {$QueryCount}
 				</span>
 		</div>
 </div>
