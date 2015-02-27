@@ -396,7 +396,7 @@ class comment {
      * @param comment_id, $user_id(registered),author_mail(Guest)
      * @return URL
      */
-    private function _buildImageURL($comment_ID, $user, $author_mail) {
+    private static function _buildImageURL($comment_ID, $user, $author_mail) {
         if ($user->getUserID() > 0) {
             //return userimage
             $curImageUrl = Package::getTplURL('news') . "img/news_anonym.png";
