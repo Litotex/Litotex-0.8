@@ -1,5 +1,5 @@
 <?php
-require_once "../../vendor/autoload.php";
+require_once LITO_ROOT."vendor/autoload.php";
 /*
  * Copyright (c) 2010 Litotex
  * 
