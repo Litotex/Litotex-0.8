@@ -56,7 +56,7 @@ class ressource{
 	private $_src;
 	/**
 	 * Name of the table to be used (user, building...)
-	 * @var str
+	 * @var string
 	 */
 	private $_table;
 	/**
@@ -69,18 +69,14 @@ class ressource{
 	 * @var array
 	 */
 	static private $_nameCache;
-	/**
-	 * Was the name of all ressources fetched?
-	 * @var bool
-	 */
-	private $_resNameFetched = false;
+
 	private $_limit = false;
 	private $_useIncreaseFormula = false;
 	private $_useLimit = array();
 	/**
 	 * Loads the data from database and pre caches them therefor
 	 * @param int $race ID of race to get information from
-	 * @param str $table Tablename lttx[n]_[$table]Ressource
+	 * @param string $table Tablename lttx[n]_[$table]Ressource
 	 * @param int $id ID to cover
 	 * @param bool $edit Should any manipulation be written to the database automaticly
 	 * @param bool $increaseFormula Should the class use a manipulate formula
@@ -106,7 +102,7 @@ class ressource{
 				$this->_resFormula[$element[0]] = $element[$i++];
 			}
 			if($limit){
-				$this->_limit[$element[0]] = $element[$i++];
+				$this->_limit[$element[0]] = $element[$i];
 			}
 		}
 		$checkRes = Package::$pdb->prepare("SELECT `ID` FROM `lttx1_ressources` WHERE `raceID` = ?");
@@ -219,6 +215,7 @@ class ressource{
 			$this->_changed[] = $resID;
 		}
 	}
+
 	public function setLimit($resID, $newValue){
 		$newValue = (int)$newValue;
 		if(!isset($this->_limit[$resID]))

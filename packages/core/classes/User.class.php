@@ -318,9 +318,9 @@ class User {
 	}
 	/**
 	 * Compares a salted string (sh1 hashed) with an unsalted string (unhased)
-	 * @param str $str1 unsalted and unhashed string
-	 * @param str $str2 salted and hashed string to compare
-	 * @param str $dynSalt dynamic generated salt which was used to salt str2
+	 * @param string $str1 unsalted and unhashed string
+	 * @param string $str2 salted and hashed string to compare
+	 * @param string $dynSalt dynamic generated salt which was used to salt str2
 	 * @return bool (true = match)
 	 */
 	static private function _compareSaltString($str1, $str2, $dynSalt) {
@@ -331,7 +331,7 @@ class User {
 	}
 	/**
 	 * This creates a new user instance by using the username
-	 * @param str $username username of user to be loaded
+	 * @param string $username username of user to be loaded
 	 * @return bool on failure | user
 	 */
 	static public function getUserByName($username) {
@@ -384,8 +384,8 @@ class User {
 	}
 	/**
 	 * This saves a new data for a specific column
-	 * @param str $key column to save
-	 * @param str $newValue new data
+	 * @param string $key column to save
+	 * @param string $newValue new data
 	 * @param bool $cached if true is set, the data will be written to the database when the destructor is called, data is loadable with getData when cache is set to true
 	 * @return bool
 	 */
@@ -634,7 +634,7 @@ class User {
 
 	/**
 	 * This will ban a user for a specific amount of time
-	 * @param str $reason Reason to ban the user (may show up on login)
+	 * @param string $reason Reason to ban the user (may show up on login)
 	 * @return bool
 	 */
 	public function banUser($reason = '') {

@@ -40,6 +40,12 @@ abstract class Package {
      * @var PDO
      */
     public static $pdb;
+
+    /**
+     * EntityManager
+     * @var \Doctrine\ORM\EntityManager
+     */
+    public static $em;
     
     public static $pdbn = 1;
     /**
@@ -296,6 +302,13 @@ abstract class Package {
         return true;
     }
 
+    static public final function setEntityManager(\Doctrine\ORM\EntityManager $em) {
+        if (__CLASS__ != 'Package')
+            return false;
+        Package::$em = $em;
+        return true;
+    }
+
     /**
      * This will save a template instance in the root class
      * Attention! Only allowed on package class
@@ -409,7 +422,7 @@ abstract class Package {
 
     /**
      * Adds a new JS file with no relations to a package, just type the url to use
-     * @param str $href
+     * @param string $href
      * @return bool
      */
     public static function addNonPackageJsFile($href) {

@@ -55,11 +55,21 @@ try {
             exit();
         }
         try {
+            $config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(LITO_ROOT . 'entities'));
             $db = new Database('mysql:dbname='.$dbConfig['database'].';host='.$dbConfig['host'], $dbConfig['user'], $dbConfig['password']);
+            $dbParams = array(
+                'pdo'      => $db,
+                'host'     => $dbConfig['host'],
+                'user'     => $dbConfig['user'],
+                'password' => $dbConfig['password'],
+                'dbname'   => $dbConfig['database'],
+            );
+            $entityManager = \Doctrine\ORM\EntityManager::create($dbParams, $config);
         } catch (PDOException $e) {
             die('Database connection failed! '.$e->getMessage());
         }
         Package::setDatabaseClass($db);
+        Package::setEntityManager($entityManager);
 
         $packageManager = new PackageManager();
         Package::setPackageManagerClass($packageManager);
