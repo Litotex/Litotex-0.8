@@ -5,7 +5,7 @@ We don't assume liability of any kind
 For help, support or just talking, you can
 
 * visit our website at [litotex.net](http://litotex.net/) (currently only german)
-* visit our [github](https:github.com/Litotex) repository
+* visit our [github](https://github.com/Litotex) repository
 * or join our IRC-Cannel at [Freenode](irc://freenode.net/#litotex)
 
 Your Litotex Team
