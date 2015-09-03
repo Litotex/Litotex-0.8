@@ -72,8 +72,8 @@ class UserPermission extends Permission {
 	/**
 	 * This will return true, if there are enough permissions for this user
 	 * @param package (extended) $mPackage name of the package this function belongs to
-	 * @param str $sFunction name of the function to be checked
-	 * @param str $sClass Name of class which is the "owner" of the static function $sFunction, false will check the function on package object
+	 * @param string $sFunction name of the function to be checked
+	 * @param string $sClass Name of class which is the "owner" of the static function $sFunction, false will check the function on package object
 	 * @return bool
 	 */
 	public function checkPerm($mPackage, $sFunction, $sClass = false) {

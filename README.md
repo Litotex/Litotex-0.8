@@ -45,6 +45,14 @@ mkdir packages/core/cache/ files/cache/ files/packages/cache/ tpl_c/ acp/tpl_c/ 
 chmod 777 packages/core/cache/ files/cache/ files/packages/cache/ tpl_c/ acp/tpl_c/ log/
 ```
 
+* Install composer: https://getcomposer.org/download/
+
+* Run composer
+```bash
+composer update
+```
+
+
 * Create a database (and adjust the settings in the config file) and import all data from `dbUpdates/litotex.sql`
 
 ```bash

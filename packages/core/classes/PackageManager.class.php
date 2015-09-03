@@ -309,10 +309,10 @@ class PackageManager {
 
 	/**
 	 * This function registers a new hook, it will be casted when generateHookCache is casted
-	 * @param str $class classname of hook saeing class
-	 * @param str $hookname name of the hook (called)
+	 * @param string $class classname of hook saeing class
+	 * @param string $hookname name of the hook (called)
 	 * @param int $nParams number of params the hook will work with
-	 * @param str $function name of the function that should be used if it is not named __hook_$hookname
+	 * @param string $function name of the function that should be used if it is not named __hook_$hookname
 	 * @return bool
 	 */
 	public function registerHook($class, $hookname, $nParams, $function, $file, $packageName) {
@@ -346,7 +346,7 @@ class PackageManager {
 
 	/**
 	 * This function will cast every available function castable named $hookname
-	 * @param str $hookname name of the hook
+	 * @param string $hookname name of the hook
 	 * @param array $args array with all the arguments that should be passed
 	 * @return bool
 	 */
@@ -379,7 +379,7 @@ class PackageManager {
 
 	/**
 	 * This function will create an instance of a package set by $packageName
-	 * @param str $packageName name of class (without package_*)
+	 * @param string $packageName name of class (without package_*)
 	 * @param bool Should a template be showed?
 	 * @param bool Should the package be initlaized at all? If not only include it...
 	 * @return bool on failure | instance of class | true if not initialized
@@ -398,13 +398,15 @@ class PackageManager {
 			include_once($this->_packagesDir . $this->_dependencyCache[$packageName][0] . '/init.php');
 			if ($loadDep)
 				$dep = $this->_getPackageDependencies($packageName, -1);
-			$pack = new $this->_dependencyCache[$packageName][1](false, $dep);
+            $constructor = $this->_dependencyCache[$packageName][1];
+			$pack = new $constructor(false, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			if ($loadDep)
 				$dep = $this->_getPackageDependencies($packageName, 1);
 			$pack->displayTpl();
-			$pack = new $this->_dependencyCache[$packageName][1]($initialize, $dep);
+            $constructor = $this->_dependencyCache[$packageName][1];
+			$pack = new $constructor($initialize, $dep);
 			$pack->setTemplatePolicy($tplEnable);
 			$this->_loaded[$packageName] = $pack;
 			$pack->displayTpl();
@@ -538,7 +540,7 @@ class PackageManager {
 
 	/**
 	 * This function will register a class for the package cache
-	 * @param str $class name of class
+	 * @param string $class name of class
 	 * @return bool
 	 */
 	public function registerClass($class) {
